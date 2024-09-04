@@ -65,3 +65,35 @@ func (rc *PodsHandler) Create(c echo.Context) error {
 
 	return c.JSON(http.StatusCreated, echo.Map{"pod": pod.Name})
 }
+
+func (rc *PodsHandler) List(c echo.Context) error {
+	var input model.PodsRequest
+
+	if err := c.Bind(&input); err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+	}
+
+	var opts = metav1.ListOptions{
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "",
+			APIVersion: "",
+		},
+		LabelSelector:        "",
+		FieldSelector:        "",
+		Watch:                false,
+		AllowWatchBookmarks:  false,
+		ResourceVersion:      "",
+		ResourceVersionMatch: "",
+		TimeoutSeconds:       new(int64),
+		Limit:                0,
+		Continue:             "",
+		SendInitialEvents:    new(bool),
+	}
+
+	list, err := rc.podsUC.Get(c.Request().Context(), "", opts)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusCreated, echo.Map{"data": list})
+}

@@ -27,3 +27,7 @@ func (rc *PodsUC) Create(ctx context.Context, pod *corev1.Pod, opts metav1.Creat
 
 	return rc.podsRepo.Create(ctx, pod, opts)
 }
+
+func (rc *PodsUC) Get(ctx context.Context, namespace string, opts metav1.ListOptions) (*corev1.PodList, error) {
+	return rc.podsRepo.Get(ctx, namespace, opts)
+}
