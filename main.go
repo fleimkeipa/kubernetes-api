@@ -51,6 +51,9 @@ func serveApplication() {
 	var podsRoutes = e.Group("/pods")
 	podsRoutes.POST("", podsHandlers.Create)
 
+	var namespaceRoutes = e.Group("/namespace")
+	namespaceRoutes.GET("", namespaceHandlers.Get)
+
 	e.Logger.Fatal(e.Start(":8080"))
 }
 
