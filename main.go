@@ -48,6 +48,10 @@ func serveApplication() {
 	var podsUC = uc.NewPodsUC(podsRepo)
 	var podsHandlers = controller.NewPodsHandler(podsUC)
 
+	var namespaceRepo = repositories.NewNamespaceRepository(kubClient)
+	var namespaceUC = uc.NewNamespaceUC(namespaceRepo)
+	var namespaceHandlers = controller.NewNamespaceHandler(namespaceUC)
+
 	var podsRoutes = e.Group("/pods")
 	podsRoutes.POST("", podsHandlers.Create)
 
