@@ -57,6 +57,7 @@ func serveApplication() {
 
 	var namespaceRoutes = e.Group("/namespace")
 	namespaceRoutes.GET("", namespaceHandlers.Get)
+	namespaceRoutes.POST("", namespaceHandlers.Create)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }
