@@ -22,3 +22,7 @@ func NewNamespaceUC(namespaceRepo interfaces.NamespaceInterfaces) *NamespaceUC {
 func (rc *NamespaceUC) Get(ctx context.Context, opts metav1.ListOptions) (*corev1.NamespaceList, error) {
 	return rc.namespaceRepo.Get(ctx, opts)
 }
+
+func (rc *NamespaceUC) Create(ctx context.Context, namespace *corev1.Namespace, opts metav1.CreateOptions) (*corev1.Namespace, error) {
+	return rc.namespaceRepo.Create(ctx, namespace, opts)
+}
