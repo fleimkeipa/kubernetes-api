@@ -21,3 +21,7 @@ func NewNamespaceRepository(client *kubernetes.Clientset) *NamespaceRepository {
 func (rc *NamespaceRepository) Get(ctx context.Context, opts metav1.ListOptions) (*corev1.NamespaceList, error) {
 	return rc.client.CoreV1().Namespaces().List(ctx, opts)
 }
+
+func (rc *NamespaceRepository) Create(ctx context.Context, namespace *corev1.Namespace, opts metav1.CreateOptions) (*corev1.Namespace, error) {
+	return rc.client.CoreV1().Namespaces().Create(ctx, namespace, opts)
+}
