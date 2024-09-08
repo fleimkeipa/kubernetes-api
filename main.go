@@ -36,7 +36,7 @@ func serveApplication() {
 
 	// Add CORS in middleware
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"*"}, // reach everywhere
+		AllowOrigins: []string{"http://localhost:8081"},
 		AllowMethods: []string{echo.GET, echo.POST, echo.PUT, echo.DELETE},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
