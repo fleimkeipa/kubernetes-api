@@ -64,3 +64,16 @@ func (rc *NamespaceHandler) Create(c echo.Context) error {
 
 	return c.JSON(http.StatusCreated, echo.Map{"pod": namespace.Name})
 }
+
+func (rc *NamespaceHandler) GetByNameOrUID(c echo.Context) error {
+	var nameOrUID = c.Param("id")
+
+	var opts = metav1.ListOptions{}
+
+	list, err := rc.namespaceUC.GetByNameOrUID(c.Request().Context(), nameOrUID, opts)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{"data": list})
+}
