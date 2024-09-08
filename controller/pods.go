@@ -67,6 +67,23 @@ func (rc *PodsHandler) Create(c echo.Context) error {
 	return c.JSON(http.StatusCreated, echo.Map{"pod": pod.Name})
 }
 
+func (rc *PodsHandler) Update(c echo.Context) error {
+	var input corev1.Pod
+
+	if err := c.Bind(&input); err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+	}
+
+	var opts = metav1.UpdateOptions{}
+
+	pod, err := rc.podsUC.Update(c.Request().Context(), &input, opts)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusCreated, echo.Map{"pod": pod.Name})
+}
+
 func (rc *PodsHandler) List(c echo.Context) error {
 	var namespace = c.QueryParam("namespace")
 
@@ -92,4 +109,17 @@ func (rc *PodsHandler) GetByNameOrUID(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, echo.Map{"data": list})
+}
+
+func (rc *PodsHandler) Delete(c echo.Context) error {
+	var namespace = c.QueryParam("namespace")
+	var nameOrUID = c.Param("id")
+
+	var opts = metav1.DeleteOptions{}
+
+	if err := rc.podsUC.Delete(c.Request().Context(), namespace, nameOrUID, opts); err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, "deleted succesfully")
 }

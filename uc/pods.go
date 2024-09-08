@@ -29,6 +29,15 @@ func (rc *PodsUC) Create(ctx context.Context, pod *corev1.Pod, opts metav1.Creat
 	return rc.podsRepo.Create(ctx, pod, opts)
 }
 
+func (rc *PodsUC) Update(ctx context.Context, pod *corev1.Pod, opts metav1.UpdateOptions) (*corev1.Pod, error) {
+	pod.TypeMeta.Kind = "pod"
+	if pod.ObjectMeta.Namespace == "" {
+		pod.ObjectMeta.Namespace = "default"
+	}
+
+	return rc.podsRepo.Update(ctx, pod, opts)
+}
+
 func (rc *PodsUC) Get(ctx context.Context, namespace string, opts metav1.ListOptions) (*corev1.PodList, error) {
 	opts.TypeMeta.Kind = "pod"
 	if namespace == "" {
@@ -61,4 +70,13 @@ func (rc *PodsUC) GetByNameOrUID(ctx context.Context, namespace, nameOrUID strin
 
 	opts.Continue = pods.ListMeta.Continue
 	return rc.GetByNameOrUID(ctx, namespace, nameOrUID, opts)
+}
+
+func (rc *PodsUC) Delete(ctx context.Context, namespace, name string, opts metav1.DeleteOptions) error {
+	opts.TypeMeta.Kind = "pod"
+	if namespace == "" {
+		namespace = "default"
+	}
+
+	return rc.podsRepo.Delete(ctx, namespace, name, opts)
 }
