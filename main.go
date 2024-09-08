@@ -34,7 +34,7 @@ func serveApplication() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	// Add CQRS in middleware
+	// Add CORS in middleware
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"}, // reach everywhere
 		AllowMethods: []string{echo.GET, echo.POST, echo.PUT, echo.DELETE},
@@ -52,6 +52,10 @@ func serveApplication() {
 	var namespaceUC = uc.NewNamespaceUC(namespaceRepo)
 	var namespaceHandlers = controller.NewNamespaceHandler(namespaceUC)
 
+	var deploymentRepo = repositories.NewDeploymentInterfaces(kubClient)
+	var deploymentUC = uc.NewDeploymentUC(deploymentRepo)
+	var deploymentHandlers = controller.NewDeploymentHandler(deploymentUC)
+
 	var podsRoutes = e.Group("/pods")
 	podsRoutes.GET("", podsHandlers.List)
 	podsRoutes.POST("", podsHandlers.Create)
@@ -61,6 +65,11 @@ func serveApplication() {
 	namespaceRoutes.GET("", namespaceHandlers.Get)
 	namespaceRoutes.POST("", namespaceHandlers.Create)
 	namespaceRoutes.GET("/:id", namespaceHandlers.GetByNameOrUID)
+
+	var deploymentRoutes = e.Group("/deployments")
+	deploymentRoutes.GET("", deploymentHandlers.List)
+	deploymentRoutes.POST("", deploymentHandlers.Create)
+	deploymentRoutes.GET("/:id", deploymentHandlers.GetByNameOrUID)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }
