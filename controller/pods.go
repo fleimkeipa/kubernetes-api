@@ -27,7 +27,7 @@ func (rc *PodsHandler) Create(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
 	}
 
-	var containers = make([]corev1.Container, len(input.Spec.Containers))
+	var containers = []corev1.Container{}
 	for _, v := range input.Spec.Containers {
 		containers = append(containers, corev1.Container{
 			Name:  v.Name,
@@ -67,33 +67,14 @@ func (rc *PodsHandler) Create(c echo.Context) error {
 }
 
 func (rc *PodsHandler) List(c echo.Context) error {
-	var input model.PodsRequest
+	var namespace = c.QueryParam("namespace")
 
-	if err := c.Bind(&input); err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
-	}
+	var opts = metav1.ListOptions{}
 
-	var opts = metav1.ListOptions{
-		TypeMeta: metav1.TypeMeta{
-			Kind:       "",
-			APIVersion: "",
-		},
-		LabelSelector:        "",
-		FieldSelector:        "",
-		Watch:                false,
-		AllowWatchBookmarks:  false,
-		ResourceVersion:      "",
-		ResourceVersionMatch: "",
-		TimeoutSeconds:       new(int64),
-		Limit:                0,
-		Continue:             "",
-		SendInitialEvents:    new(bool),
-	}
-
-	list, err := rc.podsUC.Get(c.Request().Context(), "", opts)
+	list, err := rc.podsUC.Get(c.Request().Context(), namespace, opts)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
 	}
 
-	return c.JSON(http.StatusCreated, echo.Map{"data": list})
+	return c.JSON(http.StatusOK, echo.Map{"data": list})
 }

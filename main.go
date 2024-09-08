@@ -34,9 +34,9 @@ func serveApplication() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	// CORS middleware'i ekleyin
+	// Add CQRS in middleware
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"*"}, // Her yerden erişime izin ver
+		AllowOrigins: []string{"*"}, // reach everywhere
 		AllowMethods: []string{echo.GET, echo.POST, echo.PUT, echo.DELETE},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
@@ -53,6 +53,7 @@ func serveApplication() {
 	var namespaceHandlers = controller.NewNamespaceHandler(namespaceUC)
 
 	var podsRoutes = e.Group("/pods")
+	podsRoutes.GET("", podsHandlers.List)
 	podsRoutes.POST("", podsHandlers.Create)
 
 	var namespaceRoutes = e.Group("/namespace")

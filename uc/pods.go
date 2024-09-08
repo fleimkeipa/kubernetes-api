@@ -29,5 +29,10 @@ func (rc *PodsUC) Create(ctx context.Context, pod *corev1.Pod, opts metav1.Creat
 }
 
 func (rc *PodsUC) Get(ctx context.Context, namespace string, opts metav1.ListOptions) (*corev1.PodList, error) {
+	opts.TypeMeta.Kind = "pod"
+	if namespace == "" {
+		namespace = "default"
+	}
+
 	return rc.podsRepo.Get(ctx, namespace, opts)
 }
