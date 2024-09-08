@@ -60,6 +60,8 @@ func serveApplication() {
 	podsRoutes.GET("", podsHandlers.List)
 	podsRoutes.POST("", podsHandlers.Create)
 	podsRoutes.GET("/:id", podsHandlers.GetByNameOrUID)
+	podsRoutes.DELETE("/:id", podsHandlers.Delete)
+	podsRoutes.PUT("/:id", podsHandlers.Update)
 
 	var namespaceRoutes = e.Group("/namespaces")
 	namespaceRoutes.GET("", namespaceHandlers.Get)
