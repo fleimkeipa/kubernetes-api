@@ -3,10 +3,10 @@ package main
 import (
 	"log"
 
-	"kub/controller"
-	"kub/pkg"
-	"kub/repositories"
-	"kub/uc"
+	"github.com/fleimkeipa/kubernetes-api/controller"
+	"github.com/fleimkeipa/kubernetes-api/pkg"
+	"github.com/fleimkeipa/kubernetes-api/repositories"
+	"github.com/fleimkeipa/kubernetes-api/uc"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"

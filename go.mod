@@ -1,4 +1,4 @@
-module kub
+module github.com/fleimkeipa/kubernetes-api
 
 go 1.22.3
 

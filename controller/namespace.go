@@ -1,9 +1,10 @@
 package controller
 
 import (
-	"kub/model"
-	"kub/uc"
 	"net/http"
+
+	"github.com/fleimkeipa/kubernetes-api/model"
+	"github.com/fleimkeipa/kubernetes-api/uc"
 
 	"github.com/labstack/echo/v4"
 	corev1 "k8s.io/api/core/v1"
