@@ -49,6 +49,7 @@ func TestPodsRepository_Get(t *testing.T) {
 						Kind:       "pod",
 						APIVersion: "v1",
 					},
+					Limit: 2,
 				},
 			},
 			want:    &corev1.PodList{},

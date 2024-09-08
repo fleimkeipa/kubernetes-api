@@ -78,3 +78,17 @@ func (rc *PodsHandler) List(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, echo.Map{"data": list})
 }
+
+func (rc *PodsHandler) GetByNameOrUID(c echo.Context) error {
+	var namespace = c.QueryParam("namespace")
+	var nameOrUID = c.Param("id")
+
+	var opts = metav1.ListOptions{}
+
+	list, err := rc.podsUC.GetByNameOrUID(c.Request().Context(), namespace, nameOrUID, opts)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{"data": list})
+}

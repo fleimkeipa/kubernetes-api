@@ -7,6 +7,7 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
 )
 
 type PodsUC struct {
@@ -35,4 +36,29 @@ func (rc *PodsUC) Get(ctx context.Context, namespace string, opts metav1.ListOpt
 	}
 
 	return rc.podsRepo.Get(ctx, namespace, opts)
+}
+
+func (rc *PodsUC) GetByNameOrUID(ctx context.Context, namespace, nameOrUID string, opts metav1.ListOptions) (*corev1.Pod, error) {
+	opts.TypeMeta.Kind = "pod"
+	if namespace == "" {
+		namespace = "default"
+	}
+
+	opts.Limit = 100
+	pods, err := rc.podsRepo.Get(ctx, namespace, opts)
+	if err != nil {
+		return nil, err
+	}
+	for _, v := range pods.Items {
+		if v.Name == nameOrUID || v.UID == types.UID(nameOrUID) {
+			return &v, nil
+		}
+	}
+
+	if pods.ListMeta.Continue == "" {
+		return &corev1.Pod{}, nil
+	}
+
+	opts.Continue = pods.ListMeta.Continue
+	return rc.GetByNameOrUID(ctx, namespace, nameOrUID, opts)
 }
