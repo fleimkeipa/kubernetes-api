@@ -67,6 +67,7 @@ func serveApplication() {
 	namespaceRoutes.GET("", namespaceHandlers.Get)
 	namespaceRoutes.POST("", namespaceHandlers.Create)
 	namespaceRoutes.GET("/:id", namespaceHandlers.GetByNameOrUID)
+	namespaceRoutes.DELETE("/:id", namespaceHandlers.Delete)
 
 	var deploymentRoutes = e.Group("/deployments")
 	deploymentRoutes.GET("", deploymentHandlers.List)
