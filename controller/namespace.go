@@ -7,7 +7,6 @@ import (
 	"github.com/fleimkeipa/kubernetes-api/uc"
 
 	"github.com/labstack/echo/v4"
-	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -32,33 +31,13 @@ func (rc *NamespaceHandler) Get(c echo.Context) error {
 }
 
 func (rc *NamespaceHandler) Create(c echo.Context) error {
-	var input model.PodsRequest
+	var input model.NamespaceRequest
 
 	if err := c.Bind(&input); err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
 	}
 
-	var opts = metav1.CreateOptions{
-		TypeMeta: metav1.TypeMeta{
-			Kind:       "",
-			APIVersion: "",
-		},
-		DryRun:          []string{},
-		FieldManager:    "",
-		FieldValidation: "",
-	}
-	var namespace = corev1.Namespace{
-		TypeMeta: metav1.TypeMeta{
-			Kind:       input.TypeMeta.Kind,
-			APIVersion: "v1",
-		},
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      input.ObjectMeta.Name,
-			Namespace: input.ObjectMeta.NameSpace,
-		},
-	}
-
-	_, err := rc.namespaceUC.Create(c.Request().Context(), &namespace, opts)
+	namespace, err := rc.namespaceUC.Create(c.Request().Context(), &input.Namespace, input.Opts)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
 	}
