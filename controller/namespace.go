@@ -78,3 +78,15 @@ func (rc *NamespaceHandler) GetByNameOrUID(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, echo.Map{"data": list})
 }
+
+func (rc *NamespaceHandler) Delete(c echo.Context) error {
+	var nameOrUID = c.Param("id")
+
+	var opts = metav1.DeleteOptions{}
+
+	if err := rc.namespaceUC.Delete(c.Request().Context(), nameOrUID, opts); err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, "deleted succesfully")
+}

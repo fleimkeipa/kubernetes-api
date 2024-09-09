@@ -49,3 +49,9 @@ func (rc *NamespaceUC) GetByNameOrUID(ctx context.Context, nameOrUID string, opt
 	opts.Continue = namespaces.ListMeta.Continue
 	return rc.GetByNameOrUID(ctx, nameOrUID, opts)
 }
+
+func (rc *NamespaceUC) Delete(ctx context.Context, name string, opts metav1.DeleteOptions) error {
+	opts.TypeMeta.Kind = "pod"
+
+	return rc.namespaceRepo.Delete(ctx, name, opts)
+}
