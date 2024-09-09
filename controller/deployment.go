@@ -7,7 +7,6 @@ import (
 	"github.com/fleimkeipa/kubernetes-api/uc"
 
 	"github.com/labstack/echo/v4"
-	v1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -22,33 +21,13 @@ func NewDeploymentHandler(podsUC *uc.DeploymentUC) *DeploymentHandler {
 }
 
 func (rc *DeploymentHandler) Create(c echo.Context) error {
-	var input model.PodsRequest
+	var request model.DeploymentRequest
 
-	if err := c.Bind(&input); err != nil {
+	if err := c.Bind(&request); err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
 	}
 
-	var opts = metav1.CreateOptions{
-		TypeMeta: metav1.TypeMeta{
-			Kind:       "",
-			APIVersion: "",
-		},
-		DryRun:          []string{},
-		FieldManager:    "",
-		FieldValidation: "",
-	}
-	var deployment = v1.Deployment{
-		TypeMeta: metav1.TypeMeta{
-			Kind:       input.TypeMeta.Kind,
-			APIVersion: "v1",
-		},
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      input.ObjectMeta.Name,
-			Namespace: input.ObjectMeta.NameSpace,
-		},
-	}
-
-	_, err := rc.deploymentUC.Create(c.Request().Context(), &deployment, opts)
+	deployment, err := rc.deploymentUC.Create(c.Request().Context(), &request.Deployment, request.Opts)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
 	}
