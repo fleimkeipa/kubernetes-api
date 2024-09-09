@@ -7,7 +7,6 @@ import (
 	"github.com/fleimkeipa/kubernetes-api/uc"
 
 	"github.com/labstack/echo/v4"
-	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -22,44 +21,13 @@ func NewPodsHandler(podsUC *uc.PodsUC) *PodsHandler {
 }
 
 func (rc *PodsHandler) Create(c echo.Context) error {
-	var input model.PodsRequest
+	var request model.PodsRequest
 
-	if err := c.Bind(&input); err != nil {
+	if err := c.Bind(&request); err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
 	}
 
-	var containers = []corev1.Container{}
-	for _, v := range input.Spec.Containers {
-		containers = append(containers, corev1.Container{
-			Name:  v.Name,
-			Image: v.Image,
-		})
-	}
-
-	var opts = metav1.CreateOptions{
-		TypeMeta: metav1.TypeMeta{
-			Kind:       "",
-			APIVersion: "",
-		},
-		DryRun:          []string{},
-		FieldManager:    "",
-		FieldValidation: "",
-	}
-	var pod = corev1.Pod{
-		TypeMeta: metav1.TypeMeta{
-			Kind:       input.TypeMeta.Kind,
-			APIVersion: "v1",
-		},
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      input.ObjectMeta.Name,
-			Namespace: input.ObjectMeta.NameSpace,
-		},
-		Spec: corev1.PodSpec{
-			Containers: containers,
-		},
-	}
-
-	_, err := rc.podsUC.Create(c.Request().Context(), &pod, opts)
+	pod, err := rc.podsUC.Create(c.Request().Context(), &request.Pod, request.Opts)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
 	}
@@ -68,15 +36,13 @@ func (rc *PodsHandler) Create(c echo.Context) error {
 }
 
 func (rc *PodsHandler) Update(c echo.Context) error {
-	var input corev1.Pod
+	var request model.PodsRequest
 
-	if err := c.Bind(&input); err != nil {
+	if err := c.Bind(&request); err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
 	}
 
-	var opts = metav1.UpdateOptions{}
-
-	pod, err := rc.podsUC.Update(c.Request().Context(), &input, opts)
+	pod, err := rc.podsUC.Update(c.Request().Context(), &request.Pod, metav1.UpdateOptions(request.Opts))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
 	}
