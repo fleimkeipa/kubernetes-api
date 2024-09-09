@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/fleimkeipa/kubernetes-api/controller"
+	_ "github.com/fleimkeipa/kubernetes-api/docs" // which is the generated folder after swag init
 	"github.com/fleimkeipa/kubernetes-api/pkg"
 	"github.com/fleimkeipa/kubernetes-api/repositories"
 	"github.com/fleimkeipa/kubernetes-api/uc"
@@ -11,6 +12,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	echoSwagger "github.com/swaggo/echo-swagger"
 	"k8s.io/client-go/kubernetes"
 )
 
@@ -33,6 +35,8 @@ func serveApplication() {
 
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
+
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	// Add CORS in middleware
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{

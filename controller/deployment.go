@@ -20,6 +20,17 @@ func NewDeploymentHandler(podsUC *uc.DeploymentUC) *DeploymentHandler {
 	}
 }
 
+// Create godoc
+//
+//	@Summary		Create a new deployment
+//	@Description	Creates a new deployment in the Kubernetes cluster.
+//	@Tags			deployments
+//	@Accept			json
+//	@Produce		json
+//	@Param			deployment	body		model.DeploymentRequest	true	"Deployment request body"
+//	@Success		201			{object}	map[string]string		"Successfully created deployment"
+//	@Failure		400			{object}	map[string]string		"Bad request or error message"
+//	@Router			/deployments [post]
 func (rc *DeploymentHandler) Create(c echo.Context) error {
 	var request model.DeploymentRequest
 
@@ -35,6 +46,17 @@ func (rc *DeploymentHandler) Create(c echo.Context) error {
 	return c.JSON(http.StatusCreated, echo.Map{"deployment": deployment.Name})
 }
 
+// List godoc
+//
+//	@Summary		List deployments
+//	@Description	Retrieves a list of deployments from the Kubernetes cluster, optionally filtered by namespace.
+//	@Tags			deployments
+//	@Accept			json
+//	@Produce		json
+//	@Param			namespace	query		string					false	"Namespace to filter deployments by"
+//	@Success		200			{object}	map[string]interface{}	"List of deployments"
+//	@Failure		400			{object}	map[string]string		"Bad request or error message"
+//	@Router			/deployments [get]
 func (rc *DeploymentHandler) List(c echo.Context) error {
 	var namespace = c.QueryParam("namespace")
 
@@ -48,6 +70,18 @@ func (rc *DeploymentHandler) List(c echo.Context) error {
 	return c.JSON(http.StatusOK, echo.Map{"data": list})
 }
 
+// GetByNameOrUID godoc
+//
+//	@Summary		Get a deployment by name or UID
+//	@Description	Retrieves a deployment from the Kubernetes cluster by its name or UID, optionally filtered by namespace.
+//	@Tags			deployments
+//	@Accept			json
+//	@Produce		json
+//	@Param			namespace	query		string					false	"Namespace to filter the deployment by"
+//	@Param			id			path		string					true	"Name or UID of the deployment"
+//	@Success		200			{object}	map[string]interface{}	"Details of the requested deployment"
+//	@Failure		400			{object}	map[string]string		"Bad request or error message"
+//	@Router			/deployments/{id} [get]
 func (rc *DeploymentHandler) GetByNameOrUID(c echo.Context) error {
 	var namespace = c.QueryParam("namespace")
 	var nameOrUID = c.Param("id")

@@ -20,6 +20,16 @@ func NewNamespaceHandler(namespaceUC *uc.NamespaceUC) *NamespaceHandler {
 	}
 }
 
+// Get godoc
+//
+//	@Summary		List namespaces
+//	@Description	Retrieves a list of namespaces from the Kubernetes cluster.
+//	@Tags			namespaces
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	map[string]interface{}	"List of namespaces"
+//	@Failure		400	{object}	map[string]string		"Bad request or error message"
+//	@Router			/namespaces [get]
 func (rc *NamespaceHandler) Get(c echo.Context) error {
 	var opts = metav1.ListOptions{}
 	list, err := rc.namespaceUC.Get(c.Request().Context(), opts)
@@ -30,6 +40,17 @@ func (rc *NamespaceHandler) Get(c echo.Context) error {
 	return c.JSON(http.StatusOK, echo.Map{"data": list})
 }
 
+// Create godoc
+//
+//	@Summary		Create a new namespace
+//	@Description	Creates a new namespace in the Kubernetes cluster.
+//	@Tags			namespaces
+//	@Accept			json
+//	@Produce		json
+//	@Param			namespace	body		model.NamespaceRequest	true	"Namespace request body"
+//	@Success		201			{object}	map[string]string		"Successfully created namespace"
+//	@Failure		400			{object}	map[string]string		"Bad request or error message"
+//	@Router			/namespaces [post]
 func (rc *NamespaceHandler) Create(c echo.Context) error {
 	var input model.NamespaceRequest
 
@@ -45,6 +66,17 @@ func (rc *NamespaceHandler) Create(c echo.Context) error {
 	return c.JSON(http.StatusCreated, echo.Map{"pod": namespace.Name})
 }
 
+// GetByNameOrUID godoc
+//
+//	@Summary		Get a namespace by name or UID
+//	@Description	Retrieves a namespace from the Kubernetes cluster by its name or UID.
+//	@Tags			namespaces
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		string					true	"Name or UID of the namespace"
+//	@Success		200	{object}	map[string]interface{}	"Details of the requested namespace"
+//	@Failure		400	{object}	map[string]string		"Bad request or error message"
+//	@Router			/namespaces/{id} [get]
 func (rc *NamespaceHandler) GetByNameOrUID(c echo.Context) error {
 	var nameOrUID = c.Param("id")
 
@@ -58,6 +90,17 @@ func (rc *NamespaceHandler) GetByNameOrUID(c echo.Context) error {
 	return c.JSON(http.StatusOK, echo.Map{"data": list})
 }
 
+// Delete godoc
+//
+//	@Summary		Delete a namespace by name or UID
+//	@Description	Deletes a namespace from the Kubernetes cluster by its name or UID.
+//	@Tags			namespaces
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		string				true	"Name or UID of the namespace"
+//	@Success		200	{string}	string				"Success message"
+//	@Failure		400	{object}	map[string]string	"Bad request or error message"
+//	@Router			/namespaces/{id} [delete]
 func (rc *NamespaceHandler) Delete(c echo.Context) error {
 	var nameOrUID = c.Param("id")
 
