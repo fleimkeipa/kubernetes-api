@@ -25,3 +25,7 @@ func (rc *NamespaceRepository) Get(ctx context.Context, opts metav1.ListOptions)
 func (rc *NamespaceRepository) Create(ctx context.Context, namespace *corev1.Namespace, opts metav1.CreateOptions) (*corev1.Namespace, error) {
 	return rc.client.CoreV1().Namespaces().Create(ctx, namespace, opts)
 }
+
+func (rc *NamespaceRepository) Delete(ctx context.Context, name string, opts metav1.DeleteOptions) error {
+	return rc.client.CoreV1().Namespaces().Delete(ctx, name, opts)
+}
