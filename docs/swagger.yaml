@@ -5934,7 +5934,67 @@ paths:
       summary: Create a new deployment
       tags:
       - deployments
+    put:
+      consumes:
+      - application/json
+      description: Updates an existing deployment in the Kubernetes cluster.
+      parameters:
+      - description: Deployment request body
+        in: body
+        name: deployment
+        required: true
+        schema:
+          $ref: '#/definitions/model.DeploymentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated the deployment
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad request or invalid data
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update an existing deployment
+      tags:
+      - deployments
   /deployments/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a deployment from the Kubernetes cluster by its name or
+        UID, optionally filtered by namespace.
+      parameters:
+      - description: Namespace to filter the deployment by
+        in: query
+        name: namespace
+        type: string
+      - description: Name or UID of the deployment
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success message
+          schema:
+            type: string
+        "400":
+          description: Bad request or error message
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a deployment by name or UID
+      tags:
+      - deployments
     get:
       consumes:
       - application/json
@@ -6016,6 +6076,35 @@ paths:
               type: string
             type: object
       summary: Create a new namespace
+      tags:
+      - namespaces
+    put:
+      consumes:
+      - application/json
+      description: Updates an existing namespace in the Kubernetes cluster.
+      parameters:
+      - description: Namespace request body
+        in: body
+        name: namespace
+        required: true
+        schema:
+          $ref: '#/definitions/model.NamespaceRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated the namespace
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad request or invalid data
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update an existing namespace
       tags:
       - namespaces
   /namespaces/{id}:
