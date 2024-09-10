@@ -112,3 +112,29 @@ func (rc *NamespaceHandler) Delete(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, "deleted succesfully")
 }
+
+// Update godoc
+//
+//	@Summary		Update an existing namespace
+//	@Description	Updates an existing namespace in the Kubernetes cluster.
+//	@Tags			namespaces
+//	@Accept			json
+//	@Produce		json
+//	@Param			namespace	body		model.NamespaceRequest	true	"Namespace request body"
+//	@Success		200	{object}	map[string]string	"Successfully updated the namespace"
+//	@Failure		400	{object}	map[string]string	"Bad request or invalid data"
+//	@Router			/namespaces [put]
+func (rc *NamespaceHandler) Update(c echo.Context) error {
+	var request model.NamespaceRequest
+
+	if err := c.Bind(&request); err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+	}
+
+	pod, err := rc.namespaceUC.Update(c.Request().Context(), &request.Namespace, metav1.UpdateOptions(request.Opts))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusCreated, echo.Map{"pod": pod.Name})
+}
