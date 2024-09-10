@@ -95,3 +95,54 @@ func (rc *DeploymentHandler) GetByNameOrUID(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, echo.Map{"data": list})
 }
+
+// Delete godoc
+//
+//	@Summary		Delete a deployment by name or UID
+//	@Description	Deletes a deployment from the Kubernetes cluster by its name or UID, optionally filtered by namespace.
+//	@Tags			deployments
+//	@Accept			json
+//	@Produce		json
+//	@Param			namespace	query		string				false	"Namespace to filter the deployment by"
+//	@Param			id			path		string				true	"Name or UID of the deployment"
+//	@Success		200			{string}	string				"Success message"
+//	@Failure		400			{object}	map[string]string	"Bad request or error message"
+//	@Router			/deployments/{id} [delete]
+func (rc *DeploymentHandler) Delete(c echo.Context) error {
+	var namespace = c.QueryParam("namespace")
+	var nameOrUID = c.Param("id")
+
+	var opts = metav1.DeleteOptions{}
+
+	if err := rc.deploymentUC.Delete(c.Request().Context(), namespace, nameOrUID, opts); err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, "deleted succesfully")
+}
+
+// Update godoc
+//
+//	@Summary		Update an existing deployment
+//	@Description	Updates an existing deployment in the Kubernetes cluster.
+//	@Tags			deployments
+//	@Accept			json
+//	@Produce		json
+//	@Param			deployment	body		model.DeploymentRequest	true	"Deployment request body"
+//	@Success		200	{object}	map[string]string	"Successfully updated the deployment"
+//	@Failure		400	{object}	map[string]string	"Bad request or invalid data"
+//	@Router			/deployments [put]
+func (rc *DeploymentHandler) Update(c echo.Context) error {
+	var request model.DeploymentRequest
+
+	if err := c.Bind(&request); err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+	}
+
+	pod, err := rc.deploymentUC.Update(c.Request().Context(), &request.Deployment, metav1.UpdateOptions(request.Opts))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusCreated, echo.Map{"pod": pod.Name})
+}
