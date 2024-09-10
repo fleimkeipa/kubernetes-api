@@ -63,7 +63,7 @@ func (rc *NamespaceHandler) Create(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
 	}
 
-	return c.JSON(http.StatusCreated, echo.Map{"pod": namespace.Name})
+	return c.JSON(http.StatusCreated, echo.Map{"namespace": namespace.Name})
 }
 
 // GetByNameOrUID godoc
@@ -131,10 +131,10 @@ func (rc *NamespaceHandler) Update(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
 	}
 
-	pod, err := rc.namespaceUC.Update(c.Request().Context(), &request.Namespace, metav1.UpdateOptions(request.Opts))
+	namespace, err := rc.namespaceUC.Update(c.Request().Context(), &request.Namespace, metav1.UpdateOptions(request.Opts))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
 	}
 
-	return c.JSON(http.StatusCreated, echo.Map{"pod": pod.Name})
+	return c.JSON(http.StatusCreated, echo.Map{"namespace": namespace.Name})
 }

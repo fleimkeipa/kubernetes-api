@@ -14,9 +14,9 @@ type DeploymentHandler struct {
 	deploymentUC *uc.DeploymentUC
 }
 
-func NewDeploymentHandler(podsUC *uc.DeploymentUC) *DeploymentHandler {
+func NewDeploymentHandler(deploymentUC *uc.DeploymentUC) *DeploymentHandler {
 	return &DeploymentHandler{
-		deploymentUC: podsUC,
+		deploymentUC: deploymentUC,
 	}
 }
 
@@ -139,10 +139,10 @@ func (rc *DeploymentHandler) Update(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
 	}
 
-	pod, err := rc.deploymentUC.Update(c.Request().Context(), &request.Deployment, metav1.UpdateOptions(request.Opts))
+	deployment, err := rc.deploymentUC.Update(c.Request().Context(), &request.Deployment, metav1.UpdateOptions(request.Opts))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
 	}
 
-	return c.JSON(http.StatusCreated, echo.Map{"pod": pod.Name})
+	return c.JSON(http.StatusCreated, echo.Map{"deployment": deployment.Name})
 }
