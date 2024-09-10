@@ -29,3 +29,7 @@ func (rc *NamespaceRepository) Create(ctx context.Context, namespace *corev1.Nam
 func (rc *NamespaceRepository) Delete(ctx context.Context, name string, opts metav1.DeleteOptions) error {
 	return rc.client.CoreV1().Namespaces().Delete(ctx, name, opts)
 }
+
+func (rc *NamespaceRepository) Update(ctx context.Context, namespace *corev1.Namespace, opts metav1.UpdateOptions) (*corev1.Namespace, error) {
+	return rc.client.CoreV1().Namespaces().Update(ctx, namespace, opts)
+}
