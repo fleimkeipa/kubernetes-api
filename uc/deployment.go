@@ -62,3 +62,21 @@ func (rc *DeploymentUC) GetByNameOrUID(ctx context.Context, namespace, nameOrUID
 	opts.Continue = deployments.ListMeta.Continue
 	return rc.GetByNameOrUID(ctx, namespace, nameOrUID, opts)
 }
+
+func (rc *DeploymentUC) Delete(ctx context.Context, namespace, name string, opts metav1.DeleteOptions) error {
+	opts.TypeMeta.Kind = "deployment"
+	if namespace == "" {
+		namespace = "default"
+	}
+
+	return rc.deploymentRepo.Delete(ctx, namespace, name, opts)
+}
+
+func (rc *DeploymentUC) Update(ctx context.Context, deployment *v1.Deployment, opts metav1.UpdateOptions) (*v1.Deployment, error) {
+	deployment.TypeMeta.Kind = "deployment"
+	if deployment.ObjectMeta.Namespace == "" {
+		deployment.ObjectMeta.Namespace = "default"
+	}
+
+	return rc.deploymentRepo.Update(ctx, deployment, opts)
+}
