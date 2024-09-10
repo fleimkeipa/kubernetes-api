@@ -2,7 +2,10 @@ package uc
 
 import (
 	"context"
+	"fmt"
+	"time"
 
+	"github.com/fleimkeipa/kubernetes-api/model"
 	"github.com/fleimkeipa/kubernetes-api/repositories/interfaces"
 
 	corev1 "k8s.io/api/core/v1"
@@ -11,12 +14,14 @@ import (
 )
 
 type PodsUC struct {
-	podsRepo interfaces.PodsInterfaces
+	podsRepo  interfaces.PodsInterfaces
+	eventRepo interfaces.EventsInterfaces
 }
 
-func NewPodsUC(podsRepo interfaces.PodsInterfaces) *PodsUC {
+func NewPodsUC(podsRepo interfaces.PodsInterfaces, eventRepo interfaces.EventsInterfaces) *PodsUC {
 	return &PodsUC{
-		podsRepo: podsRepo,
+		podsRepo:  podsRepo,
+		eventRepo: eventRepo,
 	}
 }
 
@@ -26,6 +31,17 @@ func (rc *PodsUC) Create(ctx context.Context, pod *corev1.Pod, opts metav1.Creat
 		pod.ObjectMeta.Namespace = "default"
 	}
 
+	var event = model.Event{
+		Kind:         pod.TypeMeta.Kind,
+		EventKind:    model.CreateEventKind,
+		CreationTime: time.Now(),
+		Owner:        model.User{},
+	}
+	_, err := rc.eventRepo.Create(ctx, &event)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create event for %s: %w", event.EventKind, err)
+	}
+
 	return rc.podsRepo.Create(ctx, pod, opts)
 }
 
@@ -33,6 +49,17 @@ func (rc *PodsUC) Update(ctx context.Context, pod *corev1.Pod, opts metav1.Updat
 	pod.TypeMeta.Kind = "pod"
 	if pod.ObjectMeta.Namespace == "" {
 		pod.ObjectMeta.Namespace = "default"
+	}
+
+	var event = model.Event{
+		Kind:         pod.TypeMeta.Kind,
+		EventKind:    model.UpdateEventKind,
+		CreationTime: time.Now(),
+		Owner:        model.User{},
+	}
+	_, err := rc.eventRepo.Create(ctx, &event)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create event for %s: %w", event.EventKind, err)
 	}
 
 	return rc.podsRepo.Update(ctx, pod, opts)
@@ -76,6 +103,17 @@ func (rc *PodsUC) Delete(ctx context.Context, namespace, name string, opts metav
 	opts.TypeMeta.Kind = "pod"
 	if namespace == "" {
 		namespace = "default"
+	}
+
+	var event = model.Event{
+		Kind:         opts.TypeMeta.Kind,
+		EventKind:    model.DeleteEventKind,
+		CreationTime: time.Now(),
+		Owner:        model.User{},
+	}
+	_, err := rc.eventRepo.Create(ctx, &event)
+	if err != nil {
+		return fmt.Errorf("failed to create event for %s: %w", event.EventKind, err)
 	}
 
 	return rc.podsRepo.Delete(ctx, namespace, name, opts)
