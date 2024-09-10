@@ -9,6 +9,7 @@ import (
 	"github.com/fleimkeipa/kubernetes-api/repositories"
 	"github.com/fleimkeipa/kubernetes-api/uc"
 
+	"github.com/go-pg/pg"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -48,8 +49,12 @@ func serveApplication() {
 	// Kubernetes client
 	var kubClient = initKubernetes()
 
+	var dbClient = initDB()
+
+	var eventRepo = repositories.NewEventRepository(dbClient)
+
 	var podsRepo = repositories.NewPodsRepository(kubClient)
-	var podsUC = uc.NewPodsUC(podsRepo)
+	var podsUC = uc.NewPodsUC(podsRepo, eventRepo)
 	var podsHandlers = controller.NewPodsHandler(podsUC)
 
 	var namespaceRepo = repositories.NewNamespaceRepository(kubClient)
@@ -91,4 +96,8 @@ func initKubernetes() *kubernetes.Clientset {
 	}
 
 	return client
+}
+
+func initDB() *pg.DB {
+	return pkg.NewPSQLClient()
 }
