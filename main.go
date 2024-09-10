@@ -72,11 +72,14 @@ func serveApplication() {
 	namespaceRoutes.POST("", namespaceHandlers.Create)
 	namespaceRoutes.GET("/:id", namespaceHandlers.GetByNameOrUID)
 	namespaceRoutes.DELETE("/:id", namespaceHandlers.Delete)
+	namespaceRoutes.PUT("/:id", namespaceHandlers.Update)
 
 	var deploymentRoutes = e.Group("/deployments")
 	deploymentRoutes.GET("", deploymentHandlers.List)
 	deploymentRoutes.POST("", deploymentHandlers.Create)
 	deploymentRoutes.GET("/:id", deploymentHandlers.GetByNameOrUID)
+	deploymentRoutes.DELETE("/:id", deploymentHandlers.Delete)
+	deploymentRoutes.PUT("/:id", deploymentHandlers.Update)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }
