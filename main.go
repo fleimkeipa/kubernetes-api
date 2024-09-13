@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"os"
 
 	"github.com/fleimkeipa/kubernetes-api/controller"
 	_ "github.com/fleimkeipa/kubernetes-api/docs" // which is the generated folder after swag init
@@ -41,7 +43,7 @@ func serveApplication() {
 
 	// Add CORS in middleware
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:8081"},
+		AllowOrigins: []string{os.Getenv("ALLOW_ORIGIN")},
 		AllowMethods: []string{echo.GET, echo.POST, echo.PUT, echo.DELETE},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
@@ -86,7 +88,7 @@ func serveApplication() {
 	deploymentRoutes.DELETE("/:id", deploymentHandlers.Delete)
 	deploymentRoutes.PUT("/:id", deploymentHandlers.Update)
 
-	e.Logger.Fatal(e.Start(":8080"))
+	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", os.Getenv("API_PORT"))))
 }
 
 func initKubernetes() *kubernetes.Clientset {
