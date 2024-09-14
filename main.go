@@ -84,8 +84,8 @@ func serveApplication() {
 	oauthRoutes.GET("/google_callback", controller.GoogleCallback)
 
 	var restrictedRoutes = e.Group("")
-	e.Use(util.JWTAuth)
-	e.Use(util.JWTAuthViewer)
+	restrictedRoutes.Use(util.JWTAuth)
+	restrictedRoutes.Use(util.JWTAuthViewer)
 
 	var podsRoutes = restrictedRoutes.Group("/pods")
 	podsRoutes.GET("", podsHandlers.List)
