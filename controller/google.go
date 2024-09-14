@@ -2,13 +2,27 @@ package controller
 
 import (
 	"context"
+	"encoding/json"
 	"io"
 	"net/http"
 
 	"github.com/fleimkeipa/kubernetes-api/config"
+	"github.com/fleimkeipa/kubernetes-api/model"
+	"github.com/fleimkeipa/kubernetes-api/uc"
+	"github.com/fleimkeipa/kubernetes-api/util"
 
 	"github.com/labstack/echo/v4"
 )
+
+type GoogleAuthHandler struct {
+	userUC *uc.UserUC
+}
+
+func NewGoogleAuthHandler(userUC *uc.UserUC) *GoogleAuthHandler {
+	return &GoogleAuthHandler{
+		userUC: userUC,
+	}
+}
 
 // Google Login godoc
 //
@@ -17,7 +31,7 @@ import (
 //	@Tags			oAuth
 //	@Success		303	{string}	string	"Redirects to Google login page"
 //	@Router			/auth/google_login [get]
-func GoogleLogin(c echo.Context) error {
+func (rc *GoogleAuthHandler) GoogleLogin(c echo.Context) error {
 	var url = config.AppConfig.GoogleLoginConfig.AuthCodeURL("randomstate")
 
 	c.Redirect(303, url)
@@ -34,7 +48,7 @@ func GoogleLogin(c echo.Context) error {
 //	@Success		200		{string}	string	"User's Google profile data"
 //	@Failure		400		{string}	string	"Error message"
 //	@Router			/auth/google_callback [get]
-func GoogleCallback(c echo.Context) error {
+func (rc *GoogleAuthHandler) GoogleCallback(c echo.Context) error {
 	var state = c.QueryParam("state")
 	if state != "randomstate" {
 		return c.String(400, "States don't Match!!")
@@ -59,5 +73,20 @@ func GoogleCallback(c echo.Context) error {
 		return c.String(400, "JSON Parsing Failed")
 	}
 
-	return c.String(200, string(userData))
+	var googleUser = new(model.GoogleUser)
+	if err := json.Unmarshal(userData, googleUser); err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+	}
+
+	user, err := rc.userUC.GetUserByUsername(c.Request().Context(), googleUser.Email)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+	}
+
+	jwt, err := util.GenerateJWT(user)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{"token": jwt, "username": user.Username, "message": "Successfully logged in"})
 }
