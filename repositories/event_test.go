@@ -113,10 +113,10 @@ func TestEventRepository_Create(t *testing.T) {
 					EventKind:    "create",
 					CreationTime: time.Now(),
 					Owner: model.User{
-						Id:       1,
+						ID:       1,
 						Username: "test_username",
 						Email:    "test@mail.com",
-						Role:     1,
+						RoleID:   1,
 					},
 				},
 			},
