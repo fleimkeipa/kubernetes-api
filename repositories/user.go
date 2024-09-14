@@ -32,7 +32,7 @@ func (rc *UserRepository) GetUserByUsername(ctx context.Context, username string
 
 	err := rc.db.
 		Model(user).
-		Where("username = ?", username).
+		Where("username = ? OR email = ?", username).
 		Select()
 	if err != nil {
 		return nil, err
