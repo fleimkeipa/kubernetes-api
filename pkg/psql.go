@@ -29,6 +29,7 @@ func NewPSQLClient() *pg.DB {
 func createSchema(db *pg.DB) error {
 	var models = []interface{}{
 		(*model.Event)(nil),
+		(*model.User)(nil),
 	}
 
 	for _, model := range models {
