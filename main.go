@@ -5,11 +5,13 @@ import (
 	"log"
 	"os"
 
+	"github.com/fleimkeipa/kubernetes-api/config"
 	"github.com/fleimkeipa/kubernetes-api/controller"
 	_ "github.com/fleimkeipa/kubernetes-api/docs" // which is the generated folder after swag init
 	"github.com/fleimkeipa/kubernetes-api/pkg"
 	"github.com/fleimkeipa/kubernetes-api/repositories"
 	"github.com/fleimkeipa/kubernetes-api/uc"
+	"github.com/fleimkeipa/kubernetes-api/util"
 
 	"github.com/go-pg/pg"
 	"github.com/joho/godotenv"
@@ -67,21 +69,39 @@ func serveApplication() {
 	var deploymentUC = uc.NewDeploymentUC(deploymentRepo)
 	var deploymentHandlers = controller.NewDeploymentHandler(deploymentUC)
 
-	var podsRoutes = e.Group("/pods")
+	var userRepo = repositories.NewUserRepository(dbClient)
+	var userUC = uc.NewUserUC(userRepo)
+	var userHandlers = controller.NewUserHandlers(userUC)
+
+	config.GoogleConfig()
+
+	var authRoutes = e.Group("/auth")
+	authRoutes.POST("/register", userHandlers.Register)
+	authRoutes.POST("/login", userHandlers.Login)
+
+	var oauthRoutes = authRoutes.Group("")
+	oauthRoutes.GET("/google_login", controller.GoogleLogin)
+	oauthRoutes.GET("/google_callback", controller.GoogleCallback)
+
+	var restrictedRoutes = e.Group("")
+	e.Use(util.JWTAuth)
+	e.Use(util.JWTAuthViewer)
+
+	var podsRoutes = restrictedRoutes.Group("/pods")
 	podsRoutes.GET("", podsHandlers.List)
 	podsRoutes.POST("", podsHandlers.Create)
 	podsRoutes.GET("/:id", podsHandlers.GetByNameOrUID)
 	podsRoutes.DELETE("/:id", podsHandlers.Delete)
 	podsRoutes.PUT("/:id", podsHandlers.Update)
 
-	var namespaceRoutes = e.Group("/namespaces")
+	var namespaceRoutes = restrictedRoutes.Group("/namespaces")
 	namespaceRoutes.GET("", namespaceHandlers.Get)
 	namespaceRoutes.POST("", namespaceHandlers.Create)
 	namespaceRoutes.GET("/:id", namespaceHandlers.GetByNameOrUID)
 	namespaceRoutes.DELETE("/:id", namespaceHandlers.Delete)
 	namespaceRoutes.PUT("/:id", namespaceHandlers.Update)
 
-	var deploymentRoutes = e.Group("/deployments")
+	var deploymentRoutes = restrictedRoutes.Group("/deployments")
 	deploymentRoutes.GET("", deploymentHandlers.List)
 	deploymentRoutes.POST("", deploymentHandlers.Create)
 	deploymentRoutes.GET("/:id", deploymentHandlers.GetByNameOrUID)
