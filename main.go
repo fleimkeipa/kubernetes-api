@@ -79,9 +79,11 @@ func serveApplication() {
 	authRoutes.POST("/register", userHandlers.Register)
 	authRoutes.POST("/login", userHandlers.Login)
 
+	var googleAuthHandler = controller.NewGoogleAuthHandler(userUC)
+
 	var oauthRoutes = authRoutes.Group("")
-	oauthRoutes.GET("/google_login", controller.GoogleLogin)
-	oauthRoutes.GET("/google_callback", controller.GoogleCallback)
+	oauthRoutes.GET("/google_login", googleAuthHandler.GoogleLogin)
+	oauthRoutes.GET("/google_callback", googleAuthHandler.GoogleCallback)
 
 	var restrictedRoutes = e.Group("")
 	restrictedRoutes.Use(util.JWTAuth)
