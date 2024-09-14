@@ -36,6 +36,16 @@ definitions:
       opts:
         $ref: '#/definitions/v1.CreateOptions'
     type: object
+  model.Login:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
   model.NamespaceRequest:
     properties:
       namespace:
@@ -49,6 +59,21 @@ definitions:
         $ref: '#/definitions/v1.CreateOptions'
       pod:
         $ref: '#/definitions/v1.Pod'
+    type: object
+  model.Register:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      role_id:
+        type: integer
+      username:
+        type: string
+    required:
+    - email
+    - password
+    - username
     type: object
   resource.Quantity:
     properties:
@@ -5877,6 +5902,46 @@ definitions:
 info:
   contact: {}
 paths:
+  /auth/google/callback:
+    get:
+      description: This endpoint handles the callback from Google after a user authorizes
+        the app. It exchanges the authorization code for an access token and retrieves
+        the user's profile information.
+      parameters:
+      - description: State for CSRF protection
+        in: query
+        name: state
+        required: true
+        type: string
+      - description: Authorization code returned by Google
+        in: query
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: User's Google profile data
+          schema:
+            type: string
+        "400":
+          description: Error message
+          schema:
+            type: string
+      summary: Google OAuth2 callback
+      tags:
+      - OAuth
+  /auth/google/login:
+    get:
+      description: This endpoint initiates the Google OAuth2 login process by redirecting
+        the user to Google's login page.
+      responses:
+        "303":
+          description: Redirects to Google login page
+          schema:
+            type: string
+      summary: Redirect to Google login page
+      tags:
+      - OAuth
   /deployments:
     get:
       consumes:
@@ -6027,6 +6092,36 @@ paths:
       summary: Get a deployment by name or UID
       tags:
       - deployments
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: This endpoint allows a user to log in by providing a valid username
+        and password.
+      parameters:
+      - description: User login input
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.Login'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully logged in with JWT token
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Error message
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: User login
+      tags:
+      - User
   /namespaces:
     get:
       consumes:
@@ -6313,4 +6408,35 @@ paths:
       summary: Get a pod by name or UID
       tags:
       - pods
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: This endpoint registers a new user by providing username, email,
+        password, and role ID.
+      parameters:
+      - description: User registration input
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.Register'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User created
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Error message
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Register a new user
+      tags:
+      - User
 swagger: "2.0"
