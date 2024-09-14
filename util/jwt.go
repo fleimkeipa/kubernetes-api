@@ -21,10 +21,11 @@ var privateKey = []byte(os.Getenv("JWT_PRIVATE_KEY"))
 func GenerateJWT(user *model.User) (string, error) {
 	tokenTTL, _ := strconv.Atoi(os.Getenv("TOKEN_TTL"))
 	var token = jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"id":   user.ID,
-		"role": user.RoleID,
-		"iat":  time.Now().Unix(),
-		"eat":  time.Now().Add(time.Second * time.Duration(tokenTTL)).Unix(),
+		"id":       user.ID,
+		"username": user.Username,
+		"role":     user.RoleID,
+		"iat":      time.Now().Unix(),
+		"eat":      time.Now().Add(time.Second * time.Duration(tokenTTL)).Unix(),
 	})
 
 	return token.SignedString(privateKey)
@@ -99,7 +100,7 @@ func ValidateViewerRoleJWT(context echo.Context) error {
 
 // check token validity
 func getToken(context echo.Context) (*jwt.Token, error) {
-	tokenString := getTokenFromRequest(context)
+	var tokenString = getTokenFromRequest(context)
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
@@ -113,8 +114,8 @@ func getToken(context echo.Context) (*jwt.Token, error) {
 
 // extract token from request Authorization header
 func getTokenFromRequest(c echo.Context) string {
-	bearerToken := c.Request().Header.Get("Authorization")
-	splitToken := strings.Split(bearerToken, " ")
+	var bearerToken = c.Request().Header.Get("Authorization")
+	var splitToken = strings.Split(bearerToken, " ")
 	if len(splitToken) == 2 {
 		return splitToken[1]
 	}
