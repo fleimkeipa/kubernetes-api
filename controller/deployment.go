@@ -129,8 +129,8 @@ func (rc *DeploymentHandler) Delete(c echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			deployment	body		model.DeploymentRequest	true	"Deployment request body"
-//	@Success		200	{object}	map[string]string	"Successfully updated the deployment"
-//	@Failure		400	{object}	map[string]string	"Bad request or invalid data"
+//	@Success		200			{object}	map[string]string		"Successfully updated the deployment"
+//	@Failure		400			{object}	map[string]string		"Bad request or invalid data"
 //	@Router			/deployments [put]
 func (rc *DeploymentHandler) Update(c echo.Context) error {
 	var request model.DeploymentRequest

@@ -121,8 +121,8 @@ func (rc *NamespaceHandler) Delete(c echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			namespace	body		model.NamespaceRequest	true	"Namespace request body"
-//	@Success		200	{object}	map[string]string	"Successfully updated the namespace"
-//	@Failure		400	{object}	map[string]string	"Bad request or invalid data"
+//	@Success		200			{object}	map[string]string		"Successfully updated the namespace"
+//	@Failure		400			{object}	map[string]string		"Bad request or invalid data"
 //	@Router			/namespaces [put]
 func (rc *NamespaceHandler) Update(c echo.Context) error {
 	var request model.NamespaceRequest
