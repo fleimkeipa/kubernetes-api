@@ -23,7 +23,17 @@ func NewUserHandlers(uc *uc.UserUC) *UserHandlers {
 	}
 }
 
-// Register user
+// Register godoc
+//
+// @Summary Register a new user
+// @Description This endpoint registers a new user by providing username, email, password, and role ID.
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param body body model.Register true "User registration input"
+// @Success 201 {object} map[string]string "User created"
+// @Failure 400 {object} map[string]string "Error message"
+// @Router /register [post]
 func (rc *UserHandlers) Register(c echo.Context) error {
 	var input model.Register
 
@@ -46,7 +56,17 @@ func (rc *UserHandlers) Register(c echo.Context) error {
 	return c.JSON(http.StatusCreated, echo.Map{"user": user.Username})
 }
 
-// User Login
+// Login godoc
+//
+// @Summary User login
+// @Description This endpoint allows a user to log in by providing a valid username and password.
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param body body model.Login true "User login input"
+// @Success 200 {object} map[string]interface{} "Successfully logged in with JWT token"
+// @Failure 400 {object} map[string]string "Error message"
+// @Router /login [post]
 func (rc *UserHandlers) Login(c echo.Context) error {
 	var input model.Login
 
