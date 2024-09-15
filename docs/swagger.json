@@ -6,7 +6,7 @@
     "paths": {
         "/auth/google_callback": {
             "get": {
-                "description": "This endpoint handles the callback from Google after a user authorizes the app. It exchanges the authorization code for an access token and retrieves the user's profile information.",
+                "description": "This endpoint handles the callback from Google after a user authorizes the app. It exchanges the authorization code for an access token and retrieves the users profile information.",
                 "tags": [
                     "oAuth"
                 ],
@@ -45,7 +45,7 @@
         },
         "/auth/google_login": {
             "get": {
-                "description": "This endpoint initiates the Google OAuth2 login process by redirecting the user to Google's login page.",
+                "description": "This endpoint initiates the Google OAuth2 login process by redirecting the user to Googles login page.",
                 "tags": [
                     "oAuth"
                 ],
@@ -614,50 +614,6 @@
                     }
                 }
             },
-            "put": {
-                "description": "Updates an existing pod in the Kubernetes cluster.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "pods"
-                ],
-                "summary": "Update an existing pod",
-                "parameters": [
-                    {
-                        "description": "Pod request body",
-                        "name": "pod",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.PodsRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully updated the pod",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad request or invalid data",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            },
             "post": {
                 "description": "Creates a new pod in the Kubernetes cluster.",
                 "consumes": [
@@ -677,7 +633,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.PodsRequest"
+                            "$ref": "#/definitions/model.PodsCreateRequest"
                         }
                     }
                 ],
@@ -741,6 +697,50 @@
                     },
                     "400": {
                         "description": "Bad request or invalid data",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update specific fields of an existing pod in the Kubernetes cluster. The following fields are changeable:",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pods"
+                ],
+                "summary": "Update an existing pod",
+                "parameters": [
+                    {
+                        "description": "Pod update request body",
+                        "name": "pod",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.PodsUpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pod successfully updated",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request or invalid input data",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -906,6 +906,17 @@
                     "type": "string"
                 },
                 "protocol": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.ContainerRequest": {
+            "type": "object",
+            "properties": {
+                "image": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 }
             }
@@ -1077,6 +1088,9 @@
         "model.PodSpec": {
             "type": "object",
             "properties": {
+                "activeDeadlineSeconds": {
+                    "type": "integer"
+                },
                 "containers": {
                     "type": "array",
                     "items": {
@@ -1087,6 +1101,15 @@
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/model.Container"
+                    }
+                },
+                "terminationGracePeriodSeconds": {
+                    "type": "integer"
+                },
+                "tolerations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Toleration"
                     }
                 },
                 "volumes": {
@@ -1123,7 +1146,15 @@
                 }
             }
         },
-        "model.PodsRequest": {
+        "model.PodUpdate": {
+            "type": "object",
+            "properties": {
+                "spec": {
+                    "$ref": "#/definitions/model.SpecRequest"
+                }
+            }
+        },
+        "model.PodsCreateRequest": {
             "type": "object",
             "properties": {
                 "opts": {
@@ -1131,6 +1162,17 @@
                 },
                 "pod": {
                     "$ref": "#/definitions/model.Pod"
+                }
+            }
+        },
+        "model.PodsUpdateRequest": {
+            "type": "object",
+            "properties": {
+                "opts": {
+                    "$ref": "#/definitions/v1.UpdateOptions"
+                },
+                "pod": {
+                    "$ref": "#/definitions/model.PodUpdate"
                 }
             }
         },
@@ -1152,6 +1194,55 @@
                     "type": "integer"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.SpecRequest": {
+            "type": "object",
+            "properties": {
+                "activeDeadlineSeconds": {
+                    "type": "integer"
+                },
+                "containers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ContainerRequest"
+                    }
+                },
+                "initContainers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ContainerRequest"
+                    }
+                },
+                "terminationGracePeriodSeconds": {
+                    "type": "integer"
+                },
+                "tolerations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Toleration"
+                    }
+                }
+            }
+        },
+        "model.Toleration": {
+            "type": "object",
+            "properties": {
+                "effect": {
+                    "type": "string"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "operator": {
+                    "type": "string"
+                },
+                "tolerationSeconds": {
+                    "type": "integer"
+                },
+                "value": {
                     "type": "string"
                 }
             }
@@ -4941,6 +5032,34 @@
                 "DoNotSchedule",
                 "ScheduleAnyway"
             ]
+        },
+        "v1.UpdateOptions": {
+            "type": "object",
+            "properties": {
+                "apiVersion": {
+                    "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources\n+optional",
+                    "type": "string"
+                },
+                "dryRun": {
+                    "description": "When present, indicates that modifications should not be\npersisted. An invalid or unrecognized dryRun directive will\nresult in an error response and no further processing of the\nrequest. Valid values are:\n- All: all dry run stages will be processed\n+optional\n+listType=atomic",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "fieldManager": {
+                    "description": "fieldManager is a name associated with the actor or entity\nthat is making these changes. The value must be less than or\n128 characters long, and only contain printable characters,\nas defined by https://golang.org/pkg/unicode/#IsPrint.\n+optional",
+                    "type": "string"
+                },
+                "fieldValidation": {
+                    "description": "fieldValidation instructs the server on how to handle\nobjects in the request (POST/PUT/PATCH) containing unknown\nor duplicate fields. Valid values are:\n- Ignore: This will ignore any unknown fields that are silently\ndropped from the object, and will ignore all but the last duplicate\nfield that the decoder encounters. This is the default behavior\nprior to v1.23.\n- Warn: This will send a warning via the standard warning response\nheader for each unknown field that is dropped from the object, and\nfor each duplicate field that is encountered. The request will\nstill succeed if there are no other errors, and will only persist\nthe last of any duplicate fields. This is the default in v1.23+\n- Strict: This will fail the request with a BadRequest error if\nany unknown fields would be dropped from the object, or if any\nduplicate fields are present. The error returned from the server\nwill contain all unknown and duplicate fields encountered.\n+optional",
+                    "type": "string"
+                },
+                "kind": {
+                    "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\n+optional",
+                    "type": "string"
+                }
+            }
         },
         "v1.Volume": {
             "type": "object",

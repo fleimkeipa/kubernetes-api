@@ -75,6 +75,13 @@ definitions:
       protocol:
         type: string
     type: object
+  model.ContainerRequest:
+    properties:
+      image:
+        type: string
+      name:
+        type: string
+    type: object
   model.DeploymentRequest:
     properties:
       deployment:
@@ -184,6 +191,8 @@ definitions:
     type: object
   model.PodSpec:
     properties:
+      activeDeadlineSeconds:
+        type: integer
       containers:
         items:
           $ref: '#/definitions/model.Container'
@@ -191,6 +200,12 @@ definitions:
       initContainers:
         items:
           $ref: '#/definitions/model.Container'
+        type: array
+      terminationGracePeriodSeconds:
+        type: integer
+      tolerations:
+        items:
+          $ref: '#/definitions/model.Toleration'
         type: array
       volumes:
         items:
@@ -214,12 +229,24 @@ definitions:
       reason:
         type: string
     type: object
-  model.PodsRequest:
+  model.PodUpdate:
+    properties:
+      spec:
+        $ref: '#/definitions/model.SpecRequest'
+    type: object
+  model.PodsCreateRequest:
     properties:
       opts:
         $ref: '#/definitions/v1.CreateOptions'
       pod:
         $ref: '#/definitions/model.Pod'
+    type: object
+  model.PodsUpdateRequest:
+    properties:
+      opts:
+        $ref: '#/definitions/v1.UpdateOptions'
+      pod:
+        $ref: '#/definitions/model.PodUpdate'
     type: object
   model.Register:
     properties:
@@ -235,6 +262,38 @@ definitions:
     - email
     - password
     - username
+    type: object
+  model.SpecRequest:
+    properties:
+      activeDeadlineSeconds:
+        type: integer
+      containers:
+        items:
+          $ref: '#/definitions/model.ContainerRequest'
+        type: array
+      initContainers:
+        items:
+          $ref: '#/definitions/model.ContainerRequest'
+        type: array
+      terminationGracePeriodSeconds:
+        type: integer
+      tolerations:
+        items:
+          $ref: '#/definitions/model.Toleration'
+        type: array
+    type: object
+  model.Toleration:
+    properties:
+      effect:
+        type: string
+      key:
+        type: string
+      operator:
+        type: string
+      tolerationSeconds:
+        type: integer
+      value:
+        type: string
     type: object
   model.Volume:
     properties:
@@ -4994,6 +5053,66 @@ definitions:
     x-enum-varnames:
     - DoNotSchedule
     - ScheduleAnyway
+  v1.UpdateOptions:
+    properties:
+      apiVersion:
+        description: |-
+          APIVersion defines the versioned schema of this representation of an object.
+          Servers should convert recognized schemas to the latest internal value, and
+          may reject unrecognized values.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+          +optional
+        type: string
+      dryRun:
+        description: |-
+          When present, indicates that modifications should not be
+          persisted. An invalid or unrecognized dryRun directive will
+          result in an error response and no further processing of the
+          request. Valid values are:
+          - All: all dry run stages will be processed
+          +optional
+          +listType=atomic
+        items:
+          type: string
+        type: array
+      fieldManager:
+        description: |-
+          fieldManager is a name associated with the actor or entity
+          that is making these changes. The value must be less than or
+          128 characters long, and only contain printable characters,
+          as defined by https://golang.org/pkg/unicode/#IsPrint.
+          +optional
+        type: string
+      fieldValidation:
+        description: |-
+          fieldValidation instructs the server on how to handle
+          objects in the request (POST/PUT/PATCH) containing unknown
+          or duplicate fields. Valid values are:
+          - Ignore: This will ignore any unknown fields that are silently
+          dropped from the object, and will ignore all but the last duplicate
+          field that the decoder encounters. This is the default behavior
+          prior to v1.23.
+          - Warn: This will send a warning via the standard warning response
+          header for each unknown field that is dropped from the object, and
+          for each duplicate field that is encountered. The request will
+          still succeed if there are no other errors, and will only persist
+          the last of any duplicate fields. This is the default in v1.23+
+          - Strict: This will fail the request with a BadRequest error if
+          any unknown fields would be dropped from the object, or if any
+          duplicate fields are present. The error returned from the server
+          will contain all unknown and duplicate fields encountered.
+          +optional
+        type: string
+      kind:
+        description: |-
+          Kind is a string value representing the REST resource this object represents.
+          Servers may infer this from the endpoint the client submits requests to.
+          Cannot be updated.
+          In CamelCase.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+          +optional
+        type: string
+    type: object
   v1.Volume:
     properties:
       awsElasticBlockStore:
@@ -5459,7 +5578,7 @@ paths:
     get:
       description: This endpoint handles the callback from Google after a user authorizes
         the app. It exchanges the authorization code for an access token and retrieves
-        the user's profile information.
+        the users profile information.
       parameters:
       - description: State for CSRF protection
         in: query
@@ -5486,7 +5605,7 @@ paths:
   /auth/google_login:
     get:
       description: This endpoint initiates the Google OAuth2 login process by redirecting
-        the user to Google's login page.
+        the user to Googles login page.
       responses:
         "303":
           description: Redirects to Google login page
@@ -5880,7 +5999,7 @@ paths:
         name: pod
         required: true
         schema:
-          $ref: '#/definitions/model.PodsRequest'
+          $ref: '#/definitions/model.PodsCreateRequest'
       produces:
       - application/json
       responses:
@@ -5897,35 +6016,6 @@ paths:
               type: string
             type: object
       summary: Create a new pod
-      tags:
-      - pods
-    put:
-      consumes:
-      - application/json
-      description: Updates an existing pod in the Kubernetes cluster.
-      parameters:
-      - description: Pod request body
-        in: body
-        name: pod
-        required: true
-        schema:
-          $ref: '#/definitions/model.PodsRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully updated the pod
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "400":
-          description: Bad request or invalid data
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Update an existing pod
       tags:
       - pods
   /pods/{id}:
@@ -5990,6 +6080,36 @@ paths:
               type: string
             type: object
       summary: Get a pod by name or UID
+      tags:
+      - pods
+    put:
+      consumes:
+      - application/json
+      description: 'Update specific fields of an existing pod in the Kubernetes cluster.
+        The following fields are changeable:'
+      parameters:
+      - description: Pod update request body
+        in: body
+        name: pod
+        required: true
+        schema:
+          $ref: '#/definitions/model.PodsUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Pod successfully updated
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad request or invalid input data
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update an existing pod
       tags:
       - pods
 swagger: "2.0"
