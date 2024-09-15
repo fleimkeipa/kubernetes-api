@@ -27,12 +27,12 @@ func (rc *UserRepository) Create(ctx context.Context, user model.User) (*model.U
 	return &user, nil
 }
 
-func (rc *UserRepository) GetUserByUsername(ctx context.Context, username string) (*model.User, error) {
+func (rc *UserRepository) GetUserByUsernameOrEmail(ctx context.Context, usernameOrEmail string) (*model.User, error) {
 	var user = new(model.User)
 
 	err := rc.db.
 		Model(user).
-		Where("username = ? OR email = ?", username).
+		Where("username = ? OR email = ?", usernameOrEmail, usernameOrEmail).
 		Select()
 	if err != nil {
 		return nil, err

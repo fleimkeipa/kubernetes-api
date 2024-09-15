@@ -83,7 +83,7 @@ func (rc *UserHandlers) Login(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": errorMessage})
 	}
 
-	user, err := rc.userUC.GetUserByUsername(c.Request().Context(), input.Username)
+	user, err := rc.userUC.GetUserByUsernameOrEmail(c.Request().Context(), input.Username)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
 	}

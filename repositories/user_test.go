@@ -27,7 +27,7 @@ func TestUserRepository_GetUserByUsername(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "",
+			name: "username search",
 			fields: fields{
 				db: test_db,
 			},
@@ -42,7 +42,38 @@ func TestUserRepository_GetUserByUsername(t *testing.T) {
 					RoleID:   7,
 				},
 			},
-			want:    &model.User{},
+			want: &model.User{
+				ID:       1,
+				Username: "admin",
+				Email:    "admin@admin.com",
+				Password: "password",
+				RoleID:   7,
+			},
+			wantErr: false,
+		},
+		{
+			name: "email search",
+			fields: fields{
+				db: test_db,
+			},
+			args: args{
+				ctx:      context.TODO(),
+				username: "admin2@admin.com",
+				user: &model.User{
+					ID:       0,
+					Username: "admin2",
+					Email:    "admin2@admin.com",
+					Password: "password",
+					RoleID:   7,
+				},
+			},
+			want: &model.User{
+				ID:       2,
+				Username: "admin2",
+				Email:    "admin2@admin.com",
+				Password: "password",
+				RoleID:   7,
+			},
 			wantErr: false,
 		},
 	}
@@ -55,7 +86,7 @@ func TestUserRepository_GetUserByUsername(t *testing.T) {
 			rc := &UserRepository{
 				db: tt.fields.db,
 			}
-			got, err := rc.GetUserByUsername(tt.args.ctx, tt.args.username)
+			got, err := rc.GetUserByUsernameOrEmail(tt.args.ctx, tt.args.username)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("UserRepository.GetUserByUsername() error = %v, wantErr %v", err, tt.wantErr)
 				return

@@ -3,6 +3,7 @@ package controller
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 
@@ -51,7 +52,7 @@ func (rc *GoogleAuthHandler) GoogleLogin(c echo.Context) error {
 func (rc *GoogleAuthHandler) GoogleCallback(c echo.Context) error {
 	var state = c.QueryParam("state")
 	if state != "randomstate" {
-		return c.String(400, "States don't Match!!")
+		return c.String(http.StatusBadRequest, "States don't Match!!")
 	}
 
 	var code = c.QueryParam("code")
@@ -60,17 +61,17 @@ func (rc *GoogleAuthHandler) GoogleCallback(c echo.Context) error {
 
 	token, err := googlecon.Exchange(context.Background(), code)
 	if err != nil {
-		return c.String(400, "Code-Token Exchange Failed")
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": fmt.Errorf("Code-Token Exchange Failed : %w", err).Error()})
 	}
 
 	resp, err := http.Get("https://www.googleapis.com/oauth2/v2/userinfo?access_token=" + token.AccessToken)
 	if err != nil {
-		return c.String(400, "User Data Fetch Failed")
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": fmt.Errorf("user Data Fetch Failed %w", err).Error()})
 	}
 
 	userData, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return c.String(400, "JSON Parsing Failed")
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": fmt.Errorf("JSON Parsing Failed %w", err).Error()})
 	}
 
 	var googleUser = new(model.GoogleUser)
@@ -78,7 +79,7 @@ func (rc *GoogleAuthHandler) GoogleCallback(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
 	}
 
-	user, err := rc.userUC.GetUserByUsername(c.Request().Context(), googleUser.Email)
+	user, err := rc.userUC.GetUserByUsernameOrEmail(c.Request().Context(), googleUser.Email)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
 	}
