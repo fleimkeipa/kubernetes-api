@@ -7,16 +7,19 @@ import (
 	"github.com/fleimkeipa/kubernetes-api/uc"
 
 	"github.com/labstack/echo/v4"
+	"go.uber.org/zap"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 type PodsHandler struct {
 	podsUC *uc.PodsUC
+	logger *zap.SugaredLogger
 }
 
-func NewPodsHandler(podsUC *uc.PodsUC) *PodsHandler {
+func NewPodsHandler(podsUC *uc.PodsUC, logger *zap.SugaredLogger) *PodsHandler {
 	return &PodsHandler{
 		podsUC: podsUC,
+		logger: logger,
 	}
 }
 
@@ -27,12 +30,12 @@ func NewPodsHandler(podsUC *uc.PodsUC) *PodsHandler {
 //	@Tags			pods
 //	@Accept			json
 //	@Produce		json
-//	@Param			pod	body		model.PodsRequest	true	"Pod request body"
-//	@Success		201	{object}	map[string]string	"Successfully created the pod"
-//	@Failure		400	{object}	map[string]string	"Bad request or invalid data"
+//	@Param			pod	body		model.PodsCreateRequest	true	"Pod request body"
+//	@Success		201	{object}	map[string]string		"Successfully created the pod"
+//	@Failure		400	{object}	map[string]string		"Bad request or invalid data"
 //	@Router			/pods [post]
 func (rc *PodsHandler) Create(c echo.Context) error {
-	var request model.PodsRequest
+	var request model.PodsCreateRequest
 
 	if err := c.Bind(&request); err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
@@ -46,26 +49,34 @@ func (rc *PodsHandler) Create(c echo.Context) error {
 	return c.JSON(http.StatusCreated, echo.Map{"pod": pod.Name})
 }
 
-// Update godoc
+// UpdatePod godoc
 //
-//	@Summary		Update an existing pod
-//	@Description	Updates an existing pod in the Kubernetes cluster.
-//	@Tags			pods
-//	@Accept			json
-//	@Produce		json
-//	@Param			pod	body		model.PodsRequest	true	"Pod request body"
-//	@Success		200	{object}	map[string]string	"Successfully updated the pod"
-//	@Failure		400	{object}	map[string]string	"Bad request or invalid data"
-//	@Router			/pods [put]
+// @Summary      Update an existing pod
+// @Description  Update specific fields of an existing pod in the Kubernetes cluster. The following fields are changeable:
+//   - containers.image
+//   - initContainers.image
+//   - tolerations (only additions)
+//   - activeDeadlineSeconds
+//   - terminationGracePeriodSeconds
+//
+// @Tags         pods
+// @Accept       json
+// @Produce      json
+// @Param        pod   body      model.PodsUpdateRequest  true  "Pod update request body"
+// @Success      200   {object}  map[string]string        "Pod successfully updated"
+// @Failure      400   {object}  map[string]string        "Bad request or invalid input data"
+// @Router       /pods/{id} [put]
 func (rc *PodsHandler) Update(c echo.Context) error {
-	var request model.PodsRequest
+	var id = c.Param("id")
 
+	var request model.PodsCreateRequest
 	if err := c.Bind(&request); err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
 	}
 
-	pod, err := rc.podsUC.Update(c.Request().Context(), &request.Pod, metav1.UpdateOptions(request.Opts))
+	pod, err := rc.podsUC.Update(c.Request().Context(), id, &request.Pod, metav1.UpdateOptions(request.Opts))
 	if err != nil {
+		rc.logger.Errorf("failed to update pod [%s], error:%v", id, err)
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
 	}
 

@@ -18,6 +18,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	echoSwagger "github.com/swaggo/echo-swagger"
+	"go.uber.org/zap"
 	"k8s.io/client-go/kubernetes"
 )
 
@@ -29,7 +30,7 @@ func main() {
 
 func loadEnv() {
 	if err := godotenv.Load(".env"); err != nil {
-		log.Fatal("Error loading .env file")
+		log.Fatalf("Error loading .env file: %v", err)
 	}
 
 	log.Println(".env file loaded successfully")
@@ -37,8 +38,19 @@ func loadEnv() {
 
 func serveApplication() {
 	var e = echo.New()
+	// e.HideBanner = true
+	// e.HidePort = true
 
-	e.Use(middleware.Logger())
+	logger, err := zap.NewProduction()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer logger.Sync()
+
+	var sugar = logger.Sugar()
+	defer sugar.Sync()
+
+	e.Use(pkg.ZapLogger(logger))
 	e.Use(middleware.Recover())
 
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
@@ -47,7 +59,7 @@ func serveApplication() {
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{os.Getenv("ALLOW_ORIGIN")},
 		AllowMethods: []string{echo.GET, echo.POST, echo.PUT, echo.DELETE},
-		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
 	}))
 
 	// Kubernetes client
@@ -59,7 +71,7 @@ func serveApplication() {
 
 	var podsRepo = repositories.NewPodsRepository(kubClient)
 	var podsUC = uc.NewPodsUC(podsRepo, eventRepo)
-	var podsHandlers = controller.NewPodsHandler(podsUC)
+	var podsHandlers = controller.NewPodsHandler(podsUC, sugar)
 
 	var namespaceRepo = repositories.NewNamespaceRepository(kubClient)
 	var namespaceUC = uc.NewNamespaceUC(namespaceRepo)
