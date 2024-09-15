@@ -5,32 +5,44 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"time"
+	"strings"
 
 	"github.com/fleimkeipa/kubernetes-api/model"
 
 	"github.com/go-pg/pg"
 	"github.com/go-pg/pg/orm"
+	"github.com/joho/godotenv"
 )
 
 var test_db *pg.DB
 
-func init() {
-	var dbName = "test_db"
-	os.Setenv("DB_ADDR", "localhost:5432")
-	os.Setenv("DB_HOST", "localhost")
-	os.Setenv("DB_PORT", "5432")
-	os.Setenv("DB_USERNAME", "postgres")
-	os.Setenv("DB_PASSWORD", "password")
-	os.Setenv("DB_NAME", dbName)
+func loadEnv() {
+	if err := godotenv.Load(".env"); err != nil {
+		log.Fatal("Error loading .env file")
+	}
 
-	// createTestDB()
+	log.Println(".env file loaded successfully")
+}
+
+func init() {
+	loadEnv()
+
+	var addr = strings.Split(os.Getenv("DB_ADDR"), ":")
+	if len(addr) < 2 {
+		os.Setenv("DB_HOST", "localhost")
+		os.Setenv("DB_PORT", "5432")
+	} else {
+		os.Setenv("DB_HOST", addr[0])
+		os.Setenv("DB_PORT", addr[1])
+	}
+
+	createTestDB()
+
+	test_db = initTestDBClient()
 
 	if err := createTestSchema(test_db); err != nil {
 		log.Fatal(err)
 	}
-
-	test_db = initTestDBClient()
 }
 
 func initTestDBClient() *pg.DB {
@@ -57,7 +69,18 @@ func createTestDB() {
 		log.Fatal(err)
 	}
 
-	_, err = db.Exec("create database " + os.Getenv("DB_NAME"))
+	var query = fmt.Sprintf(`
+		DROP DATABASE IF EXISTS %s;
+	`, "test_db")
+	_, err = db.Exec(query)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	query = fmt.Sprintf(`
+		CREATE DATABASE %s;
+	`, "test_db")
+	_, err = db.Exec(query)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -75,7 +98,6 @@ func createTestSchema(db *pg.DB) error {
 			Temp:        true,
 			IfNotExists: true,
 		}
-		time.Sleep(time.Millisecond * 500)
 		err := db.
 			Model(model).
 			CreateTable(&opts)
