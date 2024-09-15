@@ -17,8 +17,8 @@ import (
 var test_db *pg.DB
 
 func loadEnv() {
-	if err := godotenv.Load(".env"); err != nil {
-		log.Fatal("Error loading .env file")
+	if err := godotenv.Load("../.env"); err != nil {
+		log.Fatalf("Error loading .env file %v", err)
 	}
 
 	log.Println(".env file loaded successfully")
