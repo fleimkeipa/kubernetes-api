@@ -4,11 +4,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-type PodsRequest struct {
-	Pod  Pod                  `json:"pod"`
-	Opts metav1.CreateOptions `json:"opts"`
-}
-
 type Pod struct {
 	TypeMeta   `json:",inline"`
 	ObjectMeta `json:"metadata,omitempty"`
@@ -17,9 +12,12 @@ type Pod struct {
 }
 
 type PodSpec struct {
-	Volumes        []Volume    `json:"volumes,omitempty"`
-	InitContainers []Container `json:"initContainers,omitempty"`
-	Containers     []Container `json:"containers"`
+	Volumes                       []Volume     `json:"volumes,omitempty"`
+	InitContainers                []Container  `json:"initContainers,omitempty"`
+	Containers                    []Container  `json:"containers"`
+	ActiveDeadlineSeconds         *int64       `json:"activeDeadlineSeconds,omitempty"`
+	TerminationGracePeriodSeconds *int64       `json:"terminationGracePeriodSeconds,omitempty"`
+	Tolerations                   []Toleration `json:"tolerations,omitempty"`
 }
 type PodPhase string
 type PodStatus struct {
