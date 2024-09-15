@@ -67,3 +67,15 @@ type Volume struct {
 
 type VolumeSource struct {
 }
+
+type TaintEffect string
+
+type TolerationOperator string
+
+type Toleration struct {
+	Key               string             `json:"key,omitempty"`
+	Operator          TolerationOperator `json:"operator,omitempty"`
+	Value             string             `json:"value,omitempty"`
+	Effect            TaintEffect        `json:"effect,omitempty"`
+	TolerationSeconds *int64             `json:"tolerationSeconds,omitempty"`
+}
