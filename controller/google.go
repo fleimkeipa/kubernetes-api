@@ -28,7 +28,7 @@ func NewGoogleAuthHandler(userUC *uc.UserUC) *GoogleAuthHandler {
 // Google Login godoc
 //
 //	@Summary		Redirect to Google login page
-//	@Description	This endpoint initiates the Google OAuth2 login process by redirecting the user to Google's login page.
+//	@Description	This endpoint initiates the Google OAuth2 login process by redirecting the user to Googles login page.
 //	@Tags			oAuth
 //	@Success		303	{string}	string	"Redirects to Google login page"
 //	@Router			/auth/google_login [get]
@@ -42,7 +42,7 @@ func (rc *GoogleAuthHandler) GoogleLogin(c echo.Context) error {
 // Google Callback godoc
 //
 //	@Summary		Google OAuth2 callback
-//	@Description	This endpoint handles the callback from Google after a user authorizes the app. It exchanges the authorization code for an access token and retrieves the user's profile information.
+//	@Description	This endpoint handles the callback from Google after a user authorizes the app. It exchanges the authorization code for an access token and retrieves the users profile information.
 //	@Tags			oAuth
 //	@Param			state	query		string	true	"State for CSRF protection"
 //	@Param			code	query		string	true	"Authorization code returned by Google"
