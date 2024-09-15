@@ -6085,8 +6085,13 @@ paths:
     put:
       consumes:
       - application/json
-      description: 'Update specific fields of an existing pod in the Kubernetes cluster.
-        The following fields are changeable:'
+      description: |-
+        Update specific fields of an existing pod in the Kubernetes cluster. The following fields are changeable:<br />
+        - containers.image
+        - initContainers.image
+        - tolerations (only additions)
+        - activeDeadlineSeconds
+        - terminationGracePeriodSeconds
       parameters:
       - description: Pod update request body
         in: body

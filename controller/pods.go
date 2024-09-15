@@ -51,21 +51,20 @@ func (rc *PodsHandler) Create(c echo.Context) error {
 
 // UpdatePod godoc
 //
-// @Summary      Update an existing pod
-// @Description  Update specific fields of an existing pod in the Kubernetes cluster. The following fields are changeable:
-//   - containers.image
-//   - initContainers.image
-//   - tolerations (only additions)
-//   - activeDeadlineSeconds
-//   - terminationGracePeriodSeconds
-//
-// @Tags         pods
-// @Accept       json
-// @Produce      json
-// @Param        pod   body      model.PodsUpdateRequest  true  "Pod update request body"
-// @Success      200   {object}  map[string]string        "Pod successfully updated"
-// @Failure      400   {object}  map[string]string        "Bad request or invalid input data"
-// @Router       /pods/{id} [put]
+//	@Summary		Update an existing pod
+//	@Description	Update specific fields of an existing pod in the Kubernetes cluster. The following fields are changeable:
+//	@Description	- containers.image
+//	@Description	- initContainers.image
+//	@Description	- tolerations (only additions)
+//	@Description	- activeDeadlineSeconds
+//	@Description	- terminationGracePeriodSeconds
+//	@Tags			pods
+//	@Accept			json
+//	@Produce		json
+//	@Param			pod	body		model.PodsUpdateRequest	true	"Pod update request body"
+//	@Success		200	{object}	map[string]string		"Pod successfully updated"
+//	@Failure		400	{object}	map[string]string		"Bad request or invalid input data"
+//	@Router			/pods/{id} [put]
 func (rc *PodsHandler) Update(c echo.Context) error {
 	var id = c.Param("id")
 

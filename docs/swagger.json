@@ -707,7 +707,7 @@
                 }
             },
             "put": {
-                "description": "Update specific fields of an existing pod in the Kubernetes cluster. The following fields are changeable:",
+                "description": "Update specific fields of an existing pod in the Kubernetes cluster. The following fields are changeable:\u003cbr /\u003e\n- containers.image\n- initContainers.image\n- tolerations (only additions)\n- activeDeadlineSeconds\n- terminationGracePeriodSeconds",
                 "consumes": [
                     "application/json"
                 ],
