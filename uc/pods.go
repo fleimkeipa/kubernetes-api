@@ -25,7 +25,7 @@ func NewPodsUC(podsRepo interfaces.PodsInterfaces, eventRepo interfaces.EventsIn
 	}
 }
 
-func (rc *PodsUC) Create(ctx context.Context, pod *corev1.Pod, opts metav1.CreateOptions) (*corev1.Pod, error) {
+func (rc *PodsUC) Create(ctx context.Context, pod *model.Pod, opts metav1.CreateOptions) (*corev1.Pod, error) {
 	pod.TypeMeta.Kind = "pod"
 	if pod.ObjectMeta.Namespace == "" {
 		pod.ObjectMeta.Namespace = "default"
@@ -45,7 +45,7 @@ func (rc *PodsUC) Create(ctx context.Context, pod *corev1.Pod, opts metav1.Creat
 	return rc.podsRepo.Create(ctx, pod, opts)
 }
 
-func (rc *PodsUC) Update(ctx context.Context, pod *corev1.Pod, opts metav1.UpdateOptions) (*corev1.Pod, error) {
+func (rc *PodsUC) Update(ctx context.Context, pod *model.Pod, opts metav1.UpdateOptions) (*corev1.Pod, error) {
 	pod.TypeMeta.Kind = "pod"
 	if pod.ObjectMeta.Namespace == "" {
 		pod.ObjectMeta.Namespace = "default"

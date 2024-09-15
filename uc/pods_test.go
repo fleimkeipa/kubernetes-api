@@ -5,9 +5,11 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/fleimkeipa/kubernetes-api/model"
 	"github.com/fleimkeipa/kubernetes-api/pkg"
 	"github.com/fleimkeipa/kubernetes-api/repositories"
 	"github.com/fleimkeipa/kubernetes-api/repositories/interfaces"
+
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -77,7 +79,7 @@ func TestPodsUC_Update(t *testing.T) {
 	}
 	type args struct {
 		ctx  context.Context
-		pod  *corev1.Pod
+		pod  *model.Pod
 		opts metav1.UpdateOptions
 	}
 	tests := []struct {
@@ -93,13 +95,8 @@ func TestPodsUC_Update(t *testing.T) {
 				podsRepo: repositories.NewPodsRepository(initTestKubernetes()),
 			},
 			args: args{
-				ctx: context.TODO(),
-				pod: &corev1.Pod{
-					TypeMeta:   metav1.TypeMeta{},
-					ObjectMeta: metav1.ObjectMeta{},
-					Spec:       corev1.PodSpec{},
-					Status:     corev1.PodStatus{},
-				},
+				ctx:  context.TODO(),
+				pod:  &model.Pod{},
 				opts: metav1.UpdateOptions{},
 			},
 			want:    &corev1.Pod{},
