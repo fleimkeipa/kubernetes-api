@@ -851,6 +851,76 @@ const docTemplate = `{
                 "ConditionUnknown"
             ]
         },
+        "model.Container": {
+            "type": "object",
+            "properties": {
+                "args": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "command": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "env": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.EnvVar"
+                    }
+                },
+                "image": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "ports": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ContainerPort"
+                    }
+                },
+                "stdin": {
+                    "type": "boolean"
+                },
+                "stdinOnce": {
+                    "type": "boolean"
+                },
+                "terminationMessagePath": {
+                    "type": "string"
+                },
+                "tty": {
+                    "type": "boolean"
+                },
+                "workingDir": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.ContainerPort": {
+            "type": "object",
+            "properties": {
+                "containerPort": {
+                    "type": "integer"
+                },
+                "hostIP": {
+                    "type": "string"
+                },
+                "hostPort": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "protocol": {
+                    "type": "string"
+                }
+            }
+        },
         "model.DeploymentRequest": {
             "type": "object",
             "properties": {
@@ -859,6 +929,17 @@ const docTemplate = `{
                 },
                 "opts": {
                     "$ref": "#/definitions/v1.CreateOptions"
+                }
+            }
+        },
+        "model.EnvVar": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
                 }
             }
         },
@@ -888,6 +969,171 @@ const docTemplate = `{
                 }
             }
         },
+        "model.ObjectMeta": {
+            "type": "object",
+            "properties": {
+                "annotations": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "creationTimestamp": {
+                    "type": "string"
+                },
+                "deletionGracePeriodSeconds": {
+                    "type": "integer"
+                },
+                "deletionTimestamp": {
+                    "type": "string"
+                },
+                "finalizers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "generateName": {
+                    "type": "string"
+                },
+                "generation": {
+                    "type": "integer"
+                },
+                "labels": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "namespace": {
+                    "type": "string"
+                },
+                "ownerReferences": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.OwnerReference"
+                    }
+                },
+                "resourceVersion": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.OwnerReference": {
+            "type": "object",
+            "properties": {
+                "apiVersion": {
+                    "type": "string"
+                },
+                "blockOwnerDeletion": {
+                    "type": "boolean"
+                },
+                "controller": {
+                    "type": "boolean"
+                },
+                "kind": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Pod": {
+            "type": "object",
+            "properties": {
+                "apiVersion": {
+                    "type": "string"
+                },
+                "kind": {
+                    "type": "string"
+                },
+                "metadata": {
+                    "$ref": "#/definitions/model.ObjectMeta"
+                },
+                "spec": {
+                    "$ref": "#/definitions/model.PodSpec"
+                },
+                "status": {
+                    "$ref": "#/definitions/model.PodStatus"
+                }
+            }
+        },
+        "model.PodCondition": {
+            "type": "object",
+            "properties": {
+                "lastProbeTime": {
+                    "type": "string"
+                },
+                "lastTransitionTime": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.PodSpec": {
+            "type": "object",
+            "properties": {
+                "containers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Container"
+                    }
+                },
+                "initContainers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Container"
+                    }
+                },
+                "volumes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Volume"
+                    }
+                }
+            }
+        },
+        "model.PodStatus": {
+            "type": "object",
+            "properties": {
+                "conditions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.PodCondition"
+                    }
+                },
+                "hostIP": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "nominatedNodeName": {
+                    "type": "string"
+                },
+                "phase": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                }
+            }
+        },
         "model.PodsRequest": {
             "type": "object",
             "properties": {
@@ -895,7 +1141,7 @@ const docTemplate = `{
                     "$ref": "#/definitions/v1.CreateOptions"
                 },
                 "pod": {
-                    "$ref": "#/definitions/v1.Pod"
+                    "$ref": "#/definitions/model.Pod"
                 }
             }
         },
@@ -917,6 +1163,14 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Volume": {
+            "type": "object",
+            "properties": {
+                "name": {
                     "type": "string"
                 }
             }
@@ -1538,190 +1792,6 @@ const docTemplate = `{
             "x-enum-varnames": [
                 "ContainerRestartPolicyAlways"
             ]
-        },
-        "v1.ContainerState": {
-            "type": "object",
-            "properties": {
-                "running": {
-                    "description": "Details about a running container\n+optional",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.ContainerStateRunning"
-                        }
-                    ]
-                },
-                "terminated": {
-                    "description": "Details about a terminated container\n+optional",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.ContainerStateTerminated"
-                        }
-                    ]
-                },
-                "waiting": {
-                    "description": "Details about a waiting container\n+optional",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.ContainerStateWaiting"
-                        }
-                    ]
-                }
-            }
-        },
-        "v1.ContainerStateRunning": {
-            "type": "object",
-            "properties": {
-                "startedAt": {
-                    "description": "Time at which the container was last (re-)started\n+optional",
-                    "type": "string"
-                }
-            }
-        },
-        "v1.ContainerStateTerminated": {
-            "type": "object",
-            "properties": {
-                "containerID": {
-                    "description": "Container's ID in the format '\u003ctype\u003e://\u003ccontainer_id\u003e'\n+optional",
-                    "type": "string"
-                },
-                "exitCode": {
-                    "description": "Exit status from the last termination of the container",
-                    "type": "integer"
-                },
-                "finishedAt": {
-                    "description": "Time at which the container last terminated\n+optional",
-                    "type": "string"
-                },
-                "message": {
-                    "description": "Message regarding the last termination of the container\n+optional",
-                    "type": "string"
-                },
-                "reason": {
-                    "description": "(brief) reason from the last termination of the container\n+optional",
-                    "type": "string"
-                },
-                "signal": {
-                    "description": "Signal from the last termination of the container\n+optional",
-                    "type": "integer"
-                },
-                "startedAt": {
-                    "description": "Time at which previous execution of the container started\n+optional",
-                    "type": "string"
-                }
-            }
-        },
-        "v1.ContainerStateWaiting": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "description": "Message regarding why the container is not yet running.\n+optional",
-                    "type": "string"
-                },
-                "reason": {
-                    "description": "(brief) reason the container is not yet running.\n+optional",
-                    "type": "string"
-                }
-            }
-        },
-        "v1.ContainerStatus": {
-            "type": "object",
-            "properties": {
-                "allocatedResources": {
-                    "description": "AllocatedResources represents the compute resources allocated for this container by the\nnode. Kubelet sets this value to Container.Resources.Requests upon successful pod admission\nand after successfully admitting desired pod resize.\n+featureGate=InPlacePodVerticalScaling\n+optional",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.ResourceList"
-                        }
-                    ]
-                },
-                "allocatedResourcesStatus": {
-                    "description": "AllocatedResourcesStatus represents the status of various resources\nallocated for this Pod.\n+featureGate=ResourceHealthStatus\n+optional\n+patchMergeKey=name\n+patchStrategy=merge\n+listType=map\n+listMapKey=name",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/v1.ResourceStatus"
-                    }
-                },
-                "containerID": {
-                    "description": "ContainerID is the ID of the container in the format '\u003ctype\u003e://\u003ccontainer_id\u003e'.\nWhere type is a container runtime identifier, returned from Version call of CRI API\n(for example \"containerd\").\n+optional",
-                    "type": "string"
-                },
-                "image": {
-                    "description": "Image is the name of container image that the container is running.\nThe container image may not match the image used in the PodSpec,\nas it may have been resolved by the runtime.\nMore info: https://kubernetes.io/docs/concepts/containers/images.",
-                    "type": "string"
-                },
-                "imageID": {
-                    "description": "ImageID is the image ID of the container's image. The image ID may not\nmatch the image ID of the image used in the PodSpec, as it may have been\nresolved by the runtime.",
-                    "type": "string"
-                },
-                "lastState": {
-                    "description": "LastTerminationState holds the last termination state of the container to\nhelp debug container crashes and restarts. This field is not\npopulated if the container is still running and RestartCount is 0.\n+optional",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.ContainerState"
-                        }
-                    ]
-                },
-                "name": {
-                    "description": "Name is a DNS_LABEL representing the unique name of the container.\nEach container in a pod must have a unique name across all container types.\nCannot be updated.",
-                    "type": "string"
-                },
-                "ready": {
-                    "description": "Ready specifies whether the container is currently passing its readiness check.\nThe value will change as readiness probes keep executing. If no readiness\nprobes are specified, this field defaults to true once the container is\nfully started (see Started field).\n\nThe value is typically used to determine whether a container is ready to\naccept traffic.",
-                    "type": "boolean"
-                },
-                "resources": {
-                    "description": "Resources represents the compute resource requests and limits that have been successfully\nenacted on the running container after it has been started or has been successfully resized.\n+featureGate=InPlacePodVerticalScaling\n+optional",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.ResourceRequirements"
-                        }
-                    ]
-                },
-                "restartCount": {
-                    "description": "RestartCount holds the number of times the container has been restarted.\nKubelet makes an effort to always increment the value, but there\nare cases when the state may be lost due to node restarts and then the value\nmay be reset to 0. The value is never negative.",
-                    "type": "integer"
-                },
-                "started": {
-                    "description": "Started indicates whether the container has finished its postStart lifecycle hook\nand passed its startup probe.\nInitialized as false, becomes true after startupProbe is considered\nsuccessful. Resets to false when the container is restarted, or if kubelet\nloses state temporarily. In both cases, startup probes will run again.\nIs always true when no startupProbe is defined and container is running and\nhas passed the postStart lifecycle hook. The null value must be treated the\nsame as false.\n+optional",
-                    "type": "boolean"
-                },
-                "state": {
-                    "description": "State holds details about the container's current condition.\n+optional",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.ContainerState"
-                        }
-                    ]
-                },
-                "user": {
-                    "description": "User represents user identity information initially attached to the first process of the container\n+featureGate=SupplementalGroupsPolicy\n+optional",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.ContainerUser"
-                        }
-                    ]
-                },
-                "volumeMounts": {
-                    "description": "Status of volume mounts.\n+optional\n+patchMergeKey=mountPath\n+patchStrategy=merge\n+listType=map\n+listMapKey=mountPath\n+featureGate=RecursiveReadOnlyMounts",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/v1.VolumeMountStatus"
-                    }
-                }
-            }
-        },
-        "v1.ContainerUser": {
-            "type": "object",
-            "properties": {
-                "linux": {
-                    "description": "Linux holds user identity information initially attached to the first process of the containers in Linux.\nNote that the actual running identity can be changed if the process has enough privilege to do so.\n+optional",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.LinuxContainerUser"
-                        }
-                    ]
-                }
-            }
         },
         "v1.CreateOptions": {
             "type": "object",
@@ -2546,15 +2616,6 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.HostIP": {
-            "type": "object",
-            "properties": {
-                "ip": {
-                    "description": "IP is the IP address assigned to the host\n+required",
-                    "type": "string"
-                }
-            }
-        },
         "v1.HostPathType": {
             "type": "string",
             "enum": [
@@ -2798,26 +2859,6 @@ const docTemplate = `{
                             "$ref": "#/definitions/v1.TCPSocketAction"
                         }
                     ]
-                }
-            }
-        },
-        "v1.LinuxContainerUser": {
-            "type": "object",
-            "properties": {
-                "gid": {
-                    "description": "GID is the primary gid initially attached to the first process in the container",
-                    "type": "integer"
-                },
-                "supplementalGroups": {
-                    "description": "SupplementalGroups are the supplemental groups initially attached to the first process in the container\n+optional\n+listType=atomic",
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "uid": {
-                    "description": "UID is the primary uid initially attached to the first process in the container",
-                    "type": "integer"
                 }
             }
         },
@@ -3417,43 +3458,6 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.Pod": {
-            "type": "object",
-            "properties": {
-                "apiVersion": {
-                    "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources\n+optional",
-                    "type": "string"
-                },
-                "kind": {
-                    "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\n+optional",
-                    "type": "string"
-                },
-                "metadata": {
-                    "description": "Standard object's metadata.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata\n+optional",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.ObjectMeta"
-                        }
-                    ]
-                },
-                "spec": {
-                    "description": "Specification of the desired behavior of the pod.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status\n+optional",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.PodSpec"
-                        }
-                    ]
-                },
-                "status": {
-                    "description": "Most recently observed status of the pod.\nThis data may not be up to date.\nPopulated by the system.\nRead-only.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status\n+optional",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.PodStatus"
-                        }
-                    ]
-                }
-            }
-        },
         "v1.PodAffinity": {
             "type": "object",
             "properties": {
@@ -3538,43 +3542,6 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.PodCondition": {
-            "type": "object",
-            "properties": {
-                "lastProbeTime": {
-                    "description": "Last time we probed the condition.\n+optional",
-                    "type": "string"
-                },
-                "lastTransitionTime": {
-                    "description": "Last time the condition transitioned from one status to another.\n+optional",
-                    "type": "string"
-                },
-                "message": {
-                    "description": "Human-readable message indicating details about last transition.\n+optional",
-                    "type": "string"
-                },
-                "reason": {
-                    "description": "Unique, one-word, CamelCase reason for the condition's last transition.\n+optional",
-                    "type": "string"
-                },
-                "status": {
-                    "description": "Status is the status of the condition.\nCan be True, False, Unknown.\nMore info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-conditions",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/k8s_io_api_core_v1.ConditionStatus"
-                        }
-                    ]
-                },
-                "type": {
-                    "description": "Type is the type of the condition.\nMore info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-conditions",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.PodConditionType"
-                        }
-                    ]
-                }
-            }
-        },
         "v1.PodConditionType": {
             "type": "string",
             "enum": [
@@ -3644,15 +3611,6 @@ const docTemplate = `{
                 "FSGroupChangeAlways"
             ]
         },
-        "v1.PodIP": {
-            "type": "object",
-            "properties": {
-                "ip": {
-                    "description": "IP is the IP address assigned to the pod\n+required",
-                    "type": "string"
-                }
-            }
-        },
         "v1.PodOS": {
             "type": "object",
             "properties": {
@@ -3665,36 +3623,6 @@ const docTemplate = `{
                     ]
                 }
             }
-        },
-        "v1.PodPhase": {
-            "type": "string",
-            "enum": [
-                "Pending",
-                "Running",
-                "Succeeded",
-                "Failed",
-                "Unknown"
-            ],
-            "x-enum-varnames": [
-                "PodPending",
-                "PodRunning",
-                "PodSucceeded",
-                "PodFailed",
-                "PodUnknown"
-            ]
-        },
-        "v1.PodQOSClass": {
-            "type": "string",
-            "enum": [
-                "Guaranteed",
-                "Burstable",
-                "BestEffort"
-            ],
-            "x-enum-varnames": [
-                "PodQOSGuaranteed",
-                "PodQOSBurstable",
-                "PodQOSBestEffort"
-            ]
         },
         "v1.PodReadinessGate": {
             "type": "object",
@@ -3709,21 +3637,6 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.PodResizeStatus": {
-            "type": "string",
-            "enum": [
-                "Proposed",
-                "InProgress",
-                "Deferred",
-                "Infeasible"
-            ],
-            "x-enum-varnames": [
-                "PodResizeStatusProposed",
-                "PodResizeStatusInProgress",
-                "PodResizeStatusDeferred",
-                "PodResizeStatusInfeasible"
-            ]
-        },
         "v1.PodResourceClaim": {
             "type": "object",
             "properties": {
@@ -3737,19 +3650,6 @@ const docTemplate = `{
                 },
                 "resourceClaimTemplateName": {
                     "description": "ResourceClaimTemplateName is the name of a ResourceClaimTemplate\nobject in the same namespace as this pod.\n\nThe template will be used to create a new ResourceClaim, which will\nbe bound to this pod. When this pod is deleted, the ResourceClaim\nwill also be deleted. The pod name and resource name, along with a\ngenerated component, will be used to form a unique name for the\nResourceClaim, which will be recorded in pod.status.resourceClaimStatuses.\n\nThis field is immutable and no changes will be made to the\ncorresponding ResourceClaim by the control plane after creating the\nResourceClaim.\n\nExactly one of ResourceClaimName and ResourceClaimTemplateName must\nbe set.",
-                    "type": "string"
-                }
-            }
-        },
-        "v1.PodResourceClaimStatus": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "description": "Name uniquely identifies this resource claim inside the pod.\nThis must match the name of an entry in pod.spec.resourceClaims,\nwhich implies that the string must be a DNS_LABEL.",
-                    "type": "string"
-                },
-                "resourceClaimName": {
-                    "description": "ResourceClaimName is the name of the ResourceClaim that was\ngenerated for the Pod in the namespace of the Pod. If this is\nunset, then generating a ResourceClaim was not necessary. The\npod.spec.resourceClaims entry can be ignored in this case.\n\n+optional",
                     "type": "string"
                 }
             }
@@ -4075,108 +3975,6 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.PodStatus": {
-            "type": "object",
-            "properties": {
-                "conditions": {
-                    "description": "Current service state of pod.\nMore info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-conditions\n+optional\n+patchMergeKey=type\n+patchStrategy=merge\n+listType=map\n+listMapKey=type",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/v1.PodCondition"
-                    }
-                },
-                "containerStatuses": {
-                    "description": "The list has one entry per container in the manifest.\nMore info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-and-container-status\n+optional\n+listType=atomic",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/v1.ContainerStatus"
-                    }
-                },
-                "ephemeralContainerStatuses": {
-                    "description": "Status for any ephemeral containers that have run in this pod.\n+optional\n+listType=atomic",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/v1.ContainerStatus"
-                    }
-                },
-                "hostIP": {
-                    "description": "hostIP holds the IP address of the host to which the pod is assigned. Empty if the pod has not started yet.\nA pod can be assigned to a node that has a problem in kubelet which in turns mean that HostIP will\nnot be updated even if there is a node is assigned to pod\n+optional",
-                    "type": "string"
-                },
-                "hostIPs": {
-                    "description": "hostIPs holds the IP addresses allocated to the host. If this field is specified, the first entry must\nmatch the hostIP field. This list is empty if the pod has not started yet.\nA pod can be assigned to a node that has a problem in kubelet which in turns means that HostIPs will\nnot be updated even if there is a node is assigned to this pod.\n+optional\n+patchStrategy=merge\n+patchMergeKey=ip\n+listType=atomic",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/v1.HostIP"
-                    }
-                },
-                "initContainerStatuses": {
-                    "description": "The list has one entry per init container in the manifest. The most recent successful\ninit container will have ready = true, the most recently started container will have\nstartTime set.\nMore info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-and-container-status\n+listType=atomic",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/v1.ContainerStatus"
-                    }
-                },
-                "message": {
-                    "description": "A human readable message indicating details about why the pod is in this condition.\n+optional",
-                    "type": "string"
-                },
-                "nominatedNodeName": {
-                    "description": "nominatedNodeName is set only when this pod preempts other pods on the node, but it cannot be\nscheduled right away as preemption victims receive their graceful termination periods.\nThis field does not guarantee that the pod will be scheduled on this node. Scheduler may decide\nto place the pod elsewhere if other nodes become available sooner. Scheduler may also decide to\ngive the resources on this node to a higher priority pod that is created after preemption.\nAs a result, this field may be different than PodSpec.nodeName when the pod is\nscheduled.\n+optional",
-                    "type": "string"
-                },
-                "phase": {
-                    "description": "The phase of a Pod is a simple, high-level summary of where the Pod is in its lifecycle.\nThe conditions array, the reason and message fields, and the individual container status\narrays contain more detail about the pod's status.\nThere are five possible phase values:\n\nPending: The pod has been accepted by the Kubernetes system, but one or more of the\ncontainer images has not been created. This includes time before being scheduled as\nwell as time spent downloading images over the network, which could take a while.\nRunning: The pod has been bound to a node, and all of the containers have been created.\nAt least one container is still running, or is in the process of starting or restarting.\nSucceeded: All containers in the pod have terminated in success, and will not be restarted.\nFailed: All containers in the pod have terminated, and at least one container has\nterminated in failure. The container either exited with non-zero status or was terminated\nby the system.\nUnknown: For some reason the state of the pod could not be obtained, typically due to an\nerror in communicating with the host of the pod.\n\nMore info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-phase\n+optional",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.PodPhase"
-                        }
-                    ]
-                },
-                "podIP": {
-                    "description": "podIP address allocated to the pod. Routable at least within the cluster.\nEmpty if not yet allocated.\n+optional",
-                    "type": "string"
-                },
-                "podIPs": {
-                    "description": "podIPs holds the IP addresses allocated to the pod. If this field is specified, the 0th entry must\nmatch the podIP field. Pods may be allocated at most 1 value for each of IPv4 and IPv6. This list\nis empty if no IPs have been allocated yet.\n+optional\n+patchStrategy=merge\n+patchMergeKey=ip\n+listType=map\n+listMapKey=ip",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/v1.PodIP"
-                    }
-                },
-                "qosClass": {
-                    "description": "The Quality of Service (QOS) classification assigned to the pod based on resource requirements\nSee PodQOSClass type for available QOS classes\nMore info: https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/#quality-of-service-classes\n+optional",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.PodQOSClass"
-                        }
-                    ]
-                },
-                "reason": {
-                    "description": "A brief CamelCase message indicating details about why the pod is in this state.\ne.g. 'Evicted'\n+optional",
-                    "type": "string"
-                },
-                "resize": {
-                    "description": "Status of resources resize desired for pod's containers.\nIt is empty if no resources resize is pending.\nAny changes to container resources will automatically set this to \"Proposed\"\n+featureGate=InPlacePodVerticalScaling\n+optional",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.PodResizeStatus"
-                        }
-                    ]
-                },
-                "resourceClaimStatuses": {
-                    "description": "Status of resource claims.\n+patchMergeKey=name\n+patchStrategy=merge,retainKeys\n+listType=map\n+listMapKey=name\n+featureGate=DynamicResourceAllocation\n+optional",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/v1.PodResourceClaimStatus"
-                    }
-                },
-                "startTime": {
-                    "description": "RFC 3339 date and time at which the object was acknowledged by the Kubelet.\nThis is before the Kubelet pulled the container image(s) for the pod.\n+optional",
-                    "type": "string"
-                }
-            }
-        },
         "v1.PodTemplateSpec": {
             "type": "object",
             "properties": {
@@ -4477,36 +4275,6 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.ResourceHealth": {
-            "type": "object",
-            "properties": {
-                "health": {
-                    "description": "Health of the resource.\ncan be one of:\n - Healthy: operates as normal\n - Unhealthy: reported unhealthy. We consider this a temporary health issue\n              since we do not have a mechanism today to distinguish\n              temporary and permanent issues.\n - Unknown: The status cannot be determined.\n            For example, Device Plugin got unregistered and hasn't been re-registered since.\n\nIn future we may want to introduce the PermanentlyUnhealthy Status.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.ResourceHealthStatus"
-                        }
-                    ]
-                },
-                "resourceID": {
-                    "description": "ResourceID is the unique identifier of the resource. See the ResourceID type for more information.",
-                    "type": "string"
-                }
-            }
-        },
-        "v1.ResourceHealthStatus": {
-            "type": "string",
-            "enum": [
-                "Healthy",
-                "Unhealthy",
-                "Unknown"
-            ],
-            "x-enum-varnames": [
-                "ResourceHealthStatusHealthy",
-                "ResourceHealthStatusUnhealthy",
-                "ResourceHealthStatusUnknown"
-            ]
-        },
         "v1.ResourceList": {
             "type": "object",
             "additionalProperties": {
@@ -4598,26 +4366,6 @@ const docTemplate = `{
                 "NotRequired",
                 "RestartContainer"
             ]
-        },
-        "v1.ResourceStatus": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "description": "Name of the resource. Must be unique within the pod and match one of the resources from the pod spec.\n+required",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.ResourceName"
-                        }
-                    ]
-                },
-                "resources": {
-                    "description": "List of unique Resources health. Each element in the list contains an unique resource ID and resource health.\nAt a minimum, ResourceID must uniquely identify the Resource\nallocated to the Pod on the Node for the lifetime of a Pod.\nSee ResourceID type for it's definition.\n+listType=map\n+listMapKey=resourceID",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/v1.ResourceHealth"
-                    }
-                }
-            }
         },
         "v1.RestartPolicy": {
             "type": "string",
@@ -5505,31 +5253,6 @@ const docTemplate = `{
                 "subPathExpr": {
                     "description": "Expanded path within the volume from which the container's volume should be mounted.\nBehaves similarly to SubPath but environment variable references $(VAR_NAME) are expanded using the container's environment.\nDefaults to \"\" (volume's root).\nSubPathExpr and SubPath are mutually exclusive.\n+optional",
                     "type": "string"
-                }
-            }
-        },
-        "v1.VolumeMountStatus": {
-            "type": "object",
-            "properties": {
-                "mountPath": {
-                    "description": "MountPath corresponds to the original VolumeMount.",
-                    "type": "string"
-                },
-                "name": {
-                    "description": "Name corresponds to the name of the original VolumeMount.",
-                    "type": "string"
-                },
-                "readOnly": {
-                    "description": "ReadOnly corresponds to the original VolumeMount.\n+optional",
-                    "type": "boolean"
-                },
-                "recursiveReadOnly": {
-                    "description": "RecursiveReadOnly must be set to Disabled, Enabled, or unspecified (for non-readonly mounts).\nAn IfPossible value in the original VolumeMount must be translated to Disabled or Enabled,\ndepending on the mount result.\n+featureGate=RecursiveReadOnlyMounts\n+optional",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.RecursiveReadOnlyMode"
-                        }
-                    ]
                 }
             }
         },
