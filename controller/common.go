@@ -17,8 +17,8 @@ func getPagination(c echo.Context) model.PaginationOpts {
 	skip, _ := strconv.Atoi(skipQuery)
 
 	return model.PaginationOpts{
-		Skip:  uint(skip),
-		Limit: uint(limit),
+		Skip:  skip,
+		Limit: limit,
 	}
 }
 
