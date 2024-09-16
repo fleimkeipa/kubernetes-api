@@ -1,16 +1,16 @@
-version: '3.9'  # Docker Compose sürümü
+version: '3.9'  # Docker Compose version
 
 services:
   myapp:
-    image: kubernetes-api:latest  # Go uygulamanızın Docker imajı
+    image: kubernetes-api:latest  # Docker image for your Go application
     container_name: myapp-container
     environment:
-      - KUBECONFIG=/root/.kube/config  # Kubernetes konfigürasyon dosyasının yeri
+      - KUBECONFIG=/root/.kube/config  # Location of the Kubernetes configuration file
     volumes:
-      - ~/.kube/config:/root/.kube/config  # Yerel kubeconfig dosyasını konteynere monte et
+      - ~/.kube/config:/root/.kube/config  # Mount the local kubeconfig file to the container
     ports:
-      - "8080:8080"  # Gerekirse dışa açılacak portlar
-      # - "6443:6443"  # Gerekirse dışa açılacak portlar
+      - "8080:8080"  # Expose necessary ports
+      # - "6443:6443"  # Expose additional ports if needed
     networks:
       - mynetwork
     extra_hosts:
@@ -18,4 +18,4 @@ services:
 
 networks:
   mynetwork:
-    driver: bridge  # Bridge network kullanarak hizmetler arasında bağlantı sağlar
+    driver: bridge  # Use bridge network to enable communication between services
