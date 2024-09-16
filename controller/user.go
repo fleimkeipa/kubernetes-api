@@ -137,3 +137,41 @@ func (rc *UserHandlers) Login(c echo.Context) error {
 		"message":  "Successfully logged in",
 	})
 }
+
+// List Users
+//
+//	@Summary		List all users
+//	@Description	Retrieves a filtered and paginated list of users from the database based on query parameters.
+//	@Tags			users
+//	@Accept			json
+//	@Produce		json
+//	@Param			limit		query		string					false	"Limit the number of users returned"
+//	@Param			skip		query		string					false	"Number of users to skip for pagination"
+//	@Param			username	query		string					false	"Filter users by username"
+//	@Param			email		query		string					false	"Filter users by email"
+//	@Param			role_id		query		string					false	"Filter users by role ID"
+//	@Success		200			{object}	map[string]interface{}	"Successful response containing the list of users"
+//	@Failure		400			{object}	map[string]string		"Bad request, invalid parameters or error during retrieval"
+//	@Router			/users [get]
+func (rc *UserHandlers) List(c echo.Context) error {
+	var opts = rc.getUsersFindOpts(c, model.ZeroCreds)
+
+	list, err := rc.userUC.List(c.Request().Context(), &opts)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{"data": list})
+}
+
+func (rc *UserHandlers) getUsersFindOpts(c echo.Context, fields ...string) model.UserFindOpts {
+	return model.UserFindOpts{
+		PaginationOpts: getPagination(c),
+		FieldsOpts: model.FieldsOpts{
+			Fields: fields,
+		},
+		Username: getFilter(c, "username"),
+		Email:    getFilter(c, "email"),
+		RoleID:   getFilter(c, "role_id"),
+	}
+}

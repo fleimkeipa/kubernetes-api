@@ -56,3 +56,7 @@ func (rc *UserUC) GetByID(ctx context.Context, id string) (*model.User, error) {
 
 	return user, nil
 }
+
+func (rc *UserUC) List(ctx context.Context, opts *model.UserFindOpts) ([]model.User, error) {
+	return rc.userRepo.List(ctx, opts)
+}
