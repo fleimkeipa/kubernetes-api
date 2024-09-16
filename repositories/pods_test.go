@@ -62,7 +62,7 @@ func TestPodsRepository_Get(t *testing.T) {
 			rc := &PodsRepository{
 				client: tt.fields.client,
 			}
-			got, err := rc.Get(tt.args.ctx, tt.args.namespace, tt.args.opts)
+			got, err := rc.List(tt.args.ctx, tt.args.namespace, tt.args.opts)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("PodsRepository.Get() error = %v, wantErr %v", err, tt.wantErr)
 				return

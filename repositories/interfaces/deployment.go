@@ -8,7 +8,7 @@ import (
 )
 
 type DeploymentInterfaces interface {
-	Get(context.Context, string, metav1.ListOptions) (*v1.DeploymentList, error)
+	List(context.Context, string, metav1.ListOptions) (*v1.DeploymentList, error)
 	Create(context.Context, *v1.Deployment, metav1.CreateOptions) (*v1.Deployment, error)
 	Delete(context.Context, string, string, metav1.DeleteOptions) error
 	Update(context.Context, *v1.Deployment, metav1.UpdateOptions) (*v1.Deployment, error)

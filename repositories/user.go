@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/fleimkeipa/kubernetes-api/model"
 
@@ -21,7 +22,7 @@ func NewUserRepository(db *pg.DB) *UserRepository {
 func (rc *UserRepository) Create(ctx context.Context, user model.User) (*model.User, error) {
 	_, err := rc.db.Model(&user).Insert()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to create user: %w", err)
 	}
 
 	return &user, nil
@@ -30,21 +31,21 @@ func (rc *UserRepository) Create(ctx context.Context, user model.User) (*model.U
 func (rc *UserRepository) Update(ctx context.Context, user model.User) (*model.User, error) {
 	_, err := rc.db.Model(&user).WherePK().Update()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to update user: %w", err)
 	}
 
 	return &user, nil
 }
 
-func (rc *UserRepository) GetByID(ctx context.Context, usernameOrEmail string) (*model.User, error) {
+func (rc *UserRepository) GetByID(ctx context.Context, id string) (*model.User, error) {
 	var user = new(model.User)
 
 	err := rc.db.
 		Model(user).
-		Where("id = ?", usernameOrEmail).
+		Where("id = ?", id).
 		Select()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to find user [%s] id, error: %w", id, err)
 	}
 
 	return user, nil
@@ -58,7 +59,7 @@ func (rc *UserRepository) GetByUsernameOrEmail(ctx context.Context, usernameOrEm
 		Where("username = ? OR email = ?", usernameOrEmail, usernameOrEmail).
 		Select()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to find user by [%s], error: %w", usernameOrEmail, err)
 	}
 
 	return user, nil

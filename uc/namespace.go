@@ -20,10 +20,10 @@ func NewNamespaceUC(namespaceRepo interfaces.NamespaceInterfaces) *NamespaceUC {
 	}
 }
 
-func (rc *NamespaceUC) Get(ctx context.Context, opts metav1.ListOptions) (*corev1.NamespaceList, error) {
+func (rc *NamespaceUC) List(ctx context.Context, opts metav1.ListOptions) (*corev1.NamespaceList, error) {
 	opts.TypeMeta.Kind = "namespace"
 
-	return rc.namespaceRepo.Get(ctx, opts)
+	return rc.namespaceRepo.List(ctx, opts)
 }
 
 func (rc *NamespaceUC) Create(ctx context.Context, namespace *corev1.Namespace, opts metav1.CreateOptions) (*corev1.Namespace, error) {
@@ -36,7 +36,7 @@ func (rc *NamespaceUC) GetByNameOrUID(ctx context.Context, nameOrUID string, opt
 	opts.TypeMeta.Kind = "namespace"
 
 	opts.Limit = 100
-	namespaces, err := rc.namespaceRepo.Get(ctx, opts)
+	namespaces, err := rc.namespaceRepo.List(ctx, opts)
 	if err != nil {
 		return nil, err
 	}

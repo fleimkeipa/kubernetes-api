@@ -43,7 +43,7 @@ func TestNamespaceRepository_Get(t *testing.T) {
 			rc := &NamespaceRepository{
 				client: tt.fields.client,
 			}
-			got, err := rc.Get(tt.args.ctx, tt.args.opts)
+			got, err := rc.List(tt.args.ctx, tt.args.opts)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("NamespaceRepository.Get() error = %v, wantErr %v", err, tt.wantErr)
 				return

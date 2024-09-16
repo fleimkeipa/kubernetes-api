@@ -62,7 +62,7 @@ func (rc *DeploymentHandler) List(c echo.Context) error {
 
 	var opts = metav1.ListOptions{}
 
-	list, err := rc.deploymentUC.Get(c.Request().Context(), namespace, opts)
+	list, err := rc.deploymentUC.List(c.Request().Context(), namespace, opts)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
 	}

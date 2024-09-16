@@ -20,7 +20,7 @@ func (rc *DeploymentInterfaces) Create(ctx context.Context, deployment *v1.Deplo
 	return rc.client.AppsV1().Deployments(deployment.Namespace).Create(ctx, deployment, opts)
 }
 
-func (rc *DeploymentInterfaces) Get(ctx context.Context, namespace string, opts metav1.ListOptions) (*v1.DeploymentList, error) {
+func (rc *DeploymentInterfaces) List(ctx context.Context, namespace string, opts metav1.ListOptions) (*v1.DeploymentList, error) {
 	return rc.client.AppsV1().Deployments(namespace).List(ctx, opts)
 }
 

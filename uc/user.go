@@ -2,7 +2,6 @@ package uc
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/fleimkeipa/kubernetes-api/model"
 	"github.com/fleimkeipa/kubernetes-api/repositories/interfaces"
@@ -43,7 +42,7 @@ func (rc *UserUC) Update(ctx context.Context, id string, user model.User) (*mode
 func (rc *UserUC) GetByUsernameOrEmail(ctx context.Context, usernameOrEmail string) (*model.User, error) {
 	user, err := rc.userRepo.GetByUsernameOrEmail(ctx, usernameOrEmail)
 	if err != nil {
-		return nil, fmt.Errorf("failed to find user by [%s], error: %w", usernameOrEmail, err)
+		return nil, err
 	}
 
 	return user, nil
@@ -52,7 +51,7 @@ func (rc *UserUC) GetByUsernameOrEmail(ctx context.Context, usernameOrEmail stri
 func (rc *UserUC) GetByID(ctx context.Context, id string) (*model.User, error) {
 	user, err := rc.userRepo.GetByID(ctx, id)
 	if err != nil {
-		return nil, fmt.Errorf("failed to find user [%s] id, error: %w", id, err)
+		return nil, err
 	}
 
 	return user, nil

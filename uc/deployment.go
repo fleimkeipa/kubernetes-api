@@ -20,13 +20,13 @@ func NewDeploymentUC(deploymentRepo interfaces.DeploymentInterfaces) *Deployment
 	}
 }
 
-func (rc *DeploymentUC) Get(ctx context.Context, namespace string, opts metav1.ListOptions) (*v1.DeploymentList, error) {
+func (rc *DeploymentUC) List(ctx context.Context, namespace string, opts metav1.ListOptions) (*v1.DeploymentList, error) {
 	opts.TypeMeta.Kind = "deployment"
 	if namespace == "" {
 		namespace = "default"
 	}
 
-	return rc.deploymentRepo.Get(ctx, namespace, opts)
+	return rc.deploymentRepo.List(ctx, namespace, opts)
 }
 
 func (rc *DeploymentUC) Create(ctx context.Context, deployment *v1.Deployment, opts metav1.CreateOptions) (*v1.Deployment, error) {
@@ -45,7 +45,7 @@ func (rc *DeploymentUC) GetByNameOrUID(ctx context.Context, namespace, nameOrUID
 	}
 
 	opts.Limit = 100
-	deployments, err := rc.deploymentRepo.Get(ctx, namespace, opts)
+	deployments, err := rc.deploymentRepo.List(ctx, namespace, opts)
 	if err != nil {
 		return nil, err
 	}

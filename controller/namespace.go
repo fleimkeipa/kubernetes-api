@@ -20,7 +20,7 @@ func NewNamespaceHandler(namespaceUC *uc.NamespaceUC) *NamespaceHandler {
 	}
 }
 
-// Get godoc
+// List godoc
 //
 //	@Summary		List namespaces
 //	@Description	Retrieves a list of namespaces from the Kubernetes cluster.
@@ -30,9 +30,9 @@ func NewNamespaceHandler(namespaceUC *uc.NamespaceUC) *NamespaceHandler {
 //	@Success		200	{object}	map[string]interface{}	"List of namespaces"
 //	@Failure		400	{object}	map[string]string		"Bad request or error message"
 //	@Router			/namespaces [get]
-func (rc *NamespaceHandler) Get(c echo.Context) error {
+func (rc *NamespaceHandler) List(c echo.Context) error {
 	var opts = metav1.ListOptions{}
-	list, err := rc.namespaceUC.Get(c.Request().Context(), opts)
+	list, err := rc.namespaceUC.List(c.Request().Context(), opts)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
 	}

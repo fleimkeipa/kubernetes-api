@@ -74,13 +74,13 @@ func (rc *PodsUC) Update(ctx context.Context, id string, pod *model.Pod, opts me
 	return rc.podsRepo.Update(ctx, id, kubePod, opts)
 }
 
-func (rc *PodsUC) Get(ctx context.Context, namespace string, opts metav1.ListOptions) (*corev1.PodList, error) {
+func (rc *PodsUC) List(ctx context.Context, namespace string, opts metav1.ListOptions) (*corev1.PodList, error) {
 	opts.TypeMeta.Kind = "pod"
 	if namespace == "" {
 		namespace = "default"
 	}
 
-	return rc.podsRepo.Get(ctx, namespace, opts)
+	return rc.podsRepo.List(ctx, namespace, opts)
 }
 
 func (rc *PodsUC) GetByNameOrUID(ctx context.Context, namespace, nameOrUID string, opts metav1.ListOptions) (*corev1.Pod, error) {
@@ -90,7 +90,7 @@ func (rc *PodsUC) GetByNameOrUID(ctx context.Context, namespace, nameOrUID strin
 	}
 
 	opts.Limit = 100
-	pods, err := rc.podsRepo.Get(ctx, namespace, opts)
+	pods, err := rc.podsRepo.List(ctx, namespace, opts)
 	if err != nil {
 		return nil, err
 	}

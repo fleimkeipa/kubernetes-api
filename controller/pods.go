@@ -98,7 +98,7 @@ func (rc *PodsHandler) List(c echo.Context) error {
 
 	var opts = metav1.ListOptions{}
 
-	list, err := rc.podsUC.Get(c.Request().Context(), namespace, opts)
+	list, err := rc.podsUC.List(c.Request().Context(), namespace, opts)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
 	}
