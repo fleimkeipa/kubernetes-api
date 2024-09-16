@@ -20,3 +20,7 @@ func NewEventUC(eventRepo interfaces.EventsInterfaces) *EventUC {
 func (rc *EventUC) Create(ctx context.Context, event *model.Event) (*model.Event, error) {
 	return rc.eventRepo.Create(ctx, event)
 }
+
+func (rc *EventUC) List(ctx context.Context, opts *model.EventFindOpts) ([]model.Event, error) {
+	return rc.eventRepo.List(ctx, opts)
+}
