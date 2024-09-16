@@ -103,6 +103,7 @@ func serveApplication() {
 	restrictedRoutes.Use(util.JWTAuthViewer)
 
 	var usersRoutes = restrictedRoutes.Group("/users")
+	usersRoutes.GET("", userHandlers.List)
 	usersRoutes.POST("", userHandlers.CreateUser)
 	usersRoutes.PUT("/:id", userHandlers.UpdateUser)
 
