@@ -120,7 +120,7 @@ func TestUserRepository_GetByID(t *testing.T) {
 			},
 			args: args{
 				ctx: context.TODO(),
-				id:  "2",
+				id:  "1",
 				user: &model.User{
 					ID:       0,
 					Username: "admin3",
