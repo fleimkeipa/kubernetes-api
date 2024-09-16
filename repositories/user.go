@@ -27,7 +27,30 @@ func (rc *UserRepository) Create(ctx context.Context, user model.User) (*model.U
 	return &user, nil
 }
 
-func (rc *UserRepository) GetUserByUsernameOrEmail(ctx context.Context, usernameOrEmail string) (*model.User, error) {
+func (rc *UserRepository) Update(ctx context.Context, user model.User) (*model.User, error) {
+	_, err := rc.db.Model(&user).WherePK().Update()
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+func (rc *UserRepository) GetByID(ctx context.Context, usernameOrEmail string) (*model.User, error) {
+	var user = new(model.User)
+
+	err := rc.db.
+		Model(user).
+		Where("id = ?", usernameOrEmail).
+		Select()
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (rc *UserRepository) GetByUsernameOrEmail(ctx context.Context, usernameOrEmail string) (*model.User, error) {
 	var user = new(model.User)
 
 	err := rc.db.

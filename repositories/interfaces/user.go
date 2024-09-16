@@ -8,5 +8,7 @@ import (
 
 type UserInterfaces interface {
 	Create(context.Context, model.User) (*model.User, error)
-	GetUserByUsernameOrEmail(context.Context, string) (*model.User, error)
+	Update(context.Context, model.User) (*model.User, error)
+	GetByUsernameOrEmail(context.Context, string) (*model.User, error)
+	GetByID(context.Context, string) (*model.User, error)
 }

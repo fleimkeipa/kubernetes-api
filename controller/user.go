@@ -23,19 +23,19 @@ func NewUserHandlers(uc *uc.UserUC) *UserHandlers {
 	}
 }
 
-// Register godoc
+// CreateUser godoc
 //
-//	@Summary		Register a new user
-//	@Description	This endpoint registers a new user by providing username, email, password, and role ID.
+//	@Summary		CreateUser create a new user
+//	@Description	This endpoint creates a new user by providing username, email, password, and role ID.
 //	@Tags			user
 //	@Accept			json
 //	@Produce		json
-//	@Param			body	body		model.Register		true	"User registration input"
+//	@Param			body	body		model.UserRequest	true	"User creation input"
 //	@Success		201		{object}	map[string]string	"User created"
 //	@Failure		400		{object}	map[string]string	"Error message"
-//	@Router			/auth/register [post]
-func (rc *UserHandlers) Register(c echo.Context) error {
-	var input model.Register
+//	@Router			/users [post]
+func (rc *UserHandlers) CreateUser(c echo.Context) error {
+	var input model.UserRequest
 
 	if err := c.Bind(&input); err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
@@ -49,6 +49,40 @@ func (rc *UserHandlers) Register(c echo.Context) error {
 	}
 
 	_, err := rc.userUC.Create(c.Request().Context(), user)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusCreated, echo.Map{"user": user.Username})
+}
+
+// UpdateUser godoc
+//
+//	@Summary		UpdateUser update a user
+//	@Description	This endpoint updates a user by providing username, email, password, and role ID.
+//	@Tags			user
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		model.UserRequest	true	"User update input"
+//	@Success		201		{object}	map[string]string	"User created"
+//	@Failure		400		{object}	map[string]string	"Error message"
+//	@Router			/users/{id} [post]
+func (rc *UserHandlers) UpdateUser(c echo.Context) error {
+	var id = c.Param("id")
+	var input model.UserRequest
+
+	if err := c.Bind(&input); err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+	}
+
+	var user = model.User{
+		Username: input.Username,
+		Email:    input.Email,
+		Password: input.Password,
+		RoleID:   input.RoleID,
+	}
+
+	_, err := rc.userUC.Update(c.Request().Context(), id, user)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
 	}
@@ -83,7 +117,7 @@ func (rc *UserHandlers) Login(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": errorMessage})
 	}
 
-	user, err := rc.userUC.GetUserByUsernameOrEmail(c.Request().Context(), input.Username)
+	user, err := rc.userUC.GetByUsernameOrEmail(c.Request().Context(), input.Username)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
 	}

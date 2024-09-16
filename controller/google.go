@@ -79,7 +79,7 @@ func (rc *GoogleAuthHandler) GoogleCallback(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
 	}
 
-	user, err := rc.userUC.GetUserByUsernameOrEmail(c.Request().Context(), googleUser.Email)
+	user, err := rc.userUC.GetByUsernameOrEmail(c.Request().Context(), googleUser.Email)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
 	}

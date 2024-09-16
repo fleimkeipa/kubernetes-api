@@ -13,6 +13,7 @@ type Event struct {
 	EventKind    string    `json:"event_kind"`
 	CreationTime time.Time `json:"creation_time"`
 	Owner        User      `json:"owner" pg:"rel:has-one"`
+	DeletedAt    time.Time `json:"deleted_at" pg:",soft_delete"`
 }
 
 type EventFindOpts struct {

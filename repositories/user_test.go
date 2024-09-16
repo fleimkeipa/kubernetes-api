@@ -86,7 +86,7 @@ func TestUserRepository_GetUserByUsername(t *testing.T) {
 			rc := &UserRepository{
 				db: tt.fields.db,
 			}
-			got, err := rc.GetUserByUsernameOrEmail(tt.args.ctx, tt.args.username)
+			got, err := rc.GetByUsernameOrEmail(tt.args.ctx, tt.args.username)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("UserRepository.GetUserByUsername() error = %v, wantErr %v", err, tt.wantErr)
 				return

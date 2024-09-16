@@ -1,11 +1,21 @@
 package model
 
+import "time"
+
 type User struct {
-	ID       int64  `json:"id"`
+	ID        int64     `json:"id" pg:",pk"`
+	Username  string    `json:"username" binding:"required" pg:",unique"`
+	Email     string    `json:"email" binding:"required" pg:",unique"`
+	Password  string    `json:"password" binding:"required"`
+	RoleID    uint      `json:"role_id"`
+	DeletedAt time.Time `json:"deleted_at" pg:",soft_delete"`
+}
+
+type UserRequest struct {
 	Username string `json:"username" binding:"required"`
 	Email    string `json:"email" binding:"required"`
 	Password string `json:"password" binding:"required"`
-	RoleID   uint   `json:"role_id"`
+	RoleID   uint   `bson:"role_id" json:"role_id"`
 }
 
 type GoogleUser struct {

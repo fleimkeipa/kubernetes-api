@@ -88,7 +88,6 @@ func serveApplication() {
 	config.GoogleConfig()
 
 	var authRoutes = e.Group("/auth")
-	authRoutes.POST("/register", userHandlers.Register)
 	authRoutes.POST("/login", userHandlers.Login)
 
 	var googleAuthHandler = controller.NewGoogleAuthHandler(userUC)
@@ -100,6 +99,10 @@ func serveApplication() {
 	var restrictedRoutes = e.Group("")
 	restrictedRoutes.Use(util.JWTAuth)
 	restrictedRoutes.Use(util.JWTAuthViewer)
+
+	var userRoutes = restrictedRoutes.Group("/users")
+	userRoutes.POST("", userHandlers.CreateUser)
+	userRoutes.PUT("/:id", userHandlers.UpdateUser)
 
 	var podsRoutes = restrictedRoutes.Group("/pods")
 	podsRoutes.GET("", podsHandlers.List)
