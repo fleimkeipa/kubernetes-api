@@ -7,7 +7,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-type PodsInterfaces interface {
+type PodInterfaces interface {
 	Create(context.Context, *corev1.Pod, metav1.CreateOptions) (*corev1.Pod, error)
 	List(context.Context, string, metav1.ListOptions) (*corev1.PodList, error)
 	Delete(context.Context, string, string, metav1.DeleteOptions) error

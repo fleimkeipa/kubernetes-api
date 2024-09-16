@@ -14,11 +14,11 @@ import (
 )
 
 type PodsUC struct {
-	podsRepo  interfaces.PodsInterfaces
-	eventRepo interfaces.EventsInterfaces
+	podsRepo  interfaces.PodInterfaces
+	eventRepo interfaces.EventInterfaces
 }
 
-func NewPodsUC(podsRepo interfaces.PodsInterfaces, eventRepo interfaces.EventsInterfaces) *PodsUC {
+func NewPodsUC(podsRepo interfaces.PodInterfaces, eventRepo interfaces.EventInterfaces) *PodsUC {
 	return &PodsUC{
 		podsRepo:  podsRepo,
 		eventRepo: eventRepo,

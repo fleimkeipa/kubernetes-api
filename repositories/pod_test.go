@@ -59,7 +59,7 @@ func TestPodsRepository_Get(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			rc := &PodsRepository{
+			rc := &PodRepository{
 				client: tt.fields.client,
 			}
 			got, err := rc.List(tt.args.ctx, tt.args.namespace, tt.args.opts)

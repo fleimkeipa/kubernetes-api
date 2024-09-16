@@ -35,7 +35,7 @@ func initTestDB() *pg.DB {
 
 func TestPodsUC_GetByName(t *testing.T) {
 	type fields struct {
-		podsRepo interfaces.PodsInterfaces
+		podsRepo interfaces.PodInterfaces
 	}
 	type args struct {
 		ctx       context.Context
@@ -53,7 +53,7 @@ func TestPodsUC_GetByName(t *testing.T) {
 		{
 			name: "",
 			fields: fields{
-				podsRepo: repositories.NewPodsRepository(initTestKubernetes()),
+				podsRepo: repositories.NewPodRepository(initTestKubernetes()),
 			},
 			args: args{
 				ctx:       context.Background(),
@@ -85,8 +85,8 @@ func TestPodsUC_GetByName(t *testing.T) {
 func TestPodsUC_Update(t *testing.T) {
 	var second int64 = 128
 	type fields struct {
-		podsRepo  interfaces.PodsInterfaces
-		eventRepo interfaces.EventsInterfaces
+		podsRepo  interfaces.PodInterfaces
+		eventRepo interfaces.EventInterfaces
 	}
 	type args struct {
 		ctx  context.Context
@@ -104,7 +104,7 @@ func TestPodsUC_Update(t *testing.T) {
 		{
 			name: "",
 			fields: fields{
-				podsRepo:  repositories.NewPodsRepository(initTestKubernetes()),
+				podsRepo:  repositories.NewPodRepository(initTestKubernetes()),
 				eventRepo: repositories.NewEventRepository(initTestDB()),
 			},
 			args: args{

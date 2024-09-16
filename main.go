@@ -67,13 +67,13 @@ func serveApplication() {
 
 	var dbClient = initDB()
 
-	var eventsRepo = repositories.NewEventRepository(dbClient)
-	var eventsUC = uc.NewEventUC(eventsRepo)
-	var eventsHandler = controller.NewEventsHandler(eventsUC, sugar)
+	var eventRepo = repositories.NewEventRepository(dbClient)
+	var eventUC = uc.NewEventUC(eventRepo)
+	var eventHandler = controller.NewEventHandler(eventUC, sugar)
 
-	var podsRepo = repositories.NewPodsRepository(kubClient)
-	var podsUC = uc.NewPodsUC(podsRepo, eventsRepo)
-	var podsHandlers = controller.NewPodsHandler(podsUC, sugar)
+	var podRepo = repositories.NewPodRepository(kubClient)
+	var podUC = uc.NewPodsUC(podRepo, eventRepo)
+	var podHandlers = controller.NewPodHandler(podUC, sugar)
 
 	var namespaceRepo = repositories.NewNamespaceRepository(kubClient)
 	var namespaceUC = uc.NewNamespaceUC(namespaceRepo)
@@ -108,11 +108,11 @@ func serveApplication() {
 	usersRoutes.PUT("/:id", userHandlers.UpdateUser)
 
 	var podsRoutes = restrictedRoutes.Group("/pods")
-	podsRoutes.GET("", podsHandlers.List)
-	podsRoutes.POST("", podsHandlers.Create)
-	podsRoutes.GET("/:id", podsHandlers.GetByNameOrUID)
-	podsRoutes.DELETE("/:id", podsHandlers.Delete)
-	podsRoutes.PUT("/:id", podsHandlers.Update)
+	podsRoutes.GET("", podHandlers.List)
+	podsRoutes.POST("", podHandlers.Create)
+	podsRoutes.GET("/:id", podHandlers.GetByNameOrUID)
+	podsRoutes.DELETE("/:id", podHandlers.Delete)
+	podsRoutes.PUT("/:id", podHandlers.Update)
 
 	var namespacesRoutes = restrictedRoutes.Group("/namespaces")
 	namespacesRoutes.GET("", namespaceHandlers.List)
@@ -129,7 +129,7 @@ func serveApplication() {
 	deploymentsRoutes.PUT("/:id", deploymentHandlers.Update)
 
 	var eventsRoutes = restrictedRoutes.Group("/events")
-	eventsRoutes.GET("", eventsHandler.List)
+	eventsRoutes.GET("", eventHandler.List)
 
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", os.Getenv("API_PORT"))))
 }

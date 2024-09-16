@@ -8,10 +8,10 @@ import (
 )
 
 type EventUC struct {
-	eventRepo interfaces.EventsInterfaces
+	eventRepo interfaces.EventInterfaces
 }
 
-func NewEventUC(eventRepo interfaces.EventsInterfaces) *EventUC {
+func NewEventUC(eventRepo interfaces.EventInterfaces) *EventUC {
 	return &EventUC{
 		eventRepo: eventRepo,
 	}

@@ -11,13 +11,13 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-type PodsHandler struct {
+type PodHandler struct {
 	podsUC *uc.PodsUC
 	logger *zap.SugaredLogger
 }
 
-func NewPodsHandler(podsUC *uc.PodsUC, logger *zap.SugaredLogger) *PodsHandler {
-	return &PodsHandler{
+func NewPodHandler(podsUC *uc.PodsUC, logger *zap.SugaredLogger) *PodHandler {
+	return &PodHandler{
 		podsUC: podsUC,
 		logger: logger,
 	}
@@ -34,7 +34,7 @@ func NewPodsHandler(podsUC *uc.PodsUC, logger *zap.SugaredLogger) *PodsHandler {
 //	@Success		201	{object}	map[string]string		"Successfully created the pod"
 //	@Failure		400	{object}	map[string]string		"Bad request or invalid data"
 //	@Router			/pods [post]
-func (rc *PodsHandler) Create(c echo.Context) error {
+func (rc *PodHandler) Create(c echo.Context) error {
 	var request model.PodsCreateRequest
 
 	if err := c.Bind(&request); err != nil {
@@ -65,7 +65,7 @@ func (rc *PodsHandler) Create(c echo.Context) error {
 //	@Success		200	{object}	map[string]string		"Pod successfully updated"
 //	@Failure		400	{object}	map[string]string		"Bad request or invalid input data"
 //	@Router			/pods/{id} [put]
-func (rc *PodsHandler) Update(c echo.Context) error {
+func (rc *PodHandler) Update(c echo.Context) error {
 	var id = c.Param("id")
 
 	var request model.PodsCreateRequest
@@ -93,7 +93,7 @@ func (rc *PodsHandler) Update(c echo.Context) error {
 //	@Success		200			{object}	map[string]interface{}	"List of pods"
 //	@Failure		400			{object}	map[string]string		"Bad request or invalid data"
 //	@Router			/pods [get]
-func (rc *PodsHandler) List(c echo.Context) error {
+func (rc *PodHandler) List(c echo.Context) error {
 	var namespace = c.QueryParam("namespace")
 
 	var opts = metav1.ListOptions{}
@@ -118,7 +118,7 @@ func (rc *PodsHandler) List(c echo.Context) error {
 //	@Success		200			{object}	map[string]interface{}	"Details of the requested pod"
 //	@Failure		400			{object}	map[string]string		"Bad request or invalid data"
 //	@Router			/pods/{id} [get]
-func (rc *PodsHandler) GetByNameOrUID(c echo.Context) error {
+func (rc *PodHandler) GetByNameOrUID(c echo.Context) error {
 	var namespace = c.QueryParam("namespace")
 	var nameOrUID = c.Param("id")
 
@@ -144,7 +144,7 @@ func (rc *PodsHandler) GetByNameOrUID(c echo.Context) error {
 //	@Success		200			{string}	string				"Success message"
 //	@Failure		400			{object}	map[string]string	"Bad request or error message"
 //	@Router			/pods/{id} [delete]
-func (rc *PodsHandler) Delete(c echo.Context) error {
+func (rc *PodHandler) Delete(c echo.Context) error {
 	var namespace = c.QueryParam("namespace")
 	var nameOrUID = c.Param("id")
 

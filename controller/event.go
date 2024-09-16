@@ -10,13 +10,13 @@ import (
 	"go.uber.org/zap"
 )
 
-type EventsHandler struct {
+type EventHandler struct {
 	eventsUC *uc.EventUC
 	logger   *zap.SugaredLogger
 }
 
-func NewEventsHandler(eventsUC *uc.EventUC, logger *zap.SugaredLogger) *EventsHandler {
-	return &EventsHandler{
+func NewEventHandler(eventsUC *uc.EventUC, logger *zap.SugaredLogger) *EventHandler {
+	return &EventHandler{
 		eventsUC: eventsUC,
 		logger:   logger,
 	}
@@ -37,7 +37,7 @@ func NewEventsHandler(eventsUC *uc.EventUC, logger *zap.SugaredLogger) *EventsHa
 //	@Success		200				{object}	map[string]interface{}	"List of events"
 //	@Failure		400				{object}	map[string]string		"Bad request or invalid data"
 //	@Router			/events [get]
-func (rc *EventsHandler) List(c echo.Context) error {
+func (rc *EventHandler) List(c echo.Context) error {
 	var opts = rc.getEventsFindOpts(c)
 
 	list, err := rc.eventsUC.List(c.Request().Context(), &opts)
@@ -48,7 +48,7 @@ func (rc *EventsHandler) List(c echo.Context) error {
 	return c.JSON(http.StatusOK, echo.Map{"data": list})
 }
 
-func (rc *EventsHandler) getEventsFindOpts(c echo.Context) model.EventFindOpts {
+func (rc *EventHandler) getEventsFindOpts(c echo.Context) model.EventFindOpts {
 	return model.EventFindOpts{
 		PaginationOpts: getPagination(c),
 		Kind:           getFilter(c, "kind"),
