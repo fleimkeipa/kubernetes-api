@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/fleimkeipa/kubernetes-api/model"
-
 	"github.com/go-pg/pg"
 )
 
@@ -93,6 +92,69 @@ func TestUserRepository_GetUserByUsername(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("UserRepository.GetUserByUsername() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestUserRepository_GetByID(t *testing.T) {
+	type fields struct {
+		db *pg.DB
+	}
+	type args struct {
+		ctx  context.Context
+		id   string
+		user *model.User
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    *model.User
+		wantErr bool
+	}{
+		{
+			name: "",
+			fields: fields{
+				db: test_db,
+			},
+			args: args{
+				ctx: context.TODO(),
+				id:  "2",
+				user: &model.User{
+					ID:       0,
+					Username: "admin3",
+					Email:    "admin3@admin.com",
+					Password: "password",
+					RoleID:   7,
+				},
+			},
+			want: &model.User{
+				ID:       1,
+				Username: "admin3",
+				Email:    "admin3@admin.com",
+				Password: "password",
+				RoleID:   7,
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := addTempData(tt.args.user); (err != nil) != tt.wantErr {
+				t.Errorf("UserRepository.GetByID() addTempData error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			rc := &UserRepository{
+				db: tt.fields.db,
+			}
+			got, err := rc.GetByID(tt.args.ctx, tt.args.id)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("UserRepository.GetByID() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("UserRepository.GetByID() = %v, want %v", got, tt.want)
 			}
 		})
 	}
