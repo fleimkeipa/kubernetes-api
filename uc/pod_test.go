@@ -5,31 +5,15 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/fleimkeipa/kubernetes-api/pkg"
 	"github.com/fleimkeipa/kubernetes-api/repositories"
 	"github.com/fleimkeipa/kubernetes-api/repositories/interfaces"
 
-	"github.com/go-pg/pg"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/kubernetes"
 )
 
 func init() {
 	loadEnv()
-}
-
-func initTestKubernetes() *kubernetes.Clientset {
-	client, err := pkg.NewKubernetesClient()
-	if err != nil {
-		panic(err.Error())
-	}
-
-	return client
-}
-
-func initTestDB() *pg.DB {
-	return pkg.NewPSQLClient()
 }
 
 func TestPodsUC_GetByName(t *testing.T) {
@@ -66,7 +50,7 @@ func TestPodsUC_GetByName(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			rc := &PodsUC{
+			rc := &PodUC{
 				podsRepo: tt.fields.podsRepo,
 			}
 			got, err := rc.GetByNameOrUID(tt.args.ctx, tt.args.namespace, tt.args.name, tt.args.opts)

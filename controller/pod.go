@@ -12,11 +12,11 @@ import (
 )
 
 type PodHandler struct {
-	podsUC *uc.PodsUC
+	podsUC *uc.PodUC
 	logger *zap.SugaredLogger
 }
 
-func NewPodHandler(podsUC *uc.PodsUC, logger *zap.SugaredLogger) *PodHandler {
+func NewPodHandler(podsUC *uc.PodUC, logger *zap.SugaredLogger) *PodHandler {
 	return &PodHandler{
 		podsUC: podsUC,
 		logger: logger,

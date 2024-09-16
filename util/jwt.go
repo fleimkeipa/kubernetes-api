@@ -98,6 +98,30 @@ func ValidateViewerRoleJWT(c echo.Context) error {
 	return errors.New("invalid viewer or admin token provided")
 }
 
+// GetUserIDOnToken return user id
+func GetUserIDOnToken(c echo.Context) (string, error) {
+	token, err := getToken(c)
+	if err != nil {
+		return "", err
+	}
+
+	if !token.Valid {
+		return "", errors.New("invalid token")
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return "", errors.New("invalid token claims")
+	}
+
+	id, ok := claims["id"].(string)
+	if !ok {
+		return "", errors.New("invalid id claims")
+	}
+
+	return id, nil
+}
+
 // check token validity
 func getToken(context echo.Context) (*jwt.Token, error) {
 	var tokenString = getTokenFromRequest(context)

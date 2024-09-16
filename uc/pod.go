@@ -13,19 +13,19 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 )
 
-type PodsUC struct {
+type PodUC struct {
 	podsRepo interfaces.PodInterfaces
 	eventUC  *EventUC
 }
 
-func NewPodsUC(podsRepo interfaces.PodInterfaces, eventUC *EventUC) *PodsUC {
-	return &PodsUC{
+func NewPodUC(podsRepo interfaces.PodInterfaces, eventUC *EventUC) *PodUC {
+	return &PodUC{
 		podsRepo: podsRepo,
 		eventUC:  eventUC,
 	}
 }
 
-func (rc *PodsUC) Create(ctx context.Context, pod *model.Pod, opts metav1.CreateOptions) (*corev1.Pod, error) {
+func (rc *PodUC) Create(ctx context.Context, pod *model.Pod, opts metav1.CreateOptions) (*corev1.Pod, error) {
 	pod.TypeMeta.Kind = "pod"
 	if pod.ObjectMeta.Namespace == "" {
 		pod.ObjectMeta.Namespace = "default"
@@ -47,7 +47,7 @@ func (rc *PodsUC) Create(ctx context.Context, pod *model.Pod, opts metav1.Create
 	return rc.podsRepo.Create(ctx, kubePod, opts)
 }
 
-func (rc *PodsUC) Update(ctx context.Context, id string, pod *model.Pod, opts metav1.UpdateOptions) (*corev1.Pod, error) {
+func (rc *PodUC) Update(ctx context.Context, id string, pod *model.Pod, opts metav1.UpdateOptions) (*corev1.Pod, error) {
 	existPod, err := rc.GetByNameOrUID(ctx, pod.Namespace, id, metav1.ListOptions{})
 	if err != nil {
 		return nil, err
@@ -74,7 +74,7 @@ func (rc *PodsUC) Update(ctx context.Context, id string, pod *model.Pod, opts me
 	return rc.podsRepo.Update(ctx, id, kubePod, opts)
 }
 
-func (rc *PodsUC) List(ctx context.Context, namespace string, opts metav1.ListOptions) (*corev1.PodList, error) {
+func (rc *PodUC) List(ctx context.Context, namespace string, opts metav1.ListOptions) (*corev1.PodList, error) {
 	opts.TypeMeta.Kind = "pod"
 	if namespace == "" {
 		namespace = "default"
@@ -83,7 +83,7 @@ func (rc *PodsUC) List(ctx context.Context, namespace string, opts metav1.ListOp
 	return rc.podsRepo.List(ctx, namespace, opts)
 }
 
-func (rc *PodsUC) GetByNameOrUID(ctx context.Context, namespace, nameOrUID string, opts metav1.ListOptions) (*corev1.Pod, error) {
+func (rc *PodUC) GetByNameOrUID(ctx context.Context, namespace, nameOrUID string, opts metav1.ListOptions) (*corev1.Pod, error) {
 	opts.TypeMeta.Kind = "pod"
 	if namespace == "" {
 		namespace = "default"
@@ -108,7 +108,7 @@ func (rc *PodsUC) GetByNameOrUID(ctx context.Context, namespace, nameOrUID strin
 	return rc.GetByNameOrUID(ctx, namespace, nameOrUID, opts)
 }
 
-func (rc *PodsUC) Delete(ctx context.Context, namespace, name string, opts metav1.DeleteOptions) error {
+func (rc *PodUC) Delete(ctx context.Context, namespace, name string, opts metav1.DeleteOptions) error {
 	opts.TypeMeta.Kind = "pod"
 	if namespace == "" {
 		namespace = "default"
@@ -128,7 +128,7 @@ func (rc *PodsUC) Delete(ctx context.Context, namespace, name string, opts metav
 	return rc.podsRepo.Delete(ctx, namespace, name, opts)
 }
 
-func (rc *PodsUC) fillPod(pod *model.Pod) *corev1.Pod {
+func (rc *PodUC) fillPod(pod *model.Pod) *corev1.Pod {
 	var volumes = make([]corev1.Volume, 0)
 	for _, v := range pod.Spec.Volumes {
 		volumes = append(volumes, corev1.Volume{
@@ -192,7 +192,7 @@ func (rc *PodsUC) fillPod(pod *model.Pod) *corev1.Pod {
 	}
 }
 
-func (rc *PodsUC) overwritePod(newPod *model.Pod, existPod *corev1.Pod) *corev1.Pod {
+func (rc *PodUC) overwritePod(newPod *model.Pod, existPod *corev1.Pod) *corev1.Pod {
 	existPod.Spec.Containers = rc.overwriteContainers(newPod.Spec.Containers, existPod.Spec.Containers)
 	existPod.Spec.InitContainers = rc.overwriteContainers(newPod.Spec.InitContainers, existPod.Spec.InitContainers)
 
@@ -209,7 +209,7 @@ func (rc *PodsUC) overwritePod(newPod *model.Pod, existPod *corev1.Pod) *corev1.
 }
 
 // overwriteContainers change only images
-func (rc *PodsUC) overwriteContainers(newContainers []model.Container, existContainers []corev1.Container) []corev1.Container {
+func (rc *PodUC) overwriteContainers(newContainers []model.Container, existContainers []corev1.Container) []corev1.Container {
 	var containersMap = make(map[string]model.Container, 0)
 	for _, v := range newContainers {
 		containersMap[v.Name] = v
@@ -229,7 +229,7 @@ func (rc *PodsUC) overwriteContainers(newContainers []model.Container, existCont
 }
 
 // addToleration only additions to existing tolerations
-func (rc *PodsUC) addTolerations(newTolerations []model.Toleration, existTolerations []corev1.Toleration) []corev1.Toleration {
+func (rc *PodUC) addTolerations(newTolerations []model.Toleration, existTolerations []corev1.Toleration) []corev1.Toleration {
 	var additions = make([]corev1.Toleration, 0)
 	for _, v := range newTolerations {
 		additions = append(additions, corev1.Toleration{
