@@ -67,10 +67,12 @@ func serveApplication() {
 
 	var dbClient = initDB()
 
-	var eventRepo = repositories.NewEventRepository(dbClient)
+	var eventsRepo = repositories.NewEventRepository(dbClient)
+	var eventsUC = uc.NewEventUC(eventsRepo)
+	var eventsHandler = controller.NewEventsHandler(eventsUC, sugar)
 
 	var podsRepo = repositories.NewPodsRepository(kubClient)
-	var podsUC = uc.NewPodsUC(podsRepo, eventRepo)
+	var podsUC = uc.NewPodsUC(podsRepo, eventsRepo)
 	var podsHandlers = controller.NewPodsHandler(podsUC, sugar)
 
 	var namespaceRepo = repositories.NewNamespaceRepository(kubClient)
@@ -100,9 +102,9 @@ func serveApplication() {
 	restrictedRoutes.Use(util.JWTAuth)
 	restrictedRoutes.Use(util.JWTAuthViewer)
 
-	var userRoutes = restrictedRoutes.Group("/users")
-	userRoutes.POST("", userHandlers.CreateUser)
-	userRoutes.PUT("/:id", userHandlers.UpdateUser)
+	var usersRoutes = restrictedRoutes.Group("/users")
+	usersRoutes.POST("", userHandlers.CreateUser)
+	usersRoutes.PUT("/:id", userHandlers.UpdateUser)
 
 	var podsRoutes = restrictedRoutes.Group("/pods")
 	podsRoutes.GET("", podsHandlers.List)
@@ -111,19 +113,22 @@ func serveApplication() {
 	podsRoutes.DELETE("/:id", podsHandlers.Delete)
 	podsRoutes.PUT("/:id", podsHandlers.Update)
 
-	var namespaceRoutes = restrictedRoutes.Group("/namespaces")
-	namespaceRoutes.GET("", namespaceHandlers.List)
-	namespaceRoutes.POST("", namespaceHandlers.Create)
-	namespaceRoutes.GET("/:id", namespaceHandlers.GetByNameOrUID)
-	namespaceRoutes.DELETE("/:id", namespaceHandlers.Delete)
-	namespaceRoutes.PUT("/:id", namespaceHandlers.Update)
+	var namespacesRoutes = restrictedRoutes.Group("/namespaces")
+	namespacesRoutes.GET("", namespaceHandlers.List)
+	namespacesRoutes.POST("", namespaceHandlers.Create)
+	namespacesRoutes.GET("/:id", namespaceHandlers.GetByNameOrUID)
+	namespacesRoutes.DELETE("/:id", namespaceHandlers.Delete)
+	namespacesRoutes.PUT("/:id", namespaceHandlers.Update)
 
-	var deploymentRoutes = restrictedRoutes.Group("/deployments")
-	deploymentRoutes.GET("", deploymentHandlers.List)
-	deploymentRoutes.POST("", deploymentHandlers.Create)
-	deploymentRoutes.GET("/:id", deploymentHandlers.GetByNameOrUID)
-	deploymentRoutes.DELETE("/:id", deploymentHandlers.Delete)
-	deploymentRoutes.PUT("/:id", deploymentHandlers.Update)
+	var deploymentsRoutes = restrictedRoutes.Group("/deployments")
+	deploymentsRoutes.GET("", deploymentHandlers.List)
+	deploymentsRoutes.POST("", deploymentHandlers.Create)
+	deploymentsRoutes.GET("/:id", deploymentHandlers.GetByNameOrUID)
+	deploymentsRoutes.DELETE("/:id", deploymentHandlers.Delete)
+	deploymentsRoutes.PUT("/:id", deploymentHandlers.Update)
+
+	var eventsRoutes = restrictedRoutes.Group("/events")
+	eventsRoutes.GET("", eventsHandler.List)
 
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", os.Getenv("API_PORT"))))
 }
