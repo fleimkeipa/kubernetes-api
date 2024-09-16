@@ -51,32 +51,8 @@ func ValidateJWT(c echo.Context) error {
 }
 
 // validate Admin role
-func ValidateAdminRoleJWT(context echo.Context) error {
-	token, err := getToken(context)
-	if err != nil {
-		return err
-	}
-
-	if !token.Valid {
-		return errors.New("invalid token")
-	}
-
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok {
-		return errors.New("invalid token claims")
-	}
-
-	userRole := uint(claims["role"].(float64))
-	if userRole == model.AdminRole {
-		return nil
-	}
-
-	return errors.New("invalid admin token provided")
-}
-
-// validate Viewer role
-func ValidateViewerRoleJWT(context echo.Context) error {
-	token, err := getToken(context)
+func ValidateAdminRoleJWT(c echo.Context) error {
+	token, err := getToken(c)
 	if err != nil {
 		return err
 	}
@@ -91,7 +67,31 @@ func ValidateViewerRoleJWT(context echo.Context) error {
 	}
 
 	var userRole = uint(claims["role"].(float64))
-	if userRole == model.EditorRole || userRole == model.AdminRole {
+	if userRole == model.AdminRole {
+		return nil
+	}
+
+	return errors.New("invalid admin token provided")
+}
+
+// validate Viewer role
+func ValidateViewerRoleJWT(c echo.Context) error {
+	token, err := getToken(c)
+	if err != nil {
+		return err
+	}
+
+	if !token.Valid {
+		return errors.New("invalid token")
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return errors.New("invalid token claims")
+	}
+
+	var userRole = uint(claims["role"].(float64))
+	if userRole == model.ViewerRole || userRole == model.AdminRole {
 		return nil
 	}
 
