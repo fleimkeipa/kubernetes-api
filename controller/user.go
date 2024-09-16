@@ -31,7 +31,7 @@ func NewUserHandlers(uc *uc.UserUC) *UserHandlers {
 //	@Accept			json
 //	@Produce		json
 //	@Param			body	body		model.UserRequest	true	"User creation input"
-//	@Success		201		{object}	map[string]string	"User created"
+//	@Success		201		{object}	map[string]string	"user username"
 //	@Failure		400		{object}	map[string]string	"Error message"
 //	@Router			/users [post]
 func (rc *UserHandlers) CreateUser(c echo.Context) error {
@@ -64,9 +64,9 @@ func (rc *UserHandlers) CreateUser(c echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			body	body		model.UserRequest	true	"User update input"
-//	@Success		201		{object}	map[string]string	"User created"
+//	@Success		201		{object}	map[string]string	"user username"
 //	@Failure		400		{object}	map[string]string	"Error message"
-//	@Router			/users/{id} [post]
+//	@Router			/users/{id} [put]
 func (rc *UserHandlers) UpdateUser(c echo.Context) error {
 	var id = c.Param("id")
 	var input model.UserRequest
@@ -131,5 +131,9 @@ func (rc *UserHandlers) Login(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
 	}
 
-	return c.JSON(http.StatusOK, echo.Map{"token": jwt, "username": input.Username, "message": "Successfully logged in"})
+	return c.JSON(http.StatusOK, echo.Map{
+		"token":    jwt,
+		"username": input.Username,
+		"message":  "Successfully logged in",
+	})
 }
