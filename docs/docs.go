@@ -337,6 +337,71 @@ const docTemplate = `{
                 }
             }
         },
+        "/events": {
+            "get": {
+                "description": "Retrieves a list of events from the database.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "events"
+                ],
+                "summary": "List events",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "kind to filter events by",
+                        "name": "kind",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "event kind to filter events by",
+                        "name": "event_kind",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "creation time to filter events by",
+                        "name": "creation_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "owner id to filter events by",
+                        "name": "owner_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "owner username to filter events by",
+                        "name": "owner_username",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of events",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request or invalid data",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/namespaces": {
             "get": {
                 "description": "Retrieves a list of namespaces from the Kubernetes cluster.",

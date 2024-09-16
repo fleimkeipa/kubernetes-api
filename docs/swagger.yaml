@@ -5794,6 +5794,49 @@ paths:
       summary: Get a deployment by name or UID
       tags:
       - deployments
+  /events:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a list of events from the database.
+      parameters:
+      - description: kind to filter events by
+        in: query
+        name: kind
+        type: string
+      - description: event kind to filter events by
+        in: query
+        name: event_kind
+        type: string
+      - description: creation time to filter events by
+        in: query
+        name: creation_time
+        type: string
+      - description: owner id to filter events by
+        in: query
+        name: owner_id
+        type: string
+      - description: owner username to filter events by
+        in: query
+        name: owner_username
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of events
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad request or invalid data
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List events
+      tags:
+      - events
   /namespaces:
     get:
       consumes:
