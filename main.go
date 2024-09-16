@@ -72,7 +72,7 @@ func serveApplication() {
 	var eventHandler = controller.NewEventHandler(eventUC, sugar)
 
 	var podRepo = repositories.NewPodRepository(kubClient)
-	var podUC = uc.NewPodsUC(podRepo, eventRepo)
+	var podUC = uc.NewPodsUC(podRepo, eventUC)
 	var podHandlers = controller.NewPodHandler(podUC, sugar)
 
 	var namespaceRepo = repositories.NewNamespaceRepository(kubClient)

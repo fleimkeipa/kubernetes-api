@@ -14,14 +14,14 @@ import (
 )
 
 type PodsUC struct {
-	podsRepo  interfaces.PodInterfaces
-	eventRepo interfaces.EventInterfaces
+	podsRepo interfaces.PodInterfaces
+	eventUC  *EventUC
 }
 
-func NewPodsUC(podsRepo interfaces.PodInterfaces, eventRepo interfaces.EventInterfaces) *PodsUC {
+func NewPodsUC(podsRepo interfaces.PodInterfaces, eventUC *EventUC) *PodsUC {
 	return &PodsUC{
-		podsRepo:  podsRepo,
-		eventRepo: eventRepo,
+		podsRepo: podsRepo,
+		eventUC:  eventUC,
 	}
 }
 
@@ -37,7 +37,7 @@ func (rc *PodsUC) Create(ctx context.Context, pod *model.Pod, opts metav1.Create
 		CreationTime: time.Now(),
 		Owner:        model.User{},
 	}
-	_, err := rc.eventRepo.Create(ctx, &event)
+	_, err := rc.eventUC.Create(ctx, &event)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create event for %s: %w", event.EventKind, err)
 	}
@@ -64,7 +64,7 @@ func (rc *PodsUC) Update(ctx context.Context, id string, pod *model.Pod, opts me
 		CreationTime: time.Now(),
 		Owner:        model.User{},
 	}
-	_, err = rc.eventRepo.Create(ctx, &event)
+	_, err = rc.eventUC.Create(ctx, &event)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create event for %s: %w", event.EventKind, err)
 	}
@@ -120,7 +120,7 @@ func (rc *PodsUC) Delete(ctx context.Context, namespace, name string, opts metav
 		CreationTime: time.Now(),
 		Owner:        model.User{},
 	}
-	_, err := rc.eventRepo.Create(ctx, &event)
+	_, err := rc.eventUC.Create(ctx, &event)
 	if err != nil {
 		return fmt.Errorf("failed to create event for %s: %w", event.EventKind, err)
 	}
