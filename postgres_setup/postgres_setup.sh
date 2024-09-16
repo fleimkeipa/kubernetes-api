@@ -43,8 +43,8 @@ END
 # Execute SQL command to insert the admin user into the users table
 # Only insert if the user does not already exist
 docker exec -it postgres psql -U postgres -d $POSTGRES_DB -c "
-INSERT INTO public.users (username, email, password)
-SELECT '$ADMIN_USERNAME', '$ADMIN_EMAIL', '$ADMIN_PASSWORD'
+INSERT INTO public.users (username, email, password, role_id)
+SELECT '$ADMIN_USERNAME', '$ADMIN_EMAIL', '$ADMIN_PASSWORD', '7',
 WHERE NOT EXISTS (
     SELECT 1 FROM public.users WHERE username = '$ADMIN_USERNAME'
 );
