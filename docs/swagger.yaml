@@ -6130,6 +6130,49 @@ paths:
       tags:
       - pods
   /users:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a filtered and paginated list of users from the database
+        based on query parameters.
+      parameters:
+      - description: Limit the number of users returned
+        in: query
+        name: limit
+        type: string
+      - description: Number of users to skip for pagination
+        in: query
+        name: skip
+        type: string
+      - description: Filter users by username
+        in: query
+        name: username
+        type: string
+      - description: Filter users by email
+        in: query
+        name: email
+        type: string
+      - description: Filter users by role ID
+        in: query
+        name: role_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response containing the list of users
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad request, invalid parameters or error during retrieval
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List all users
+      tags:
+      - users
     post:
       consumes:
       - application/json
@@ -6146,7 +6189,7 @@ paths:
       - application/json
       responses:
         "201":
-          description: User created
+          description: user username
           schema:
             additionalProperties:
               type: string
@@ -6161,7 +6204,7 @@ paths:
       tags:
       - user
   /users/{id}:
-    post:
+    put:
       consumes:
       - application/json
       description: This endpoint updates a user by providing username, email, password,
@@ -6177,7 +6220,7 @@ paths:
       - application/json
       responses:
         "201":
-          description: User created
+          description: user username
           schema:
             additionalProperties:
               type: string

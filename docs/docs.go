@@ -827,6 +827,69 @@ const docTemplate = `{
             }
         },
         "/users": {
+            "get": {
+                "description": "Retrieves a filtered and paginated list of users from the database based on query parameters.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "List all users",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Limit the number of users returned",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Number of users to skip for pagination",
+                        "name": "skip",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter users by username",
+                        "name": "username",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter users by email",
+                        "name": "email",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter users by role ID",
+                        "name": "role_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response containing the list of users",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request, invalid parameters or error during retrieval",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "This endpoint creates a new user by providing username, email, password, and role ID.",
                 "consumes": [
@@ -852,7 +915,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "201": {
-                        "description": "User created",
+                        "description": "user username",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -873,7 +936,7 @@ const docTemplate = `{
             }
         },
         "/users/{id}": {
-            "post": {
+            "put": {
                 "description": "This endpoint updates a user by providing username, email, password, and role ID.",
                 "consumes": [
                     "application/json"
@@ -898,7 +961,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "201": {
-                        "description": "User created",
+                        "description": "user username",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
