@@ -2,6 +2,8 @@ package model
 
 import "time"
 
+const ZeroCreds = "zeroCreds"
+
 type User struct {
 	ID        int64     `json:"id" pg:",pk"`
 	Username  string    `json:"username" binding:"required" pg:",unique"`
@@ -26,4 +28,12 @@ type GoogleUser struct {
 	GivenName     string `json:"given_name"`
 	FamilyName    string `json:"family_name"`
 	Picture       string `json:"picture"`
+}
+
+type UserFindOpts struct {
+	PaginationOpts
+	FieldsOpts
+	Username Filter
+	Email    Filter
+	RoleID   Filter
 }
