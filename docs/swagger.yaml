@@ -248,21 +248,6 @@ definitions:
       pod:
         $ref: '#/definitions/model.PodUpdate'
     type: object
-  model.Register:
-    properties:
-      email:
-        type: string
-      password:
-        type: string
-      role_id:
-        type: integer
-      username:
-        type: string
-    required:
-    - email
-    - password
-    - username
-    type: object
   model.SpecRequest:
     properties:
       activeDeadlineSeconds:
@@ -294,6 +279,21 @@ definitions:
         type: integer
       value:
         type: string
+    type: object
+  model.UserRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      role_id:
+        type: integer
+      username:
+        type: string
+    required:
+    - email
+    - password
+    - username
     type: object
   model.Volume:
     properties:
@@ -5644,37 +5644,6 @@ paths:
       summary: User login
       tags:
       - user
-  /auth/register:
-    post:
-      consumes:
-      - application/json
-      description: This endpoint registers a new user by providing username, email,
-        password, and role ID.
-      parameters:
-      - description: User registration input
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/model.Register'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: User created
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "400":
-          description: Error message
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Register a new user
-      tags:
-      - user
   /deployments:
     get:
       consumes:
@@ -6086,7 +6055,7 @@ paths:
       consumes:
       - application/json
       description: |-
-        Update specific fields of an existing pod in the Kubernetes cluster. The following fields are changeable:<br />
+        Update specific fields of an existing pod in the Kubernetes cluster. The following fields are changeable:
         - containers.image
         - initContainers.image
         - tolerations (only additions)
@@ -6117,4 +6086,66 @@ paths:
       summary: Update an existing pod
       tags:
       - pods
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: This endpoint creates a new user by providing username, email,
+        password, and role ID.
+      parameters:
+      - description: User creation input
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User created
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Error message
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: CreateUser create a new user
+      tags:
+      - user
+  /users/{id}:
+    post:
+      consumes:
+      - application/json
+      description: This endpoint updates a user by providing username, email, password,
+        and role ID.
+      parameters:
+      - description: User update input
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User created
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Error message
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: UpdateUser update a user
+      tags:
+      - user
 swagger: "2.0"

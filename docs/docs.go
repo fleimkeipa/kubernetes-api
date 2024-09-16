@@ -115,52 +115,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/auth/register": {
-            "post": {
-                "description": "This endpoint registers a new user by providing username, email, password, and role ID.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user"
-                ],
-                "summary": "Register a new user",
-                "parameters": [
-                    {
-                        "description": "User registration input",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.Register"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "User created",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Error message",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/deployments": {
             "get": {
                 "description": "Retrieves a list of deployments from the Kubernetes cluster, optionally filtered by namespace.",
@@ -718,7 +672,7 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "Update specific fields of an existing pod in the Kubernetes cluster. The following fields are changeable:\u003cbr /\u003e\n- containers.image\n- initContainers.image\n- tolerations (only additions)\n- activeDeadlineSeconds\n- terminationGracePeriodSeconds",
+                "description": "Update specific fields of an existing pod in the Kubernetes cluster. The following fields are changeable:\n- containers.image\n- initContainers.image\n- tolerations (only additions)\n- activeDeadlineSeconds\n- terminationGracePeriodSeconds",
                 "consumes": [
                     "application/json"
                 ],
@@ -797,6 +751,98 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad request or error message",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "post": {
+                "description": "This endpoint creates a new user by providing username, email, password, and role ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "CreateUser create a new user",
+                "parameters": [
+                    {
+                        "description": "User creation input",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.UserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "User created",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error message",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "post": {
+                "description": "This endpoint updates a user by providing username, email, password, and role ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "UpdateUser update a user",
+                "parameters": [
+                    {
+                        "description": "User update input",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.UserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "User created",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error message",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -1187,28 +1233,6 @@ const docTemplate = `{
                 }
             }
         },
-        "model.Register": {
-            "type": "object",
-            "required": [
-                "email",
-                "password",
-                "username"
-            ],
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "role_id": {
-                    "type": "integer"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
         "model.SpecRequest": {
             "type": "object",
             "properties": {
@@ -1254,6 +1278,28 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.UserRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password",
+                "username"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "role_id": {
+                    "type": "integer"
+                },
+                "username": {
                     "type": "string"
                 }
             }
