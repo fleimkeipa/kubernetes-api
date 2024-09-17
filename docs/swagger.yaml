@@ -5673,7 +5673,7 @@ paths:
             $ref: '#/definitions/controller.FailureResponse'
       summary: User login
       tags:
-      - user
+      - auth
   /deployments:
     get:
       consumes:
@@ -5681,6 +5681,12 @@ paths:
       description: Retrieves a list of deployments from the Kubernetes cluster, optionally
         filtered by namespace.
       parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Namespace to filter deployments by
         in: query
         name: namespace
@@ -5704,6 +5710,12 @@ paths:
       - application/json
       description: Creates a new deployment in the Kubernetes cluster.
       parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Deployment request body
         in: body
         name: deployment
@@ -5735,6 +5747,12 @@ paths:
       - application/json
       description: Updates an existing deployment in the Kubernetes cluster.
       parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Deployment request body
         in: body
         name: deployment
@@ -5766,6 +5784,12 @@ paths:
       description: Deletes a deployment from the Kubernetes cluster by its name or
         UID, optionally filtered by namespace.
       parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Namespace to filter the deployment by
         in: query
         name: namespace
@@ -5795,6 +5819,12 @@ paths:
       description: Retrieves a deployment from the Kubernetes cluster by its name
         or UID, optionally filtered by namespace.
       parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Namespace to filter the deployment by
         in: query
         name: namespace
@@ -5824,6 +5854,12 @@ paths:
       - application/json
       description: Retrieves a list of events from the database.
       parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: kind to filter events by
         in: query
         name: kind
@@ -5863,6 +5899,13 @@ paths:
       consumes:
       - application/json
       description: Retrieves a list of namespaces from the Kubernetes cluster.
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -5882,6 +5925,12 @@ paths:
       - application/json
       description: Creates a new namespace in the Kubernetes cluster.
       parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Namespace request body
         in: body
         name: namespace
@@ -5911,6 +5960,12 @@ paths:
       - application/json
       description: Updates an existing namespace in the Kubernetes cluster.
       parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Namespace request body
         in: body
         name: namespace
@@ -5942,6 +5997,12 @@ paths:
       description: Deletes a namespace from the Kubernetes cluster by its name or
         UID.
       parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Name or UID of the namespace
         in: path
         name: id
@@ -5967,6 +6028,12 @@ paths:
       description: Retrieves a namespace from the Kubernetes cluster by its name or
         UID.
       parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Name or UID of the namespace
         in: path
         name: id
@@ -5993,6 +6060,12 @@ paths:
       description: Retrieves a list of pods from the Kubernetes cluster, optionally
         filtered by namespace.
       parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Namespace to filter pods by
         in: query
         name: namespace
@@ -6016,6 +6089,12 @@ paths:
       - application/json
       description: Creates a new pod in the Kubernetes cluster.
       parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Pod request body
         in: body
         name: pod
@@ -6047,6 +6126,12 @@ paths:
       description: Deletes a pod from the Kubernetes cluster by its name or UID, optionally
         filtered by namespace.
       parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Namespace to filter the pod by
         in: query
         name: namespace
@@ -6076,6 +6161,12 @@ paths:
       description: Retrieves a pod from the Kubernetes cluster by its name or UID,
         optionally filtered by namespace.
       parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Namespace to filter the pod by
         in: query
         name: namespace
@@ -6110,6 +6201,12 @@ paths:
         - activeDeadlineSeconds
         - terminationGracePeriodSeconds
       parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Pod update request body
         in: body
         name: pod
@@ -6141,6 +6238,12 @@ paths:
       description: Retrieves a filtered and paginated list of users from the database
         based on query parameters.
       parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Limit the number of users returned
         in: query
         name: limit
@@ -6181,6 +6284,12 @@ paths:
       description: This endpoint creates a new user by providing username, email,
         password, and role ID.
       parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: User creation input
         in: body
         name: body
@@ -6204,20 +6313,19 @@ paths:
             $ref: '#/definitions/controller.FailureResponse'
       summary: CreateUser creates a new user
       tags:
-      - user
+      - users
   /users/{id}:
     put:
       consumes:
       - application/json
-      description: This endpoint updates a user by providing username, email, password,
-        and role ID.
+      description: This endpoint deletes a user by providing user id.
       parameters:
-      - description: User update input
-        in: body
-        name: body
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
         required: true
-        schema:
-          $ref: '#/definitions/model.UserRequest'
+        type: string
       produces:
       - application/json
       responses:
@@ -6225,15 +6333,11 @@ paths:
           description: user username
           schema:
             $ref: '#/definitions/controller.SuccessResponse'
-        "400":
-          description: Error message including details on failure
-          schema:
-            $ref: '#/definitions/controller.FailureResponse'
         "500":
           description: Interval error
           schema:
             $ref: '#/definitions/controller.FailureResponse'
-      summary: UpdateUser updates an existing user
+      summary: DeleteUser deletes an existing user
       tags:
-      - user
+      - users
 swagger: "2.0"

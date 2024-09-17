@@ -99,7 +99,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "auth"
                 ],
                 "summary": "User login",
                 "parameters": [
@@ -151,6 +151,14 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "Namespace to filter deployments by",
                         "name": "namespace",
                         "in": "query"
@@ -184,6 +192,14 @@ const docTemplate = `{
                 ],
                 "summary": "Update an existing deployment",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "description": "Deployment request body",
                         "name": "deployment",
@@ -228,6 +244,14 @@ const docTemplate = `{
                 ],
                 "summary": "Create a new deployment",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "description": "Deployment request body",
                         "name": "deployment",
@@ -279,6 +303,14 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "Namespace to filter the deployment by",
                         "name": "namespace",
                         "in": "query"
@@ -319,6 +351,14 @@ const docTemplate = `{
                 ],
                 "summary": "Delete a deployment by name or UID",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "type": "string",
                         "description": "Namespace to filter the deployment by",
@@ -363,6 +403,14 @@ const docTemplate = `{
                 ],
                 "summary": "List events",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "type": "string",
                         "description": "kind to filter events by",
@@ -423,6 +471,16 @@ const docTemplate = `{
                     "namespaces"
                 ],
                 "summary": "List namespaces",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "List of namespaces",
@@ -451,6 +509,14 @@ const docTemplate = `{
                 ],
                 "summary": "Update an existing namespace",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "description": "Namespace request body",
                         "name": "namespace",
@@ -495,6 +561,14 @@ const docTemplate = `{
                 ],
                 "summary": "Create a new namespace",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "description": "Namespace request body",
                         "name": "namespace",
@@ -543,6 +617,14 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "Name or UID of the namespace",
                         "name": "id",
                         "in": "path",
@@ -577,6 +659,14 @@ const docTemplate = `{
                 ],
                 "summary": "Delete a namespace by name or UID",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "type": "string",
                         "description": "Name or UID of the namespace",
@@ -617,6 +707,14 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "Namespace to filter pods by",
                         "name": "namespace",
                         "in": "query"
@@ -650,6 +748,14 @@ const docTemplate = `{
                 ],
                 "summary": "Create a new pod",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "description": "Pod request body",
                         "name": "pod",
@@ -698,6 +804,14 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "Namespace to filter the pod by",
                         "name": "namespace",
                         "in": "query"
@@ -738,6 +852,14 @@ const docTemplate = `{
                 ],
                 "summary": "Update an existing pod",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "description": "Pod update request body",
                         "name": "pod",
@@ -784,6 +906,14 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "Namespace to filter the pod by",
                         "name": "namespace",
                         "in": "query"
@@ -826,6 +956,14 @@ const docTemplate = `{
                 ],
                 "summary": "List all users",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "type": "string",
                         "description": "Limit the number of users returned",
@@ -881,10 +1019,18 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
                 "summary": "CreateUser creates a new user",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "description": "User creation input",
                         "name": "body",
@@ -919,7 +1065,7 @@ const docTemplate = `{
         },
         "/users/{id}": {
             "put": {
-                "description": "This endpoint updates a user by providing username, email, password, and role ID.",
+                "description": "This endpoint deletes a user by providing user id.",
                 "consumes": [
                     "application/json"
                 ],
@@ -927,18 +1073,17 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "users"
                 ],
-                "summary": "UpdateUser updates an existing user",
+                "summary": "DeleteUser deletes an existing user",
                 "parameters": [
                     {
-                        "description": "User update input",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.UserRequest"
-                        }
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -946,12 +1091,6 @@ const docTemplate = `{
                         "description": "user username",
                         "schema": {
                             "$ref": "#/definitions/controller.SuccessResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Error message including details on failure",
-                        "schema": {
-                            "$ref": "#/definitions/controller.FailureResponse"
                         }
                     },
                     "500": {
