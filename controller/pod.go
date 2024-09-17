@@ -8,19 +8,16 @@ import (
 	"github.com/fleimkeipa/kubernetes-api/uc"
 
 	"github.com/labstack/echo/v4"
-	"go.uber.org/zap"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 type PodHandler struct {
 	podsUC *uc.PodUC
-	logger *zap.SugaredLogger
 }
 
-func NewPodHandler(podsUC *uc.PodUC, logger *zap.SugaredLogger) *PodHandler {
+func NewPodHandler(podsUC *uc.PodUC) *PodHandler {
 	return &PodHandler{
 		podsUC: podsUC,
-		logger: logger,
 	}
 }
 
@@ -92,7 +89,6 @@ func (rc *PodHandler) Update(c echo.Context) error {
 
 	pod, err := rc.podsUC.Update(c.Request().Context(), id, &request, metav1.UpdateOptions(request.Opts))
 	if err != nil {
-		rc.logger.Errorf("failed to update pod [%s], error: %v", id, err)
 		return c.JSON(http.StatusInternalServerError, FailureResponse{
 			Error:   fmt.Sprintf("Failed to update pod: %v", err),
 			Message: "Pod update failed. Please verify the details and try again.",
