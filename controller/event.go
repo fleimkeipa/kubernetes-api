@@ -8,18 +8,15 @@ import (
 	"github.com/fleimkeipa/kubernetes-api/uc"
 
 	"github.com/labstack/echo/v4"
-	"go.uber.org/zap"
 )
 
 type EventHandler struct {
 	eventsUC *uc.EventUC
-	logger   *zap.SugaredLogger
 }
 
-func NewEventHandler(eventsUC *uc.EventUC, logger *zap.SugaredLogger) *EventHandler {
+func NewEventHandler(eventsUC *uc.EventUC) *EventHandler {
 	return &EventHandler{
 		eventsUC: eventsUC,
-		logger:   logger,
 	}
 }
 
