@@ -4,20 +4,20 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"os"
 	"strings"
 
+	"github.com/fleimkeipa/kubernetes-api/config"
 	"github.com/fleimkeipa/kubernetes-api/model"
 
 	"github.com/go-pg/pg"
 	"github.com/go-pg/pg/orm"
-	"github.com/joho/godotenv"
+	"github.com/spf13/viper"
 )
 
 var test_db *pg.DB
 
 func loadEnv() {
-	if err := godotenv.Load("../.env"); err != nil {
+	if err := config.LoadEnv(); err != nil {
 		log.Fatalf("Error loading .env file %v", err)
 	}
 
@@ -27,13 +27,13 @@ func loadEnv() {
 func init() {
 	loadEnv()
 
-	var addr = strings.Split(os.Getenv("DB_ADDR"), ":")
+	var addr = strings.Split(viper.GetString("database.addr"), ":")
 	if len(addr) < 2 {
-		os.Setenv("DB_HOST", "localhost")
-		os.Setenv("DB_PORT", "5432")
+		viper.Set("database.host", "localhost")
+		viper.Set("database.port", "5432")
 	} else {
-		os.Setenv("DB_HOST", addr[0])
-		os.Setenv("DB_PORT", addr[1])
+		viper.Set("database.host", addr[0])
+		viper.Set("database.port", addr[1])
 	}
 
 	createTestDB()
@@ -47,10 +47,10 @@ func init() {
 
 func initTestDBClient() *pg.DB {
 	var opts = pg.Options{
-		Database: os.Getenv("DB_NAME"),
-		User:     os.Getenv("DB_USERNAME"),
-		Password: os.Getenv("DB_PASSWORD"),
-		Addr:     os.Getenv("DB_ADDR"),
+		Database: viper.GetString("database.name"),
+		User:     viper.GetString("database.username"),
+		Password: viper.GetString("database.password"),
+		Addr:     viper.GetString("database.addr"),
 	}
 	var db = pg.Connect(&opts)
 
@@ -59,10 +59,10 @@ func initTestDBClient() *pg.DB {
 
 func createTestDB() {
 	var conninfo = fmt.Sprintf("user=%s password=%s host=%s port=%s sslmode=disable",
-		os.Getenv("DB_USERNAME"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_PORT"),
+		viper.GetString("database.username"),
+		viper.GetString("database.password"),
+		viper.GetString("database.host"),
+		viper.GetString("database.port"),
 	)
 	db, err := sql.Open("postgres", conninfo)
 	if err != nil {
