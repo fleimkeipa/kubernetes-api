@@ -2,20 +2,20 @@ package pkg
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/fleimkeipa/kubernetes-api/model"
 
 	"github.com/go-pg/pg"
 	"github.com/go-pg/pg/orm"
+	"github.com/spf13/viper"
 )
 
 func NewPSQLClient() *pg.DB {
 	var opts = pg.Options{
-		Database: os.Getenv("DB_NAME"),
-		User:     os.Getenv("DB_USERNAME"),
-		Password: os.Getenv("DB_PASSWORD"),
-		Addr:     os.Getenv("DB_ADDR"),
+		Database: viper.GetString("database.name"),
+		User:     viper.GetString("database.username"),
+		Password: viper.GetString("database.password"),
+		Addr:     viper.GetString("database.addr"),
 	}
 	var db = pg.Connect(&opts)
 
