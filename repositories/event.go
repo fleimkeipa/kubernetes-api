@@ -51,6 +51,22 @@ func (rc *EventRepository) List(ctx context.Context, opts *model.EventFindOpts) 
 	return events, nil
 }
 
+func (rc *EventRepository) GetByID(ctx context.Context, id string) (*model.Event, error) {
+	var event = new(model.Event)
+
+	var fields = []string{}
+	err := rc.db.
+		Model(event).
+		Where("id = ?", id).
+		Column(fields...).
+		Select()
+	if err != nil {
+		return nil, fmt.Errorf("failed to find user [%s] id, error: %w", id, err)
+	}
+
+	return event, nil
+}
+
 func (rc *EventRepository) fillFilter(opts *model.EventFindOpts) string {
 	var filter string
 	if opts.Kind.IsSended {

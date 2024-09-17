@@ -59,6 +59,35 @@ func (rc *EventHandler) List(c echo.Context) error {
 	})
 }
 
+// GetByID godoc
+//
+//	@Summary		Get a event by ID
+//	@Description	Retrieves a event from Database by its ID, optionally filtered by namespace.
+//	@Tags			events
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization	header		string			true	"Insert your access token"	default(Bearer <Add access token here>)
+//	@Param			id				path		string			true	"ID of the event"
+//	@Success		200				{object}	SuccessResponse	"Details of the requested event"
+//	@Failure		500				{object}	FailureResponse	"Interval error"
+//	@Router			/events/{id} [get]
+func (rc *EventHandler) GetByID(c echo.Context) error {
+	var nameOrUID = c.Param("id")
+
+	event, err := rc.eventsUC.GetByID(c.Request().Context(), nameOrUID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, FailureResponse{
+			Error:   fmt.Sprintf("Failed to retrieve event: %v", err),
+			Message: "Error fetching the event details. Please verify the event name or UID and try again.",
+		})
+	}
+
+	return c.JSON(http.StatusOK, SuccessResponse{
+		Data:    event,
+		Message: "Event retrieved successfully.",
+	})
+}
+
 func (rc *EventHandler) getEventsFindOpts(c echo.Context) model.EventFindOpts {
 	return model.EventFindOpts{
 		PaginationOpts: getPagination(c),

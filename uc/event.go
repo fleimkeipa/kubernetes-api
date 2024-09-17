@@ -24,3 +24,7 @@ func (rc *EventUC) Create(ctx context.Context, event *model.Event) (*model.Event
 func (rc *EventUC) List(ctx context.Context, opts *model.EventFindOpts) ([]model.Event, error) {
 	return rc.eventRepo.List(ctx, opts)
 }
+
+func (rc *EventUC) GetByID(ctx context.Context, id string) (*model.Event, error) {
+	return rc.eventRepo.GetByID(ctx, id)
+}

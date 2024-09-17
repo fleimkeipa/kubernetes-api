@@ -131,6 +131,7 @@ func serveApplication() {
 
 	var eventsRoutes = restrictedRoutes.Group("/events")
 	eventsRoutes.GET("", eventHandler.List)
+	eventsRoutes.GET("/:id", eventHandler.GetByID)
 
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", os.Getenv("API_PORT"))))
 }
