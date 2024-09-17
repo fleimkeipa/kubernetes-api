@@ -159,3 +159,53 @@ func TestUserRepository_GetByID(t *testing.T) {
 		})
 	}
 }
+
+func TestUserRepository_Delete(t *testing.T) {
+	type fields struct {
+		db *pg.DB
+	}
+	type args struct {
+		ctx  context.Context
+		id   string
+		user *model.User
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "",
+			fields: fields{
+				db: test_db,
+			},
+			args: args{
+				ctx: context.TODO(),
+				id:  "1",
+				user: &model.User{
+					ID:       0,
+					Username: "admin3",
+					Email:    "admin3@admin.com",
+					Password: "password",
+					RoleID:   7,
+				},
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := addTempData(tt.args.user); (err != nil) != tt.wantErr {
+				t.Errorf("UserRepository.Delete() addTempData error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			rc := &UserRepository{
+				db: tt.fields.db,
+			}
+			if err := rc.Delete(tt.args.ctx, tt.args.id); (err != nil) != tt.wantErr {
+				t.Errorf("UserRepository.Delete() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}

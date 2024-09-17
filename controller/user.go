@@ -27,13 +27,14 @@ func NewUserHandlers(uc *uc.UserUC) *UserHandlers {
 //
 //	@Summary		CreateUser creates a new user
 //	@Description	This endpoint creates a new user by providing username, email, password, and role ID.
-//	@Tags			user
+//	@Tags			users
 //	@Accept			json
 //	@Produce		json
-//	@Param			body	body		model.UserRequest	true	"User creation input"
-//	@Success		201		{object}	SuccessResponse		"user username"
-//	@Failure		400		{object}	FailureResponse		"Error message including details on failure"
-//	@Failure		500		{object}	FailureResponse		"Interval error"
+//	@Param			Authorization	header		string				true	"Insert your access token"	default(Bearer <Add access token here>)
+//	@Param			body			body		model.UserRequest	true	"User creation input"
+//	@Success		201				{object}	SuccessResponse		"user username"
+//	@Failure		400				{object}	FailureResponse		"Error message including details on failure"
+//	@Failure		500				{object}	FailureResponse		"Interval error"
 //	@Router			/users [post]
 func (rc *UserHandlers) CreateUser(c echo.Context) error {
 	var input model.UserRequest
@@ -70,13 +71,14 @@ func (rc *UserHandlers) CreateUser(c echo.Context) error {
 //
 //	@Summary		UpdateUser updates an existing user
 //	@Description	This endpoint updates a user by providing username, email, password, and role ID.
-//	@Tags			user
+//	@Tags			users
 //	@Accept			json
 //	@Produce		json
-//	@Param			body	body		model.UserRequest	true	"User update input"
-//	@Success		200		{object}	SuccessResponse		"user username"
-//	@Failure		400		{object}	FailureResponse		"Error message including details on failure"
-//	@Failure		500		{object}	FailureResponse		"Interval error"
+//	@Param			Authorization	header		string				true	"Insert your access token"	default(Bearer <Add access token here>)
+//	@Param			body			body		model.UserRequest	true	"User update input"
+//	@Success		200				{object}	SuccessResponse		"user username"
+//	@Failure		400				{object}	FailureResponse		"Error message including details on failure"
+//	@Failure		500				{object}	FailureResponse		"Interval error"
 //	@Router			/users/{id} [put]
 func (rc *UserHandlers) UpdateUser(c echo.Context) error {
 	var id = c.Param("id")
@@ -140,7 +142,7 @@ func (rc *UserHandlers) DeleteUser(c echo.Context) error {
 //
 //	@Summary		User login
 //	@Description	This endpoint allows a user to log in by providing a valid username and password.
-//	@Tags			user
+//	@Tags			auth
 //	@Accept			json
 //	@Produce		json
 //	@Param			body	body		model.Login		true	"User login input"
@@ -204,13 +206,14 @@ func (rc *UserHandlers) Login(c echo.Context) error {
 //	@Tags			users
 //	@Accept			json
 //	@Produce		json
-//	@Param			limit		query		string			false	"Limit the number of users returned"
-//	@Param			skip		query		string			false	"Number of users to skip for pagination"
-//	@Param			username	query		string			false	"Filter users by username"
-//	@Param			email		query		string			false	"Filter users by email"
-//	@Param			role_id		query		string			false	"Filter users by role ID"
-//	@Success		200			{object}	SuccessResponse	"Successful response containing the list of users"
-//	@Failure		500			{object}	FailureResponse	"Interval error"
+//	@Param			Authorization	header		string			true	"Insert your access token"	default(Bearer <Add access token here>)
+//	@Param			limit			query		string			false	"Limit the number of users returned"
+//	@Param			skip			query		string			false	"Number of users to skip for pagination"
+//	@Param			username		query		string			false	"Filter users by username"
+//	@Param			email			query		string			false	"Filter users by email"
+//	@Param			role_id			query		string			false	"Filter users by role ID"
+//	@Success		200				{object}	SuccessResponse	"Successful response containing the list of users"
+//	@Failure		500				{object}	FailureResponse	"Interval error"
 //	@Router			/users [get]
 func (rc *UserHandlers) List(c echo.Context) error {
 	var opts = rc.getUsersFindOpts(c, model.ZeroCreds)

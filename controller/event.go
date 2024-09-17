@@ -30,13 +30,14 @@ func NewEventHandler(eventsUC *uc.EventUC, logger *zap.SugaredLogger) *EventHand
 //	@Tags			events
 //	@Accept			json
 //	@Produce		json
+//	@Param			Authorization	header		string			true	"Insert your access token"	default(Bearer <Add access token here>)
 //	@Param			kind			query		string			false	"kind to filter events by"
 //	@Param			event_kind		query		string			false	"event kind to filter events by"
 //	@Param			creation_time	query		string			false	"creation time to filter events by"
 //	@Param			owner_id		query		string			false	"owner id to filter events by"
 //	@Param			owner_username	query		string			false	"owner username to filter events by"
 //	@Success		200				{object}	SuccessResponse	"List of events"
-//	@Failure		500				{object}	FailureResponse "Interval error"
+//	@Failure		500				{object}	FailureResponse	"Interval error"
 //	@Router			/events [get]
 func (rc *EventHandler) List(c echo.Context) error {
 	// Extract filtering options from the query parameters

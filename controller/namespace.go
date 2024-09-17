@@ -28,8 +28,9 @@ func NewNamespaceHandler(namespaceUC *uc.NamespaceUC) *NamespaceHandler {
 //	@Tags			namespaces
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{object}	SuccessResponse	"List of namespaces"
-//	@Failure		500	{object}	FailureResponse	"Bad request or error message"
+//	@Param			Authorization	header		string			true	"Insert your access token"	default(Bearer <Add access token here>)
+//	@Success		200				{object}	SuccessResponse	"List of namespaces"
+//	@Failure		500				{object}	FailureResponse	"Bad request or error message"
 //	@Router			/namespaces [get]
 func (rc *NamespaceHandler) List(c echo.Context) error {
 	var opts = metav1.ListOptions{}
@@ -54,10 +55,11 @@ func (rc *NamespaceHandler) List(c echo.Context) error {
 //	@Tags			namespaces
 //	@Accept			json
 //	@Produce		json
-//	@Param			namespace	body		model.NamespaceRequest	true	"Namespace request body"
-//	@Success		201			{object}	SuccessResponse			"Successfully created namespace"
-//	@Failure		400			{object}	FailureResponse			"Bad request or error message"
-//	@Failure		500			{object}	FailureResponse			"Interval error"
+//	@Param			Authorization	header		string					true	"Insert your access token"	default(Bearer <Add access token here>)
+//	@Param			namespace		body		model.NamespaceRequest	true	"Namespace request body"
+//	@Success		201				{object}	SuccessResponse			"Successfully created namespace"
+//	@Failure		400				{object}	FailureResponse			"Bad request or error message"
+//	@Failure		500				{object}	FailureResponse			"Interval error"
 //	@Router			/namespaces [post]
 func (rc *NamespaceHandler) Create(c echo.Context) error {
 	var input model.NamespaceRequest
@@ -90,9 +92,10 @@ func (rc *NamespaceHandler) Create(c echo.Context) error {
 //	@Tags			namespaces
 //	@Accept			json
 //	@Produce		json
-//	@Param			id	path		string			true	"Name or UID of the namespace"
-//	@Success		200	{object}	SuccessResponse	"Details of the requested namespace"
-//	@Failure		500	{object}	FailureResponse	"Interval error"
+//	@Param			Authorization	header		string			true	"Insert your access token"	default(Bearer <Add access token here>)
+//	@Param			id				path		string			true	"Name or UID of the namespace"
+//	@Success		200				{object}	SuccessResponse	"Details of the requested namespace"
+//	@Failure		500				{object}	FailureResponse	"Interval error"
 //	@Router			/namespaces/{id} [get]
 func (rc *NamespaceHandler) GetByNameOrUID(c echo.Context) error {
 	var nameOrUID = c.Param("id")
@@ -120,9 +123,10 @@ func (rc *NamespaceHandler) GetByNameOrUID(c echo.Context) error {
 //	@Tags			namespaces
 //	@Accept			json
 //	@Produce		json
-//	@Param			id	path		string			true	"Name or UID of the namespace"
-//	@Success		200	{string}	SuccessResponse	"Success message"
-//	@Failure		500	{object}	FailureResponse	"Interval error"
+//	@Param			Authorization	header		string			true	"Insert your access token"	default(Bearer <Add access token here>)
+//	@Param			id				path		string			true	"Name or UID of the namespace"
+//	@Success		200				{string}	SuccessResponse	"Success message"
+//	@Failure		500				{object}	FailureResponse	"Interval error"
 //	@Router			/namespaces/{id} [delete]
 func (rc *NamespaceHandler) Delete(c echo.Context) error {
 	var nameOrUID = c.Param("id")
@@ -148,10 +152,11 @@ func (rc *NamespaceHandler) Delete(c echo.Context) error {
 //	@Tags			namespaces
 //	@Accept			json
 //	@Produce		json
-//	@Param			namespace	body		model.NamespaceRequest	true	"Namespace request body"
-//	@Success		200			{object}	SuccessResponse			"Successfully updated the namespace"
-//	@Failure		400			{object}	FailureResponse			"Bad request or invalid data"
-//	@Failure		500			{object}	FailureResponse			"Interval error"
+//	@Param			Authorization	header		string					true	"Insert your access token"	default(Bearer <Add access token here>)
+//	@Param			namespace		body		model.NamespaceRequest	true	"Namespace request body"
+//	@Success		200				{object}	SuccessResponse			"Successfully updated the namespace"
+//	@Failure		400				{object}	FailureResponse			"Bad request or invalid data"
+//	@Failure		500				{object}	FailureResponse			"Interval error"
 //	@Router			/namespaces [put]
 func (rc *NamespaceHandler) Update(c echo.Context) error {
 	var request model.NamespaceRequest

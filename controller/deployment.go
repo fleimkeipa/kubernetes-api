@@ -28,10 +28,11 @@ func NewDeploymentHandler(deploymentUC *uc.DeploymentUC) *DeploymentHandler {
 //	@Tags			deployments
 //	@Accept			json
 //	@Produce		json
-//	@Param			deployment	body		model.DeploymentRequest	true	"Deployment request body"
-//	@Success		201			{object}	map[string]string		"Suxccessfully created deployment"
-//	@Failure		400			{object}	FailureResponse			"Bad request or error message"
-//	@Failure		500			{object}	FailureResponse			"Interval error"
+//	@Param			Authorization	header		string					true	"Insert your access token"	default(Bearer <Add access token here>)
+//	@Param			deployment		body		model.DeploymentRequest	true	"Deployment request body"
+//	@Success		201				{object}	map[string]string		"Suxccessfully created deployment"
+//	@Failure		400				{object}	FailureResponse			"Bad request or error message"
+//	@Failure		500				{object}	FailureResponse			"Interval error"
 //	@Router			/deployments [post]
 func (rc *DeploymentHandler) Create(c echo.Context) error {
 	var request model.DeploymentRequest
@@ -64,9 +65,10 @@ func (rc *DeploymentHandler) Create(c echo.Context) error {
 //	@Tags			deployments
 //	@Accept			json
 //	@Produce		json
-//	@Param			namespace	query		string			false	"Namespace to filter deployments by"
-//	@Success		200			{object}	SuccessResponse	"List of deployments"
-//	@Failure		500			{object}	FailureResponse	"Interval error"
+//	@Param			Authorization	header		string			true	"Insert your access token"	default(Bearer <Add access token here>)
+//	@Param			namespace		query		string			false	"Namespace to filter deployments by"
+//	@Success		200				{object}	SuccessResponse	"List of deployments"
+//	@Failure		500				{object}	FailureResponse	"Interval error"
 //	@Router			/deployments [get]
 func (rc *DeploymentHandler) List(c echo.Context) error {
 	var namespace = c.QueryParam("namespace")
@@ -94,10 +96,11 @@ func (rc *DeploymentHandler) List(c echo.Context) error {
 //	@Tags			deployments
 //	@Accept			json
 //	@Produce		json
-//	@Param			namespace	query		string			false	"Namespace to filter the deployment by"
-//	@Param			id			path		string			true	"Name or UID of the deployment"
-//	@Success		200			{object}	SuccessResponse	"Details of the requested deployment"
-//	@Failure		500			{object}	FailureResponse	"Interval error"
+//	@Param			Authorization	header		string			true	"Insert your access token"	default(Bearer <Add access token here>)
+//	@Param			namespace		query		string			false	"Namespace to filter the deployment by"
+//	@Param			id				path		string			true	"Name or UID of the deployment"
+//	@Success		200				{object}	SuccessResponse	"Details of the requested deployment"
+//	@Failure		500				{object}	FailureResponse	"Interval error"
 //	@Router			/deployments/{id} [get]
 func (rc *DeploymentHandler) GetByNameOrUID(c echo.Context) error {
 	var namespace = c.QueryParam("namespace")
@@ -126,10 +129,11 @@ func (rc *DeploymentHandler) GetByNameOrUID(c echo.Context) error {
 //	@Tags			deployments
 //	@Accept			json
 //	@Produce		json
-//	@Param			namespace	query		string			false	"Namespace to filter the deployment by"
-//	@Param			id			path		string			true	"Name or UID of the deployment"
-//	@Success		200			{string}	SuccessResponse	"Success message"
-//	@Failure		500			{object}	FailureResponse	"Bad request or error message"
+//	@Param			Authorization	header		string			true	"Insert your access token"	default(Bearer <Add access token here>)
+//	@Param			namespace		query		string			false	"Namespace to filter the deployment by"
+//	@Param			id				path		string			true	"Name or UID of the deployment"
+//	@Success		200				{string}	SuccessResponse	"Success message"
+//	@Failure		500				{object}	FailureResponse	"Bad request or error message"
 //	@Router			/deployments/{id} [delete]
 func (rc *DeploymentHandler) Delete(c echo.Context) error {
 	var namespace = c.QueryParam("namespace")
@@ -156,10 +160,11 @@ func (rc *DeploymentHandler) Delete(c echo.Context) error {
 //	@Tags			deployments
 //	@Accept			json
 //	@Produce		json
-//	@Param			deployment	body		model.DeploymentRequest	true	"Deployment request body"
-//	@Success		200			{object}	SuccessResponse			"Successfully updated the deployment"
-//	@Failure		400			{object}	FailureResponse			"Bad request or invalid data"
-//	@Failure		500			{object}	FailureResponse			"Interval error"
+//	@Param			Authorization	header		string					true	"Insert your access token"	default(Bearer <Add access token here>)
+//	@Param			deployment		body		model.DeploymentRequest	true	"Deployment request body"
+//	@Success		200				{object}	SuccessResponse			"Successfully updated the deployment"
+//	@Failure		400				{object}	FailureResponse			"Bad request or invalid data"
+//	@Failure		500				{object}	FailureResponse			"Interval error"
 //	@Router			/deployments [put]
 func (rc *DeploymentHandler) Update(c echo.Context) error {
 	var request model.DeploymentRequest

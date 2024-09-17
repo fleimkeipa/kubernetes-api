@@ -31,10 +31,11 @@ func NewPodHandler(podsUC *uc.PodUC, logger *zap.SugaredLogger) *PodHandler {
 //	@Tags			pods
 //	@Accept			json
 //	@Produce		json
-//	@Param			pod	body		model.PodsCreateRequest	true	"Pod request body"
-//	@Success		201	{object}	SuccessResponse			"Successfully created the pod"
-//	@Failure		400	{object}	FailureResponse			"Bad request or invalid data"
-//	@Failure		500	{object}	FailureResponse			"Interval error"
+//	@Param			Authorization	header		string					true	"Insert your access token"	default(Bearer <Add access token here>)
+//	@Param			pod				body		model.PodsCreateRequest	true	"Pod request body"
+//	@Success		201				{object}	SuccessResponse			"Successfully created the pod"
+//	@Failure		400				{object}	FailureResponse			"Bad request or invalid data"
+//	@Failure		500				{object}	FailureResponse			"Interval error"
 //	@Router			/pods [post]
 func (rc *PodHandler) Create(c echo.Context) error {
 	var request model.PodsCreateRequest
@@ -72,10 +73,11 @@ func (rc *PodHandler) Create(c echo.Context) error {
 //	@Tags			pods
 //	@Accept			json
 //	@Produce		json
-//	@Param			pod	body		model.PodsUpdateRequest	true	"Pod update request body"
-//	@Success		200	{object}	SuccessResponse			"Pod successfully updated"
-//	@Failure		400	{object}	FailureResponse			"Bad request or invalid input data"
-//	@Failure		500	{object}	FailureResponse			"Interval error"
+//	@Param			Authorization	header		string					true	"Insert your access token"	default(Bearer <Add access token here>)
+//	@Param			pod				body		model.PodsUpdateRequest	true	"Pod update request body"
+//	@Success		200				{object}	SuccessResponse			"Pod successfully updated"
+//	@Failure		400				{object}	FailureResponse			"Bad request or invalid input data"
+//	@Failure		500				{object}	FailureResponse			"Interval error"
 //	@Router			/pods/{id} [put]
 func (rc *PodHandler) Update(c echo.Context) error {
 	var id = c.Param("id")
@@ -110,9 +112,10 @@ func (rc *PodHandler) Update(c echo.Context) error {
 //	@Tags			pods
 //	@Accept			json
 //	@Produce		json
-//	@Param			namespace	query		string			false	"Namespace to filter pods by"
-//	@Success		200			{object}	SuccessResponse	"List of pods"
-//	@Failure		500			{object}	FailureResponse	"Interval error"
+//	@Param			Authorization	header		string			true	"Insert your access token"	default(Bearer <Add access token here>)
+//	@Param			namespace		query		string			false	"Namespace to filter pods by"
+//	@Success		200				{object}	SuccessResponse	"List of pods"
+//	@Failure		500				{object}	FailureResponse	"Interval error"
 //	@Router			/pods [get]
 func (rc *PodHandler) List(c echo.Context) error {
 	var namespace = c.QueryParam("namespace")
@@ -140,10 +143,11 @@ func (rc *PodHandler) List(c echo.Context) error {
 //	@Tags			pods
 //	@Accept			json
 //	@Produce		json
-//	@Param			namespace	query		string			false	"Namespace to filter the pod by"
-//	@Param			id			path		string			true	"Name or UID of the pod"
-//	@Success		200			{object}	SuccessResponse	"Details of the requested pod"
-//	@Failure		500			{object}	FailureResponse	"Interval error"
+//	@Param			Authorization	header		string			true	"Insert your access token"	default(Bearer <Add access token here>)
+//	@Param			namespace		query		string			false	"Namespace to filter the pod by"
+//	@Param			id				path		string			true	"Name or UID of the pod"
+//	@Success		200				{object}	SuccessResponse	"Details of the requested pod"
+//	@Failure		500				{object}	FailureResponse	"Interval error"
 //	@Router			/pods/{id} [get]
 func (rc *PodHandler) GetByNameOrUID(c echo.Context) error {
 	var namespace = c.QueryParam("namespace")
@@ -172,10 +176,11 @@ func (rc *PodHandler) GetByNameOrUID(c echo.Context) error {
 //	@Tags			pods
 //	@Accept			json
 //	@Produce		json
-//	@Param			namespace	query		string			false	"Namespace to filter the pod by"
-//	@Param			id			path		string			true	"Name or UID of the pod"
-//	@Success		200			{string}	SuccessResponse	"Success message"
-//	@Failure		500			{object}	FailureResponse	"Interval error"
+//	@Param			Authorization	header		string			true	"Insert your access token"	default(Bearer <Add access token here>)
+//	@Param			namespace		query		string			false	"Namespace to filter the pod by"
+//	@Param			id				path		string			true	"Name or UID of the pod"
+//	@Success		200				{string}	SuccessResponse	"Success message"
+//	@Failure		500				{object}	FailureResponse	"Interval error"
 //	@Router			/pods/{id} [delete]
 func (rc *PodHandler) Delete(c echo.Context) error {
 	var namespace = c.QueryParam("namespace")
