@@ -1,4 +1,17 @@
 definitions:
+  controller.FailureResponse:
+    properties:
+      error:
+        type: string
+      message:
+        type: string
+    type: object
+  controller.SuccessResponse:
+    properties:
+      data: {}
+      message:
+        type: string
+    type: object
   intstr.IntOrString:
     properties:
       intVal:
@@ -231,6 +244,10 @@ definitions:
     type: object
   model.PodUpdate:
     properties:
+      id:
+        type: string
+      namespace:
+        type: string
       spec:
         $ref: '#/definitions/model.SpecRequest'
     type: object
@@ -5594,11 +5611,17 @@ paths:
         "200":
           description: User's Google profile data
           schema:
-            type: string
+            additionalProperties:
+              type: string
+            type: object
         "400":
           description: Error message
           schema:
-            type: string
+            $ref: '#/definitions/controller.FailureResponse'
+        "500":
+          description: Interval error
+          schema:
+            $ref: '#/definitions/controller.FailureResponse'
       summary: Google OAuth2 callback
       tags:
       - oAuth
@@ -5610,7 +5633,13 @@ paths:
         "303":
           description: Redirects to Google login page
           schema:
-            type: string
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Error message
+          schema:
+            $ref: '#/definitions/controller.FailureResponse'
       summary: Redirect to Google login page
       tags:
       - oAuth
@@ -5633,14 +5662,15 @@ paths:
         "200":
           description: Successfully logged in with JWT token
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/controller.SuccessResponse'
         "400":
-          description: Error message
+          description: Error message including details on failure
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/controller.FailureResponse'
+        "500":
+          description: Interval error
+          schema:
+            $ref: '#/definitions/controller.FailureResponse'
       summary: User login
       tags:
       - user
@@ -5661,14 +5691,11 @@ paths:
         "200":
           description: List of deployments
           schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: Bad request or error message
+            $ref: '#/definitions/controller.SuccessResponse'
+        "500":
+          description: Interval error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/controller.FailureResponse'
       summary: List deployments
       tags:
       - deployments
@@ -5687,7 +5714,7 @@ paths:
       - application/json
       responses:
         "201":
-          description: Successfully created deployment
+          description: Suxccessfully created deployment
           schema:
             additionalProperties:
               type: string
@@ -5695,9 +5722,11 @@ paths:
         "400":
           description: Bad request or error message
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/controller.FailureResponse'
+        "500":
+          description: Interval error
+          schema:
+            $ref: '#/definitions/controller.FailureResponse'
       summary: Create a new deployment
       tags:
       - deployments
@@ -5718,15 +5747,15 @@ paths:
         "200":
           description: Successfully updated the deployment
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/controller.SuccessResponse'
         "400":
           description: Bad request or invalid data
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/controller.FailureResponse'
+        "500":
+          description: Interval error
+          schema:
+            $ref: '#/definitions/controller.FailureResponse'
       summary: Update an existing deployment
       tags:
       - deployments
@@ -5753,12 +5782,10 @@ paths:
           description: Success message
           schema:
             type: string
-        "400":
+        "500":
           description: Bad request or error message
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/controller.FailureResponse'
       summary: Delete a deployment by name or UID
       tags:
       - deployments
@@ -5783,14 +5810,11 @@ paths:
         "200":
           description: Details of the requested deployment
           schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: Bad request or error message
+            $ref: '#/definitions/controller.SuccessResponse'
+        "500":
+          description: Interval error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/controller.FailureResponse'
       summary: Get a deployment by name or UID
       tags:
       - deployments
@@ -5826,14 +5850,11 @@ paths:
         "200":
           description: List of events
           schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: Bad request or invalid data
+            $ref: '#/definitions/controller.SuccessResponse'
+        "500":
+          description: Interval error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/controller.FailureResponse'
       summary: List events
       tags:
       - events
@@ -5848,14 +5869,11 @@ paths:
         "200":
           description: List of namespaces
           schema:
-            additionalProperties: true
-            type: object
-        "400":
+            $ref: '#/definitions/controller.SuccessResponse'
+        "500":
           description: Bad request or error message
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/controller.FailureResponse'
       summary: List namespaces
       tags:
       - namespaces
@@ -5876,15 +5894,15 @@ paths:
         "201":
           description: Successfully created namespace
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/controller.SuccessResponse'
         "400":
           description: Bad request or error message
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/controller.FailureResponse'
+        "500":
+          description: Interval error
+          schema:
+            $ref: '#/definitions/controller.FailureResponse'
       summary: Create a new namespace
       tags:
       - namespaces
@@ -5905,15 +5923,15 @@ paths:
         "200":
           description: Successfully updated the namespace
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/controller.SuccessResponse'
         "400":
           description: Bad request or invalid data
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/controller.FailureResponse'
+        "500":
+          description: Interval error
+          schema:
+            $ref: '#/definitions/controller.FailureResponse'
       summary: Update an existing namespace
       tags:
       - namespaces
@@ -5936,12 +5954,10 @@ paths:
           description: Success message
           schema:
             type: string
-        "400":
-          description: Bad request or error message
+        "500":
+          description: Interval error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/controller.FailureResponse'
       summary: Delete a namespace by name or UID
       tags:
       - namespaces
@@ -5962,14 +5978,11 @@ paths:
         "200":
           description: Details of the requested namespace
           schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: Bad request or error message
+            $ref: '#/definitions/controller.SuccessResponse'
+        "500":
+          description: Interval error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/controller.FailureResponse'
       summary: Get a namespace by name or UID
       tags:
       - namespaces
@@ -5990,14 +6003,11 @@ paths:
         "200":
           description: List of pods
           schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: Bad request or invalid data
+            $ref: '#/definitions/controller.SuccessResponse'
+        "500":
+          description: Interval error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/controller.FailureResponse'
       summary: List pods
       tags:
       - pods
@@ -6018,15 +6028,15 @@ paths:
         "201":
           description: Successfully created the pod
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/controller.SuccessResponse'
         "400":
           description: Bad request or invalid data
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/controller.FailureResponse'
+        "500":
+          description: Interval error
+          schema:
+            $ref: '#/definitions/controller.FailureResponse'
       summary: Create a new pod
       tags:
       - pods
@@ -6053,12 +6063,10 @@ paths:
           description: Success message
           schema:
             type: string
-        "400":
-          description: Bad request or error message
+        "500":
+          description: Interval error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/controller.FailureResponse'
       summary: Delete a pod by name or UID
       tags:
       - pods
@@ -6083,14 +6091,11 @@ paths:
         "200":
           description: Details of the requested pod
           schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: Bad request or invalid data
+            $ref: '#/definitions/controller.SuccessResponse'
+        "500":
+          description: Interval error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/controller.FailureResponse'
       summary: Get a pod by name or UID
       tags:
       - pods
@@ -6117,15 +6122,15 @@ paths:
         "200":
           description: Pod successfully updated
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/controller.SuccessResponse'
         "400":
           description: Bad request or invalid input data
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/controller.FailureResponse'
+        "500":
+          description: Interval error
+          schema:
+            $ref: '#/definitions/controller.FailureResponse'
       summary: Update an existing pod
       tags:
       - pods
@@ -6162,14 +6167,11 @@ paths:
         "200":
           description: Successful response containing the list of users
           schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: Bad request, invalid parameters or error during retrieval
+            $ref: '#/definitions/controller.SuccessResponse'
+        "500":
+          description: Interval error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/controller.FailureResponse'
       summary: List all users
       tags:
       - users
@@ -6191,16 +6193,16 @@ paths:
         "201":
           description: user username
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/controller.SuccessResponse'
         "400":
-          description: Error message
+          description: Error message including details on failure
           schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: CreateUser create a new user
+            $ref: '#/definitions/controller.FailureResponse'
+        "500":
+          description: Interval error
+          schema:
+            $ref: '#/definitions/controller.FailureResponse'
+      summary: CreateUser creates a new user
       tags:
       - user
   /users/{id}:
@@ -6219,19 +6221,19 @@ paths:
       produces:
       - application/json
       responses:
-        "201":
+        "200":
           description: user username
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/controller.SuccessResponse'
         "400":
-          description: Error message
+          description: Error message including details on failure
           schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: UpdateUser update a user
+            $ref: '#/definitions/controller.FailureResponse'
+        "500":
+          description: Interval error
+          schema:
+            $ref: '#/definitions/controller.FailureResponse'
+      summary: UpdateUser updates an existing user
       tags:
       - user
 swagger: "2.0"

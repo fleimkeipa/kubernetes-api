@@ -42,13 +42,22 @@ const docTemplate = `{
                     "200": {
                         "description": "User's Google profile data",
                         "schema": {
-                            "type": "string"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "400": {
                         "description": "Error message",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/controller.FailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Interval error",
+                        "schema": {
+                            "$ref": "#/definitions/controller.FailureResponse"
                         }
                     }
                 }
@@ -65,7 +74,16 @@ const docTemplate = `{
                     "303": {
                         "description": "Redirects to Google login page",
                         "schema": {
-                            "type": "string"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error message",
+                        "schema": {
+                            "$ref": "#/definitions/controller.FailureResponse"
                         }
                     }
                 }
@@ -99,17 +117,19 @@ const docTemplate = `{
                     "200": {
                         "description": "Successfully logged in with JWT token",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/controller.SuccessResponse"
                         }
                     },
                     "400": {
-                        "description": "Error message",
+                        "description": "Error message including details on failure",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controller.FailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Interval error",
+                        "schema": {
+                            "$ref": "#/definitions/controller.FailureResponse"
                         }
                     }
                 }
@@ -140,17 +160,13 @@ const docTemplate = `{
                     "200": {
                         "description": "List of deployments",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/controller.SuccessResponse"
                         }
                     },
-                    "400": {
-                        "description": "Bad request or error message",
+                    "500": {
+                        "description": "Interval error",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controller.FailureResponse"
                         }
                     }
                 }
@@ -182,19 +198,19 @@ const docTemplate = `{
                     "200": {
                         "description": "Successfully updated the deployment",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controller.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad request or invalid data",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controller.FailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Interval error",
+                        "schema": {
+                            "$ref": "#/definitions/controller.FailureResponse"
                         }
                     }
                 }
@@ -224,7 +240,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "201": {
-                        "description": "Successfully created deployment",
+                        "description": "Suxccessfully created deployment",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -235,10 +251,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad request or error message",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controller.FailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Interval error",
+                        "schema": {
+                            "$ref": "#/definitions/controller.FailureResponse"
                         }
                     }
                 }
@@ -276,17 +295,13 @@ const docTemplate = `{
                     "200": {
                         "description": "Details of the requested deployment",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/controller.SuccessResponse"
                         }
                     },
-                    "400": {
-                        "description": "Bad request or error message",
+                    "500": {
+                        "description": "Interval error",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controller.FailureResponse"
                         }
                     }
                 }
@@ -325,13 +340,10 @@ const docTemplate = `{
                             "type": "string"
                         }
                     },
-                    "400": {
+                    "500": {
                         "description": "Bad request or error message",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controller.FailureResponse"
                         }
                     }
                 }
@@ -386,17 +398,13 @@ const docTemplate = `{
                     "200": {
                         "description": "List of events",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/controller.SuccessResponse"
                         }
                     },
-                    "400": {
-                        "description": "Bad request or invalid data",
+                    "500": {
+                        "description": "Interval error",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controller.FailureResponse"
                         }
                     }
                 }
@@ -419,17 +427,13 @@ const docTemplate = `{
                     "200": {
                         "description": "List of namespaces",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/controller.SuccessResponse"
                         }
                     },
-                    "400": {
+                    "500": {
                         "description": "Bad request or error message",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controller.FailureResponse"
                         }
                     }
                 }
@@ -461,19 +465,19 @@ const docTemplate = `{
                     "200": {
                         "description": "Successfully updated the namespace",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controller.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad request or invalid data",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controller.FailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Interval error",
+                        "schema": {
+                            "$ref": "#/definitions/controller.FailureResponse"
                         }
                     }
                 }
@@ -505,19 +509,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Successfully created namespace",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controller.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad request or error message",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controller.FailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Interval error",
+                        "schema": {
+                            "$ref": "#/definitions/controller.FailureResponse"
                         }
                     }
                 }
@@ -549,17 +553,13 @@ const docTemplate = `{
                     "200": {
                         "description": "Details of the requested namespace",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/controller.SuccessResponse"
                         }
                     },
-                    "400": {
-                        "description": "Bad request or error message",
+                    "500": {
+                        "description": "Interval error",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controller.FailureResponse"
                         }
                     }
                 }
@@ -592,13 +592,10 @@ const docTemplate = `{
                             "type": "string"
                         }
                     },
-                    "400": {
-                        "description": "Bad request or error message",
+                    "500": {
+                        "description": "Interval error",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controller.FailureResponse"
                         }
                     }
                 }
@@ -629,17 +626,13 @@ const docTemplate = `{
                     "200": {
                         "description": "List of pods",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/controller.SuccessResponse"
                         }
                     },
-                    "400": {
-                        "description": "Bad request or invalid data",
+                    "500": {
+                        "description": "Interval error",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controller.FailureResponse"
                         }
                     }
                 }
@@ -671,19 +664,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Successfully created the pod",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controller.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad request or invalid data",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controller.FailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Interval error",
+                        "schema": {
+                            "$ref": "#/definitions/controller.FailureResponse"
                         }
                     }
                 }
@@ -721,17 +714,13 @@ const docTemplate = `{
                     "200": {
                         "description": "Details of the requested pod",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/controller.SuccessResponse"
                         }
                     },
-                    "400": {
-                        "description": "Bad request or invalid data",
+                    "500": {
+                        "description": "Interval error",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controller.FailureResponse"
                         }
                     }
                 }
@@ -763,19 +752,19 @@ const docTemplate = `{
                     "200": {
                         "description": "Pod successfully updated",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controller.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad request or invalid input data",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controller.FailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Interval error",
+                        "schema": {
+                            "$ref": "#/definitions/controller.FailureResponse"
                         }
                     }
                 }
@@ -814,13 +803,10 @@ const docTemplate = `{
                             "type": "string"
                         }
                     },
-                    "400": {
-                        "description": "Bad request or error message",
+                    "500": {
+                        "description": "Interval error",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controller.FailureResponse"
                         }
                     }
                 }
@@ -875,17 +861,13 @@ const docTemplate = `{
                     "200": {
                         "description": "Successful response containing the list of users",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/controller.SuccessResponse"
                         }
                     },
-                    "400": {
-                        "description": "Bad request, invalid parameters or error during retrieval",
+                    "500": {
+                        "description": "Interval error",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controller.FailureResponse"
                         }
                     }
                 }
@@ -901,7 +883,7 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "CreateUser create a new user",
+                "summary": "CreateUser creates a new user",
                 "parameters": [
                     {
                         "description": "User creation input",
@@ -917,19 +899,19 @@ const docTemplate = `{
                     "201": {
                         "description": "user username",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controller.SuccessResponse"
                         }
                     },
                     "400": {
-                        "description": "Error message",
+                        "description": "Error message including details on failure",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controller.FailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Interval error",
+                        "schema": {
+                            "$ref": "#/definitions/controller.FailureResponse"
                         }
                     }
                 }
@@ -947,7 +929,7 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "UpdateUser update a user",
+                "summary": "UpdateUser updates an existing user",
                 "parameters": [
                     {
                         "description": "User update input",
@@ -960,22 +942,22 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "201": {
+                    "200": {
                         "description": "user username",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controller.SuccessResponse"
                         }
                     },
                     "400": {
-                        "description": "Error message",
+                        "description": "Error message including details on failure",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controller.FailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Interval error",
+                        "schema": {
+                            "$ref": "#/definitions/controller.FailureResponse"
                         }
                     }
                 }
@@ -983,6 +965,26 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "controller.FailureResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "controller.SuccessResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
         "intstr.IntOrString": {
             "type": "object",
             "properties": {
@@ -1334,6 +1336,12 @@ const docTemplate = `{
         "model.PodUpdate": {
             "type": "object",
             "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "namespace": {
+                    "type": "string"
+                },
                 "spec": {
                     "$ref": "#/definitions/model.SpecRequest"
                 }
