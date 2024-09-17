@@ -3,6 +3,12 @@ package model
 import "time"
 
 const (
+	PodKind        = "pod"
+	DeploymentKind = "deployment"
+	NamespaceKind  = "namespace"
+)
+
+const (
 	CreateEventKind = "create"
 	UpdateEventKind = "update"
 	DeleteEventKind = "delete"

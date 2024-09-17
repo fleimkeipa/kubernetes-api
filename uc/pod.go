@@ -32,7 +32,7 @@ func (rc *PodUC) Create(ctx context.Context, pod *model.Pod, opts metav1.CreateO
 	}
 
 	var event = model.Event{
-		Kind:         pod.TypeMeta.Kind,
+		Kind:         model.PodKind,
 		EventKind:    model.CreateEventKind,
 		CreationTime: time.Now(),
 		Owner:        model.User{},
@@ -47,19 +47,14 @@ func (rc *PodUC) Create(ctx context.Context, pod *model.Pod, opts metav1.CreateO
 	return rc.podsRepo.Create(ctx, kubePod, opts)
 }
 
-func (rc *PodUC) Update(ctx context.Context, id string, pod *model.Pod, opts metav1.UpdateOptions) (*corev1.Pod, error) {
-	existPod, err := rc.GetByNameOrUID(ctx, pod.Namespace, id, metav1.ListOptions{})
+func (rc *PodUC) Update(ctx context.Context, id string, request *model.PodsUpdateRequest, opts metav1.UpdateOptions) (*corev1.Pod, error) {
+	existPod, err := rc.GetByNameOrUID(ctx, request.Pod.Namespace, id, metav1.ListOptions{})
 	if err != nil {
 		return nil, err
 	}
 
-	pod.TypeMeta.Kind = "pod"
-	if pod.ObjectMeta.Namespace == "" {
-		pod.ObjectMeta.Namespace = "default"
-	}
-
 	var event = model.Event{
-		Kind:         pod.TypeMeta.Kind,
+		Kind:         model.PodKind,
 		EventKind:    model.UpdateEventKind,
 		CreationTime: time.Now(),
 		Owner:        model.User{},
@@ -69,7 +64,7 @@ func (rc *PodUC) Update(ctx context.Context, id string, pod *model.Pod, opts met
 		return nil, fmt.Errorf("failed to create event for %s: %w", event.EventKind, err)
 	}
 
-	var kubePod = rc.overwritePod(pod, existPod)
+	var kubePod = rc.overwritePod(request, existPod)
 
 	return rc.podsRepo.Update(ctx, id, kubePod, opts)
 }
@@ -115,7 +110,7 @@ func (rc *PodUC) Delete(ctx context.Context, namespace, name string, opts metav1
 	}
 
 	var event = model.Event{
-		Kind:         opts.TypeMeta.Kind,
+		Kind:         model.PodKind,
 		EventKind:    model.DeleteEventKind,
 		CreationTime: time.Now(),
 		Owner:        model.User{},
@@ -192,27 +187,30 @@ func (rc *PodUC) fillPod(pod *model.Pod) *corev1.Pod {
 	}
 }
 
-func (rc *PodUC) overwritePod(newPod *model.Pod, existPod *corev1.Pod) *corev1.Pod {
-	existPod.Spec.Containers = rc.overwriteContainers(newPod.Spec.Containers, existPod.Spec.Containers)
-	existPod.Spec.InitContainers = rc.overwriteContainers(newPod.Spec.InitContainers, existPod.Spec.InitContainers)
+func (rc *PodUC) overwritePod(newPod *model.PodsUpdateRequest, existPod *corev1.Pod) *corev1.Pod {
+	existPod.Spec.Containers = rc.overwriteContainers(newPod.Pod.Spec.Containers, existPod.Spec.Containers)
+	existPod.Spec.InitContainers = rc.overwriteContainers(newPod.Pod.Spec.InitContainers, existPod.Spec.InitContainers)
 
-	existPod.Spec.Tolerations = rc.addTolerations(newPod.Spec.Tolerations, existPod.Spec.Tolerations)
+	existPod.Spec.Tolerations = rc.addTolerations(newPod.Pod.Spec.Tolerations, existPod.Spec.Tolerations)
 
-	existPod.Spec.ActiveDeadlineSeconds = newPod.Spec.ActiveDeadlineSeconds
+	existPod.Spec.ActiveDeadlineSeconds = newPod.Pod.Spec.ActiveDeadlineSeconds
 
 	var graceSeconds = existPod.Spec.TerminationGracePeriodSeconds
 	if graceSeconds == nil { // (allow it to be set to 1 if it was previously negative)
-		existPod.Spec.TerminationGracePeriodSeconds = newPod.Spec.TerminationGracePeriodSeconds
+		existPod.Spec.TerminationGracePeriodSeconds = newPod.Pod.Spec.TerminationGracePeriodSeconds
 	}
 
 	return existPod
 }
 
 // overwriteContainers change only images
-func (rc *PodUC) overwriteContainers(newContainers []model.Container, existContainers []corev1.Container) []corev1.Container {
+func (rc *PodUC) overwriteContainers(newContainers []model.ContainerRequest, existContainers []corev1.Container) []corev1.Container {
 	var containersMap = make(map[string]model.Container, 0)
 	for _, v := range newContainers {
-		containersMap[v.Name] = v
+		containersMap[v.Name] = model.Container{
+			Name:  v.Name,
+			Image: v.Image,
+		}
 	}
 
 	for i, v := range existContainers {
