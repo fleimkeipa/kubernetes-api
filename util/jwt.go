@@ -3,8 +3,6 @@ package util
 import (
 	"errors"
 	"fmt"
-	"os"
-	"strconv"
 	"strings"
 	"time"
 
@@ -12,20 +10,20 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
+	"github.com/spf13/viper"
 )
 
 // retrieve JWT key from .env file
-var privateKey = []byte(os.Getenv("JWT_PRIVATE_KEY"))
+var privateKey = []byte(viper.GetString("jwt.private_key"))
 
 // generate JWT token
 func GenerateJWT(user *model.User) (string, error) {
-	tokenTTL, _ := strconv.Atoi(os.Getenv("TOKEN_TTL"))
 	var token = jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id":       user.ID,
 		"username": user.Username,
 		"role":     user.RoleID,
 		"iat":      time.Now().Unix(),
-		"eat":      time.Now().Add(time.Second * time.Duration(tokenTTL)).Unix(),
+		"eat":      time.Now().Add(time.Second * time.Duration(viper.GetInt("jwt.token_ttl"))).Unix(),
 	})
 
 	return token.SignedString(privateKey)
