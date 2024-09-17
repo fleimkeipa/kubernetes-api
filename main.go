@@ -53,6 +53,9 @@ func serveApplication() {
 	e.Use(pkg.ZapLogger(logger))
 	e.Use(middleware.Recover())
 
+	var loggerHandler = controller.NewLogger(sugar)
+	e.Use(loggerHandler.LoggerMiddleware)
+
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	// Add CORS in middleware
@@ -73,7 +76,7 @@ func serveApplication() {
 
 	var podRepo = repositories.NewPodRepository(kubClient)
 	var podUC = uc.NewPodUC(podRepo, eventUC)
-	var podHandlers = controller.NewPodHandler(podUC, sugar)
+	var podHandlers = controller.NewPodHandler(podUC)
 
 	var namespaceRepo = repositories.NewNamespaceRepository(kubClient)
 	var namespaceUC = uc.NewNamespaceUC(namespaceRepo)
