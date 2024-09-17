@@ -110,6 +110,32 @@ func (rc *UserHandlers) UpdateUser(c echo.Context) error {
 	})
 }
 
+// DeleteUser godoc
+//
+//	@Summary		DeleteUser deletes an existing user
+//	@Description	This endpoint deletes a user by providing user id.
+//	@Tags			users
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization	header		string			true	"Insert your access token"	default(Bearer <Add access token here>)
+//	@Success		200				{object}	SuccessResponse	"user username"
+//	@Failure		500				{object}	FailureResponse	"Interval error"
+//	@Router			/users/{id} [put]
+func (rc *UserHandlers) DeleteUser(c echo.Context) error {
+	var id = c.Param("id")
+
+	if err := rc.userUC.Delete(c.Request().Context(), id); err != nil {
+		return c.JSON(http.StatusInternalServerError, FailureResponse{
+			Error:   fmt.Sprintf("Failed to delete user: %v", err),
+			Message: "User delete failed. Please check the provided details and try again.",
+		})
+	}
+
+	return c.JSON(http.StatusOK, SuccessResponse{
+		Message: "User deleted successfully.",
+	})
+}
+
 // Login godoc
 //
 //	@Summary		User login

@@ -106,6 +106,7 @@ func serveApplication() {
 	usersRoutes.GET("", userHandlers.List)
 	usersRoutes.POST("", userHandlers.CreateUser)
 	usersRoutes.PUT("/:id", userHandlers.UpdateUser)
+	usersRoutes.DELETE("/:id", userHandlers.DeleteUser)
 
 	var podsRoutes = restrictedRoutes.Group("/pods")
 	podsRoutes.GET("", podHandlers.List)

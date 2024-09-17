@@ -37,6 +37,15 @@ func (rc *UserRepository) Update(ctx context.Context, user model.User) (*model.U
 	return &user, nil
 }
 
+func (rc *UserRepository) Delete(ctx context.Context, id string) error {
+	_, err := rc.db.Model(&model.User{}).Where("id = ?", id).Delete()
+	if err != nil {
+		return fmt.Errorf("failed to delete user: %w", err)
+	}
+
+	return nil
+}
+
 func (rc *UserRepository) GetByID(ctx context.Context, id string) (*model.User, error) {
 	var user = new(model.User)
 
