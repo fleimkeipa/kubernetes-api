@@ -122,7 +122,7 @@ func (rc *UserHandlers) UpdateUser(c echo.Context) error {
 //	@Param			Authorization	header		string			true	"Insert your access token"	default(Bearer <Add access token here>)
 //	@Success		200				{object}	SuccessResponse	"user username"
 //	@Failure		500				{object}	FailureResponse	"Interval error"
-//	@Router			/users/{id} [put]
+//	@Router			/users/{id} [delete]
 func (rc *UserHandlers) DeleteUser(c echo.Context) error {
 	var id = c.Param("id")
 
