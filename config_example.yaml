@@ -1,0 +1,29 @@
+# Database options
+database:
+  name: kubernetes-api
+  username: postgres
+  password: password
+  addr: localhost:5432
+
+# UI service options
+ui_service:
+  allow_origin: http://localhost:8081
+
+# API service options
+api_service:
+  port: 8080
+
+# JWT options
+jwt:
+  private_key: <SECRET>
+
+# OAuth2 options
+oauth2:
+  google:
+    client_id: "<CLIENT_ID>" # Replace <CLIENT_ID> with your actual ID.
+    client_secret: "<CLIENT_SECRET>" # Replace <CLIENT_SECRET> with your actual SECRET.
+    redirect_url: "<CLIENT_REDIRECT_URL>" # Replace <CLIENT_REDIRECT_URL> with your actual Redirect URL.
+  github:
+    client_id: "<CLIENT_ID>" # Replace <CLIENT_ID> with your actual ID.
+    client_secret: "<CLIENT_SECRET>" # Replace <CLIENT_SECRET> with your actual SECRET.
+    redirect_url: "<CLIENT_REDIRECT_URL>" # Replace <CLIENT_REDIRECT_URL> with your actual Redirect URL.
