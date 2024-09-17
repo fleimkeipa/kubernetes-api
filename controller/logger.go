@@ -25,9 +25,14 @@ type responseWriter struct {
 }
 
 // Write captures the response body while continuing to write to the original response
-func (w *responseWriter) Write(b []byte) (int, error) {
-	w.body.Write(b)            // Buffer the response body
-	return w.Response.Write(b) // Write the response to the client
+func (rc *responseWriter) Write(b []byte) (int, error) {
+	rc.body.Write(b)            // Buffer the response body
+	return rc.Response.Write(b) // Write the response to the client
+}
+
+// WriteHeader captures the status code
+func (rc *responseWriter) WriteHeader(statusCode int) {
+	rc.Response.WriteHeader(statusCode)
 }
 
 // LoggerMiddleware intercepts the response to log any errors present in the response body
@@ -35,6 +40,7 @@ func (rc *Logger) LoggerMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		// Wrap the original response writer to intercept the response body
 		var res = c.Response()
+
 		var bodyBuffer = new(bytes.Buffer)
 		var writer = &responseWriter{
 			Response: *res,
@@ -44,6 +50,12 @@ func (rc *Logger) LoggerMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 
 		// Proceed with request handling
 		var err = next(c)
+
+		// If the response status code indicates a success (100-399),
+		// pass the request to the next handler without logging.
+		if res.Status > 99 && res.Status < 400 {
+			return next(c)
+		}
 
 		// After the handler, check if there was an error in the response
 		var failureResponse FailureResponse
