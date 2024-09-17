@@ -8,6 +8,16 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+type SuccessResponse struct {
+	Data    interface{} `json:"data"`
+	Message string      `json:"message"`
+}
+
+type FailureResponse struct {
+	Error   string `json:"error"`
+	Message string `json:"message"`
+}
+
 func getPagination(c echo.Context) model.PaginationOpts {
 	var limitQuery = c.QueryParam("limit")
 	var skipQuery = c.QueryParam("skip")
