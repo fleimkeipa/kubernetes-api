@@ -458,6 +458,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/events/{id}": {
+            "get": {
+                "description": "Retrieves a event from Database by its ID, optionally filtered by namespace.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "events"
+                ],
+                "summary": "Get a event by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "ID of the event",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Details of the requested event",
+                        "schema": {
+                            "$ref": "#/definitions/controller.SuccessResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Interval error",
+                        "schema": {
+                            "$ref": "#/definitions/controller.FailureResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/namespaces": {
             "get": {
                 "description": "Retrieves a list of namespaces from the Kubernetes cluster.",
@@ -1065,6 +1111,58 @@ const docTemplate = `{
         },
         "/users/{id}": {
             "put": {
+                "description": "This endpoint updates a user by providing username, email, password, and role ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "UpdateUser updates an existing user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "User update input",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.UserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "user username",
+                        "schema": {
+                            "$ref": "#/definitions/controller.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Error message including details on failure",
+                        "schema": {
+                            "$ref": "#/definitions/controller.FailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Interval error",
+                        "schema": {
+                            "$ref": "#/definitions/controller.FailureResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
                 "description": "This endpoint deletes a user by providing user id.",
                 "consumes": [
                     "application/json"
