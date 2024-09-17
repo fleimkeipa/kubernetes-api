@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/fleimkeipa/kubernetes-api/model"
@@ -29,23 +30,32 @@ func NewEventHandler(eventsUC *uc.EventUC, logger *zap.SugaredLogger) *EventHand
 //	@Tags			events
 //	@Accept			json
 //	@Produce		json
-//	@Param			kind			query		string					false	"kind to filter events by"
-//	@Param			event_kind		query		string					false	"event kind to filter events by"
-//	@Param			creation_time	query		string					false	"creation time to filter events by"
-//	@Param			owner_id		query		string					false	"owner id to filter events by"
-//	@Param			owner_username	query		string					false	"owner username to filter events by"
-//	@Success		200				{object}	map[string]interface{}	"List of events"
-//	@Failure		400				{object}	map[string]string		"Bad request or invalid data"
+//	@Param			kind			query		string			false	"kind to filter events by"
+//	@Param			event_kind		query		string			false	"event kind to filter events by"
+//	@Param			creation_time	query		string			false	"creation time to filter events by"
+//	@Param			owner_id		query		string			false	"owner id to filter events by"
+//	@Param			owner_username	query		string			false	"owner username to filter events by"
+//	@Success		200				{object}	SuccessResponse	"List of events"
+//	@Failure		500				{object}	FailureResponse "Interval error"
 //	@Router			/events [get]
 func (rc *EventHandler) List(c echo.Context) error {
+	// Extract filtering options from the query parameters
 	var opts = rc.getEventsFindOpts(c)
 
+	// Attempt to retrieve the list of events
 	list, err := rc.eventsUC.List(c.Request().Context(), &opts)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+		return c.JSON(http.StatusInternalServerError, FailureResponse{
+			Error:   fmt.Sprintf("Failed to retrieve events: %v", err),
+			Message: "There was an error fetching the events. Please verify the filters and try again.",
+		})
 	}
 
-	return c.JSON(http.StatusOK, echo.Map{"data": list})
+	// Return the list of events if successful
+	return c.JSON(http.StatusOK, SuccessResponse{
+		Data:    list,
+		Message: "Events retrieved successfully.",
+	})
 }
 
 func (rc *EventHandler) getEventsFindOpts(c echo.Context) model.EventFindOpts {

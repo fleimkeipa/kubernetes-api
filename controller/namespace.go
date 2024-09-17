@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/fleimkeipa/kubernetes-api/model"
@@ -27,17 +28,23 @@ func NewNamespaceHandler(namespaceUC *uc.NamespaceUC) *NamespaceHandler {
 //	@Tags			namespaces
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{object}	map[string]interface{}	"List of namespaces"
-//	@Failure		400	{object}	map[string]string		"Bad request or error message"
+//	@Success		200	{object}	SuccessResponse	"List of namespaces"
+//	@Failure		500	{object}	FailureResponse	"Bad request or error message"
 //	@Router			/namespaces [get]
 func (rc *NamespaceHandler) List(c echo.Context) error {
 	var opts = metav1.ListOptions{}
 	list, err := rc.namespaceUC.List(c.Request().Context(), opts)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+		return c.JSON(http.StatusInternalServerError, FailureResponse{
+			Error:   fmt.Sprintf("Failed to retrieve namespaces: %v", err),
+			Message: "There was an error retrieving the list of namespaces. Please try again.",
+		})
 	}
 
-	return c.JSON(http.StatusOK, echo.Map{"data": list})
+	return c.JSON(http.StatusOK, SuccessResponse{
+		Data:    list,
+		Message: "Namespaces retrieved successfully.",
+	})
 }
 
 // Create godoc
@@ -48,22 +55,32 @@ func (rc *NamespaceHandler) List(c echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			namespace	body		model.NamespaceRequest	true	"Namespace request body"
-//	@Success		201			{object}	map[string]string		"Successfully created namespace"
-//	@Failure		400			{object}	map[string]string		"Bad request or error message"
+//	@Success		201			{object}	SuccessResponse			"Successfully created namespace"
+//	@Failure		400			{object}	FailureResponse			"Bad request or error message"
+//	@Failure		500			{object}	FailureResponse			"Interval error"
 //	@Router			/namespaces [post]
 func (rc *NamespaceHandler) Create(c echo.Context) error {
 	var input model.NamespaceRequest
 
 	if err := c.Bind(&input); err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+		return c.JSON(http.StatusBadRequest, FailureResponse{
+			Error:   fmt.Sprintf("Failed to bind namespace request: %v", err),
+			Message: "Invalid input. Please verify the data and try again.",
+		})
 	}
 
 	namespace, err := rc.namespaceUC.Create(c.Request().Context(), &input.Namespace, input.Opts)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+		return c.JSON(http.StatusInternalServerError, FailureResponse{
+			Error:   fmt.Sprintf("Failed to create namespace: %v", err),
+			Message: "There was an error creating the namespace. Please try again.",
+		})
 	}
 
-	return c.JSON(http.StatusCreated, echo.Map{"namespace": namespace.Name})
+	return c.JSON(http.StatusCreated, SuccessResponse{
+		Data:    namespace.Name,
+		Message: "Namespace created successfully.",
+	})
 }
 
 // GetByNameOrUID godoc
@@ -73,9 +90,9 @@ func (rc *NamespaceHandler) Create(c echo.Context) error {
 //	@Tags			namespaces
 //	@Accept			json
 //	@Produce		json
-//	@Param			id	path		string					true	"Name or UID of the namespace"
-//	@Success		200	{object}	map[string]interface{}	"Details of the requested namespace"
-//	@Failure		400	{object}	map[string]string		"Bad request or error message"
+//	@Param			id	path		string			true	"Name or UID of the namespace"
+//	@Success		200	{object}	SuccessResponse	"Details of the requested namespace"
+//	@Failure		500	{object}	FailureResponse	"Interval error"
 //	@Router			/namespaces/{id} [get]
 func (rc *NamespaceHandler) GetByNameOrUID(c echo.Context) error {
 	var nameOrUID = c.Param("id")
@@ -84,10 +101,16 @@ func (rc *NamespaceHandler) GetByNameOrUID(c echo.Context) error {
 
 	list, err := rc.namespaceUC.GetByNameOrUID(c.Request().Context(), nameOrUID, opts)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+		return c.JSON(http.StatusInternalServerError, FailureResponse{
+			Error:   fmt.Sprintf("Failed to retrieve namespace: %v", err),
+			Message: "Error retrieving namespace. Please check the name or UID and try again.",
+		})
 	}
 
-	return c.JSON(http.StatusOK, echo.Map{"data": list})
+	return c.JSON(http.StatusOK, SuccessResponse{
+		Data:    list,
+		Message: "Namespace retrieved successfully.",
+	})
 }
 
 // Delete godoc
@@ -97,9 +120,9 @@ func (rc *NamespaceHandler) GetByNameOrUID(c echo.Context) error {
 //	@Tags			namespaces
 //	@Accept			json
 //	@Produce		json
-//	@Param			id	path		string				true	"Name or UID of the namespace"
-//	@Success		200	{string}	string				"Success message"
-//	@Failure		400	{object}	map[string]string	"Bad request or error message"
+//	@Param			id	path		string			true	"Name or UID of the namespace"
+//	@Success		200	{string}	SuccessResponse	"Success message"
+//	@Failure		500	{object}	FailureResponse	"Interval error"
 //	@Router			/namespaces/{id} [delete]
 func (rc *NamespaceHandler) Delete(c echo.Context) error {
 	var nameOrUID = c.Param("id")
@@ -107,10 +130,15 @@ func (rc *NamespaceHandler) Delete(c echo.Context) error {
 	var opts = metav1.DeleteOptions{}
 
 	if err := rc.namespaceUC.Delete(c.Request().Context(), nameOrUID, opts); err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+		return c.JSON(http.StatusInternalServerError, FailureResponse{
+			Error:   fmt.Sprintf("Failed to delete namespace: %v", err),
+			Message: "Error deleting namespace. Please check the name or UID and try again.",
+		})
 	}
 
-	return c.JSON(http.StatusOK, "deleted succesfully")
+	return c.JSON(http.StatusOK, SuccessResponse{
+		Message: "Namespace deleted successfully.",
+	})
 }
 
 // Update godoc
@@ -121,20 +149,30 @@ func (rc *NamespaceHandler) Delete(c echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			namespace	body		model.NamespaceRequest	true	"Namespace request body"
-//	@Success		200			{object}	map[string]string		"Successfully updated the namespace"
-//	@Failure		400			{object}	map[string]string		"Bad request or invalid data"
+//	@Success		200			{object}	SuccessResponse			"Successfully updated the namespace"
+//	@Failure		400			{object}	FailureResponse			"Bad request or invalid data"
+//	@Failure		500			{object}	FailureResponse			"Interval error"
 //	@Router			/namespaces [put]
 func (rc *NamespaceHandler) Update(c echo.Context) error {
 	var request model.NamespaceRequest
 
 	if err := c.Bind(&request); err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+		return c.JSON(http.StatusBadRequest, FailureResponse{
+			Error:   fmt.Sprintf("Failed to bind namespace request: %v", err),
+			Message: "Invalid input. Please verify the data and try again.",
+		})
 	}
 
 	namespace, err := rc.namespaceUC.Update(c.Request().Context(), &request.Namespace, metav1.UpdateOptions(request.Opts))
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+		return c.JSON(http.StatusInternalServerError, FailureResponse{
+			Error:   fmt.Sprintf("Failed to update namespace: %v", err),
+			Message: "Error updating namespace. Please try again.",
+		})
 	}
 
-	return c.JSON(http.StatusCreated, echo.Map{"namespace": namespace.Name})
+	return c.JSON(http.StatusOK, SuccessResponse{
+		Data:    namespace.Name,
+		Message: "Namespace updated successfully.",
+	})
 }
