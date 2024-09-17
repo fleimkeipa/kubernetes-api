@@ -1,25 +1,24 @@
 package config
 
 import (
-	"os"
-
+	"github.com/spf13/viper"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/github"
 	"golang.org/x/oauth2/google"
 )
 
-type Config struct {
+type OAuthConfig struct {
 	GoogleLoginConfig oauth2.Config
 	GitHubLoginConfig oauth2.Config
 }
 
-var AppConfig Config
+var AppConfig OAuthConfig
 
 func GoogleConfig() oauth2.Config {
 	AppConfig.GoogleLoginConfig = oauth2.Config{
-		RedirectURL:  os.Getenv("GOOGLE_REDIRECT_URL"),
-		ClientID:     os.Getenv("GOOGLE_CLIENT_ID"),
-		ClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
+		RedirectURL:  viper.GetString("oauth2.google.redirect_url"),
+		ClientID:     viper.GetString("oauth2.google.client_id"),
+		ClientSecret: viper.GetString("oauth2.google.client_secret"),
 		Scopes: []string{
 			"https://www.googleapis.com/auth/userinfo.email",
 			"https://www.googleapis.com/auth/userinfo.profile",
@@ -32,11 +31,9 @@ func GoogleConfig() oauth2.Config {
 
 func GithubConfig() oauth2.Config {
 	AppConfig.GitHubLoginConfig = oauth2.Config{
-		RedirectURL: "http://localhost:8080/github_callback",
-		ClientID:    os.Getenv("GITHUB_CLIENT_ID"),
-		//RedirectURL: fmt.Sprintf(
-		//	"https://github.com/login/oauth/authorize?scope=user:repo&client_id=%s&redirect_uri=%s", os.Getenv("GITHUB_CLIENT_ID"), "http://localhost:8080/github_callback"),
-		ClientSecret: os.Getenv("GITHUB_CLIENT_SECRET"),
+		RedirectURL:  viper.GetString("oauth2.github.redirect_url"),
+		ClientID:     viper.GetString("oauth2.github.client_id"),
+		ClientSecret: viper.GetString("oauth2.github.client_secret"),
 		Scopes:       []string{"user", "repo"},
 		Endpoint:     github.Endpoint,
 	}
