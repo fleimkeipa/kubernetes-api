@@ -1,15 +1,12 @@
 package controller
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 
 	"github.com/fleimkeipa/kubernetes-api/model"
 	"github.com/fleimkeipa/kubernetes-api/uc"
-	"github.com/fleimkeipa/kubernetes-api/util"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 )
 
@@ -138,67 +135,6 @@ func (rc *UserHandlers) DeleteUser(c echo.Context) error {
 	})
 }
 
-// Login godoc
-//
-//	@Summary		User login
-//	@Description	This endpoint allows a user to log in by providing a valid username and password.
-//	@Tags			auth
-//	@Accept			json
-//	@Produce		json
-//	@Param			body	body		model.Login		true	"User login input"
-//	@Success		200		{object}	SuccessResponse	"Successfully logged in with JWT token"
-//	@Failure		400		{object}	FailureResponse	"Error message including details on failure"
-//	@Failure		500		{object}	FailureResponse	"Interval error"
-//	@Router			/auth/login [post]
-func (rc *UserHandlers) Login(c echo.Context) error {
-	var input model.Login
-
-	if err := c.Bind(&input); err != nil {
-		var errorMessage string
-		var validationErrors validator.ValidationErrors
-		if errors.As(err, &validationErrors) {
-			validationError := validationErrors[0]
-			if validationError.Tag() == "required" {
-				errorMessage = fmt.Sprintf("%s not provided", validationError.Field())
-			}
-		}
-
-		return c.JSON(http.StatusBadRequest, FailureResponse{
-			Error:   fmt.Sprintf("Failed to bind request: %v", errorMessage),
-			Message: "Invalid login details. Please ensure all required fields are provided and try again.",
-		})
-	}
-
-	user, err := rc.userUC.GetByUsernameOrEmail(c.Request().Context(), input.Username)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, FailureResponse{
-			Error:   fmt.Sprintf("User not found: %v", err),
-			Message: "User not found. Please check the username and try again.",
-		})
-	}
-
-	if err := model.ValidateUserPassword(user.Password, input.Password); err != nil {
-		return c.JSON(http.StatusBadRequest, FailureResponse{
-			Error:   fmt.Sprintf("Invalid password: %v", err),
-			Message: "Invalid password. Please check the password and try again.",
-		})
-	}
-
-	jwt, err := util.GenerateJWT(user)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, FailureResponse{
-			Error:   fmt.Sprintf("Failed to generate JWT: %v", err),
-			Message: "Login failed. Please try again later.",
-		})
-	}
-
-	return c.JSON(http.StatusOK, echo.Map{
-		"token":    jwt,
-		"username": input.Username,
-		"message":  "Successfully logged in",
-	})
-}
-
 // List godoc
 //
 //	@Summary		List all users
@@ -229,6 +165,38 @@ func (rc *UserHandlers) List(c echo.Context) error {
 	return c.JSON(http.StatusOK, SuccessResponse{
 		Data:    list,
 		Message: "Users retrieved successfully.",
+	})
+}
+
+// GetByID godoc
+//
+//	@Summary		Retrieve user by ID
+//	@Description	Fetches a user by their unique ID from the database.
+//	@Tags			users
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization	header		string			true	"Insert your access token"	default(Bearer <Add access token here>)
+//	@Param			id				path		string			true	"User ID"
+//	@Success		200				{object}	SuccessResponse	"Successful response containing the user information"
+//	@Failure		500				{object}	FailureResponse	"Internal server error"
+//	@Router			/users/{id} [get]
+func (rc *UserHandlers) GetByID(c echo.Context) error {
+	var id = c.Param("id") // Extract the user ID from the path parameters
+
+	user, err := rc.userUC.GetByID(c.Request().Context(), id)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, FailureResponse{
+			Error:   "Internal Server Error",
+			Message: fmt.Sprintf("Failed to retrieve user: %v", err),
+		})
+	}
+
+	// Remove the password from the user object before returning it
+	user.Password = ""
+
+	return c.JSON(http.StatusOK, SuccessResponse{
+		Data:    user,
+		Message: "User retrieved successfully.",
 	})
 }
 
