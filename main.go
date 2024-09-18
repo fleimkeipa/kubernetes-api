@@ -56,28 +56,35 @@ func serveApplication() {
 	var eventUC = uc.NewEventUC(eventRepo)
 	var eventHandler = controller.NewEventHandler(eventUC)
 
+	// Create Pod handlers and related components
 	var podRepo = repositories.NewPodRepository(kubClient)
 	var podUC = uc.NewPodUC(podRepo, eventUC)
 	var podHandlers = controller.NewPodHandler(podUC)
 
+	// Create Namespace handlers and related components
 	var namespaceRepo = repositories.NewNamespaceRepository(kubClient)
 	var namespaceUC = uc.NewNamespaceUC(namespaceRepo)
 	var namespaceHandlers = controller.NewNamespaceHandler(namespaceUC)
 
+	// Create Deployment handlers and related components
 	var deploymentRepo = repositories.NewDeploymentInterfaces(kubClient)
 	var deploymentUC = uc.NewDeploymentUC(deploymentRepo)
 	var deploymentHandlers = controller.NewDeploymentHandler(deploymentUC)
 
+	// Create user handlers and related components
 	var userRepo = repositories.NewUserRepository(dbClient)
 	var userUC = uc.NewUserUC(userRepo)
 	var userHandlers = controller.NewUserHandlers(userUC)
+
+	// Create Auth handlers and related components
+	var authHandlers = controller.NewAuthHandlers(userUC)
 
 	// Load Google OAuth2 configuration
 	config.GoogleConfig()
 
 	// Define authentication routes and handlers
 	var authRoutes = e.Group("/auth")
-	authRoutes.POST("/login", userHandlers.Login)
+	authRoutes.POST("/login", authHandlers.Login)
 
 	var googleAuthHandler = controller.NewGoogleAuthHandler(userUC)
 	var oauthRoutes = authRoutes.Group("")
@@ -92,6 +99,7 @@ func serveApplication() {
 	// Define user routes
 	var usersRoutes = restrictedRoutes.Group("/users")
 	usersRoutes.GET("", userHandlers.List)
+	usersRoutes.GET("/:id", userHandlers.GetByID)
 	usersRoutes.POST("", userHandlers.CreateUser)
 	usersRoutes.PUT("/:id", userHandlers.UpdateUser)
 	usersRoutes.DELETE("/:id", userHandlers.DeleteUser)
@@ -99,26 +107,26 @@ func serveApplication() {
 	// Define pod routes
 	var podsRoutes = restrictedRoutes.Group("/pods")
 	podsRoutes.GET("", podHandlers.List)
-	podsRoutes.POST("", podHandlers.Create)
 	podsRoutes.GET("/:id", podHandlers.GetByNameOrUID)
-	podsRoutes.DELETE("/:id", podHandlers.Delete)
+	podsRoutes.POST("", podHandlers.Create)
 	podsRoutes.PUT("/:id", podHandlers.Update)
+	podsRoutes.DELETE("/:id", podHandlers.Delete)
 
 	// Define namespace routes
 	var namespacesRoutes = restrictedRoutes.Group("/namespaces")
 	namespacesRoutes.GET("", namespaceHandlers.List)
-	namespacesRoutes.POST("", namespaceHandlers.Create)
 	namespacesRoutes.GET("/:id", namespaceHandlers.GetByNameOrUID)
-	namespacesRoutes.DELETE("/:id", namespaceHandlers.Delete)
+	namespacesRoutes.POST("", namespaceHandlers.Create)
 	namespacesRoutes.PUT("/:id", namespaceHandlers.Update)
+	namespacesRoutes.DELETE("/:id", namespaceHandlers.Delete)
 
 	// Define deployment routes
 	var deploymentsRoutes = restrictedRoutes.Group("/deployments")
 	deploymentsRoutes.GET("", deploymentHandlers.List)
-	deploymentsRoutes.POST("", deploymentHandlers.Create)
 	deploymentsRoutes.GET("/:id", deploymentHandlers.GetByNameOrUID)
-	deploymentsRoutes.DELETE("/:id", deploymentHandlers.Delete)
+	deploymentsRoutes.POST("", deploymentHandlers.Create)
 	deploymentsRoutes.PUT("/:id", deploymentHandlers.Update)
+	deploymentsRoutes.DELETE("/:id", deploymentHandlers.Delete)
 
 	// Define event routes
 	var eventsRoutes = restrictedRoutes.Group("/events")
@@ -159,11 +167,10 @@ func configureLogger(e *echo.Echo) *zap.SugaredLogger {
 		log.Fatal(err)
 	}
 
-	sugar := logger.Sugar()
-
 	e.Use(pkg.ZapLogger(logger))
 
-	loggerHandler := controller.NewLogger(sugar)
+	var sugar = logger.Sugar()
+	var loggerHandler = controller.NewLogger(sugar)
 	e.Use(loggerHandler.LoggerMiddleware)
 
 	return sugar
