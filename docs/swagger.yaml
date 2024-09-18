@@ -5662,7 +5662,9 @@ paths:
         "200":
           description: Successfully logged in with JWT token
           schema:
-            $ref: '#/definitions/controller.SuccessResponse'
+            additionalProperties:
+              type: string
+            type: object
         "400":
           description: Error message including details on failure
           schema:
@@ -6370,6 +6372,36 @@ paths:
           schema:
             $ref: '#/definitions/controller.FailureResponse'
       summary: DeleteUser deletes an existing user
+      tags:
+      - users
+    get:
+      consumes:
+      - application/json
+      description: Fetches a user by their unique ID from the database.
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response containing the user information
+          schema:
+            $ref: '#/definitions/controller.SuccessResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/controller.FailureResponse'
+      summary: Retrieve user by ID
       tags:
       - users
     put:
