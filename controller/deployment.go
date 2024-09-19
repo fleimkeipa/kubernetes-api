@@ -58,6 +58,43 @@ func (rc *DeploymentHandler) Create(c echo.Context) error {
 	})
 }
 
+// Update godoc
+//
+//	@Summary		Update an existing deployment
+//	@Description	Updates an existing deployment in the Kubernetes cluster.
+//	@Tags			deployments
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization	header		string					true	"Insert your access token"	default(Bearer <Add access token here>)
+//	@Param			deployment		body		model.DeploymentRequest	true	"Deployment request body"
+//	@Success		200				{object}	SuccessResponse			"Successfully updated the deployment"
+//	@Failure		400				{object}	FailureResponse			"Bad request or invalid data"
+//	@Failure		500				{object}	FailureResponse			"Interval error"
+//	@Router			/deployments [put]
+func (rc *DeploymentHandler) Update(c echo.Context) error {
+	var request model.DeploymentRequest
+
+	if err := c.Bind(&request); err != nil {
+		return c.JSON(http.StatusBadRequest, FailureResponse{
+			Error:   fmt.Sprintf("Failed to parse request body: %v", err),
+			Message: "Invalid request format. Please ensure your data is correctly formatted.",
+		})
+	}
+
+	deployment, err := rc.deploymentUC.Update(c.Request().Context(), &request.Deployment, metav1.UpdateOptions(request.Opts))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, FailureResponse{
+			Error:   fmt.Sprintf("Failed to update deployment: %v", err),
+			Message: "There was an error updating the deployment. Please check your data and try again.",
+		})
+	}
+
+	return c.JSON(http.StatusOK, SuccessResponse{
+		Data:    deployment.Name,
+		Message: "Deployment updated successfully.",
+	})
+}
+
 // List godoc
 //
 //	@Summary		List deployments
@@ -150,42 +187,5 @@ func (rc *DeploymentHandler) Delete(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, SuccessResponse{
 		Message: "Deployment deleted successfully.",
-	})
-}
-
-// Update godoc
-//
-//	@Summary		Update an existing deployment
-//	@Description	Updates an existing deployment in the Kubernetes cluster.
-//	@Tags			deployments
-//	@Accept			json
-//	@Produce		json
-//	@Param			Authorization	header		string					true	"Insert your access token"	default(Bearer <Add access token here>)
-//	@Param			deployment		body		model.DeploymentRequest	true	"Deployment request body"
-//	@Success		200				{object}	SuccessResponse			"Successfully updated the deployment"
-//	@Failure		400				{object}	FailureResponse			"Bad request or invalid data"
-//	@Failure		500				{object}	FailureResponse			"Interval error"
-//	@Router			/deployments [put]
-func (rc *DeploymentHandler) Update(c echo.Context) error {
-	var request model.DeploymentRequest
-
-	if err := c.Bind(&request); err != nil {
-		return c.JSON(http.StatusBadRequest, FailureResponse{
-			Error:   fmt.Sprintf("Failed to parse request body: %v", err),
-			Message: "Invalid request format. Please ensure your data is correctly formatted.",
-		})
-	}
-
-	deployment, err := rc.deploymentUC.Update(c.Request().Context(), &request.Deployment, metav1.UpdateOptions(request.Opts))
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, FailureResponse{
-			Error:   fmt.Sprintf("Failed to update deployment: %v", err),
-			Message: "There was an error updating the deployment. Please check your data and try again.",
-		})
-	}
-
-	return c.JSON(http.StatusOK, SuccessResponse{
-		Data:    deployment.Name,
-		Message: "Deployment updated successfully.",
 	})
 }
