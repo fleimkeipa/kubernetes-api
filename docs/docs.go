@@ -15,6 +15,80 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/auth/Github_callback": {
+            "get": {
+                "description": "This endpoint handles the callback from Github after a user authorizes the app. It exchanges the authorization code for an access token and retrieves the users profile information.",
+                "tags": [
+                    "oAuth"
+                ],
+                "summary": "Github OAuth2 callback",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "State for CSRF protection",
+                        "name": "state",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authorization code returned by Github",
+                        "name": "code",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User's Github profile data",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error message",
+                        "schema": {
+                            "$ref": "#/definitions/controller.FailureResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Interval error",
+                        "schema": {
+                            "$ref": "#/definitions/controller.FailureResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/Github_login": {
+            "get": {
+                "description": "This endpoint initiates the Github OAuth2 login process by redirecting the user to Githubs login page.",
+                "tags": [
+                    "oAuth"
+                ],
+                "summary": "Redirect to Github login page",
+                "responses": {
+                    "303": {
+                        "description": "Redirects to Github login page",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error message",
+                        "schema": {
+                            "$ref": "#/definitions/controller.FailureResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/google_callback": {
             "get": {
                 "description": "This endpoint handles the callback from Google after a user authorizes the app. It exchanges the authorization code for an access token and retrieves the users profile information.",

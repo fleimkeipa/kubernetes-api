@@ -5591,6 +5591,58 @@ definitions:
 info:
   contact: {}
 paths:
+  /auth/Github_callback:
+    get:
+      description: This endpoint handles the callback from Github after a user authorizes
+        the app. It exchanges the authorization code for an access token and retrieves
+        the users profile information.
+      parameters:
+      - description: State for CSRF protection
+        in: query
+        name: state
+        required: true
+        type: string
+      - description: Authorization code returned by Github
+        in: query
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: User's Github profile data
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Error message
+          schema:
+            $ref: '#/definitions/controller.FailureResponse'
+        "500":
+          description: Interval error
+          schema:
+            $ref: '#/definitions/controller.FailureResponse'
+      summary: Github OAuth2 callback
+      tags:
+      - oAuth
+  /auth/Github_login:
+    get:
+      description: This endpoint initiates the Github OAuth2 login process by redirecting
+        the user to Githubs login page.
+      responses:
+        "303":
+          description: Redirects to Github login page
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Error message
+          schema:
+            $ref: '#/definitions/controller.FailureResponse'
+      summary: Redirect to Github login page
+      tags:
+      - oAuth
   /auth/google_callback:
     get:
       description: This endpoint handles the callback from Google after a user authorizes
