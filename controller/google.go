@@ -60,11 +60,11 @@ func (rc *GoogleAuthHandler) GoogleLogin(c echo.Context) error {
 //	@Summary		Google OAuth2 callback
 //	@Description	This endpoint handles the callback from Google after a user authorizes the app. It exchanges the authorization code for an access token and retrieves the users profile information.
 //	@Tags			oAuth
-//	@Param			state	query		string				true	"State for CSRF protection"
-//	@Param			code	query		string				true	"Authorization code returned by Google"
-//	@Success		200		{object}	map[string]string	"User's Google profile data"
-//	@Failure		400		{object}	FailureResponse		"Error message"
-//	@Failure		500		{object}	FailureResponse		"Interval error"
+//	@Param			state	query		string			true	"State for CSRF protection"
+//	@Param			code	query		string			true	"Authorization code returned by Google"
+//	@Success		200		{object}	AuthResponse	"User's Google profile data"
+//	@Failure		400		{object}	FailureResponse	"Error message"
+//	@Failure		500		{object}	FailureResponse	"Interval error"
 //	@Router			/auth/google_callback [get]
 func (rc *GoogleAuthHandler) GoogleCallback(c echo.Context) error {
 	var state = c.QueryParam("state")
@@ -131,9 +131,10 @@ func (rc *GoogleAuthHandler) GoogleCallback(c echo.Context) error {
 		})
 	}
 
-	return c.JSON(http.StatusOK, echo.Map{
-		"token":    jwt,
-		"username": user.Username,
-		"message":  "Successfully logged in with Google.",
+	return c.JSON(http.StatusOK, AuthResponse{
+		Token:    jwt,
+		Type:     "oauth2",
+		Username: user.Username,
+		Message:  "Successfully logged in with Google.",
 	})
 }

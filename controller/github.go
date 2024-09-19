@@ -32,7 +32,7 @@ func NewGithubAuthHandler(userUC *uc.UserUC) *GithubAuthHandler {
 //	@Tags			oAuth
 //	@Success		303	{object}	map[string]string	"Redirects to Github login page"
 //	@Failure		400	{object}	FailureResponse		"Error message"
-//	@Router			/auth/Github_login [get]
+//	@Router			/auth/github_login [get]
 func (rc *GithubAuthHandler) GithubLogin(c echo.Context) error {
 	// Load Github OAuth2 configuration
 	config.GithubConfig()
@@ -60,12 +60,12 @@ func (rc *GithubAuthHandler) GithubLogin(c echo.Context) error {
 //	@Summary		Github OAuth2 callback
 //	@Description	This endpoint handles the callback from Github after a user authorizes the app. It exchanges the authorization code for an access token and retrieves the users profile information.
 //	@Tags			oAuth
-//	@Param			state	query		string				true	"State for CSRF protection"
-//	@Param			code	query		string				true	"Authorization code returned by Github"
-//	@Success		200		{object}	map[string]string	"User's Github profile data"
-//	@Failure		400		{object}	FailureResponse		"Error message"
-//	@Failure		500		{object}	FailureResponse		"Interval error"
-//	@Router			/auth/Github_callback [get]
+//	@Param			state	query		string			true	"State for CSRF protection"
+//	@Param			code	query		string			true	"Authorization code returned by Github"
+//	@Success		200		{object}	AuthResponse	"User's Github profile data"
+//	@Failure		400		{object}	FailureResponse	"Error message"
+//	@Failure		500		{object}	FailureResponse	"Interval error"
+//	@Router			/auth/github_callback [get]
 func (rc *GithubAuthHandler) GithubCallback(c echo.Context) error {
 	var state = c.QueryParam("state")
 	if state != "randomstate" {
@@ -144,9 +144,10 @@ func (rc *GithubAuthHandler) GithubCallback(c echo.Context) error {
 		})
 	}
 
-	return c.JSON(http.StatusOK, echo.Map{
-		"token":    jwt,
-		"username": user.Username,
-		"message":  "Successfully logged in with Github.",
+	return c.JSON(http.StatusOK, AuthResponse{
+		Token:    jwt,
+		Type:     "oauth2",
+		Username: user.Username,
+		Message:  "Successfully logged in with Github.",
 	})
 }
