@@ -626,7 +626,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.NamespaceRequest"
+                            "$ref": "#/definitions/model.NamespaceUpdateRequest"
                         }
                     }
                 ],
@@ -678,7 +678,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.NamespaceRequest"
+                            "$ref": "#/definitions/model.NamespaceCreateRequest"
                         }
                     }
                 ],
@@ -1486,6 +1486,15 @@
                 }
             }
         },
+        "model.FinalizerName": {
+            "type": "string",
+            "enum": [
+                "kubernetes"
+            ],
+            "x-enum-varnames": [
+                "FinalizerKubernetes"
+            ]
+        },
         "model.Login": {
             "type": "object",
             "required": [
@@ -1501,14 +1510,144 @@
                 }
             }
         },
-        "model.NamespaceRequest": {
+        "model.Namespace": {
+            "type": "object",
+            "properties": {
+                "apiVersion": {
+                    "type": "string"
+                },
+                "kind": {
+                    "type": "string"
+                },
+                "metadata": {
+                    "$ref": "#/definitions/model.ObjectMeta"
+                },
+                "spec": {
+                    "description": "Spec defines the behavior of the Namespace.\n+optional",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.NamespaceSpec"
+                        }
+                    ]
+                },
+                "status": {
+                    "description": "Status describes the current status of a Namespace.\n+optional",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.NamespaceStatus"
+                        }
+                    ]
+                }
+            }
+        },
+        "model.NamespaceCondition": {
+            "type": "object",
+            "properties": {
+                "lastTransitionTime": {
+                    "description": "+optional",
+                    "type": "string"
+                },
+                "message": {
+                    "description": "+optional",
+                    "type": "string"
+                },
+                "reason": {
+                    "description": "+optional",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "Status of the condition, one of True, False, Unknown.",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "Type of namespace controller condition.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.NamespaceConditionType"
+                        }
+                    ]
+                }
+            }
+        },
+        "model.NamespaceConditionType": {
+            "type": "string",
+            "enum": [
+                "NamespaceDeletionDiscoveryFailure",
+                "NamespaceDeletionContentFailure",
+                "NamespaceDeletionGroupVersionParsingFailure",
+                "NamespaceContentRemaining",
+                "NamespaceFinalizersRemaining"
+            ],
+            "x-enum-varnames": [
+                "NamespaceDeletionDiscoveryFailure",
+                "NamespaceDeletionContentFailure",
+                "NamespaceDeletionGVParsingFailure",
+                "NamespaceContentRemaining",
+                "NamespaceFinalizersRemaining"
+            ]
+        },
+        "model.NamespaceCreateRequest": {
             "type": "object",
             "properties": {
                 "namespace": {
-                    "$ref": "#/definitions/v1.Namespace"
+                    "$ref": "#/definitions/model.Namespace"
                 },
                 "opts": {
                     "$ref": "#/definitions/v1.CreateOptions"
+                }
+            }
+        },
+        "model.NamespacePhase": {
+            "type": "string",
+            "enum": [
+                "Active",
+                "Terminating"
+            ],
+            "x-enum-varnames": [
+                "NamespaceActive",
+                "NamespaceTerminating"
+            ]
+        },
+        "model.NamespaceSpec": {
+            "type": "object",
+            "properties": {
+                "finalizers": {
+                    "description": "Finalizers is an opaque list of values that must be empty to permanently remove object from storage.\n+optional",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.FinalizerName"
+                    }
+                }
+            }
+        },
+        "model.NamespaceStatus": {
+            "type": "object",
+            "properties": {
+                "conditions": {
+                    "description": "Represents the latest available observations of a namespace's current state.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.NamespaceCondition"
+                    }
+                },
+                "phase": {
+                    "description": "Phase is the current lifecycle phase of the namespace.\n+optional",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.NamespacePhase"
+                        }
+                    ]
+                }
+            }
+        },
+        "model.NamespaceUpdateRequest": {
+            "type": "object",
+            "properties": {
+                "namespace": {
+                    "$ref": "#/definitions/model.Namespace"
+                },
+                "opts": {
+                    "$ref": "#/definitions/v1.UpdateOptions"
                 }
             }
         },
@@ -3058,15 +3197,6 @@
         "v1.FieldsV1": {
             "type": "object"
         },
-        "v1.FinalizerName": {
-            "type": "string",
-            "enum": [
-                "kubernetes"
-            ],
-            "x-enum-varnames": [
-                "FinalizerKubernetes"
-            ]
-        },
         "v1.FlexVolumeSource": {
             "type": "object",
             "properties": {
@@ -3579,136 +3709,6 @@
                 "server": {
                     "description": "server is the hostname or IP address of the NFS server.\nMore info: https://kubernetes.io/docs/concepts/storage/volumes#nfs",
                     "type": "string"
-                }
-            }
-        },
-        "v1.Namespace": {
-            "type": "object",
-            "properties": {
-                "apiVersion": {
-                    "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources\n+optional",
-                    "type": "string"
-                },
-                "kind": {
-                    "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\n+optional",
-                    "type": "string"
-                },
-                "metadata": {
-                    "description": "Standard object's metadata.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata\n+optional",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.ObjectMeta"
-                        }
-                    ]
-                },
-                "spec": {
-                    "description": "Spec defines the behavior of the Namespace.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status\n+optional",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.NamespaceSpec"
-                        }
-                    ]
-                },
-                "status": {
-                    "description": "Status describes the current status of a Namespace.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status\n+optional",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.NamespaceStatus"
-                        }
-                    ]
-                }
-            }
-        },
-        "v1.NamespaceCondition": {
-            "type": "object",
-            "properties": {
-                "lastTransitionTime": {
-                    "description": "+optional",
-                    "type": "string"
-                },
-                "message": {
-                    "description": "+optional",
-                    "type": "string"
-                },
-                "reason": {
-                    "description": "+optional",
-                    "type": "string"
-                },
-                "status": {
-                    "description": "Status of the condition, one of True, False, Unknown.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/k8s_io_api_core_v1.ConditionStatus"
-                        }
-                    ]
-                },
-                "type": {
-                    "description": "Type of namespace controller condition.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.NamespaceConditionType"
-                        }
-                    ]
-                }
-            }
-        },
-        "v1.NamespaceConditionType": {
-            "type": "string",
-            "enum": [
-                "NamespaceDeletionDiscoveryFailure",
-                "NamespaceDeletionContentFailure",
-                "NamespaceDeletionGroupVersionParsingFailure",
-                "NamespaceContentRemaining",
-                "NamespaceFinalizersRemaining"
-            ],
-            "x-enum-varnames": [
-                "NamespaceDeletionDiscoveryFailure",
-                "NamespaceDeletionContentFailure",
-                "NamespaceDeletionGVParsingFailure",
-                "NamespaceContentRemaining",
-                "NamespaceFinalizersRemaining"
-            ]
-        },
-        "v1.NamespacePhase": {
-            "type": "string",
-            "enum": [
-                "Active",
-                "Terminating"
-            ],
-            "x-enum-varnames": [
-                "NamespaceActive",
-                "NamespaceTerminating"
-            ]
-        },
-        "v1.NamespaceSpec": {
-            "type": "object",
-            "properties": {
-                "finalizers": {
-                    "description": "Finalizers is an opaque list of values that must be empty to permanently remove object from storage.\nMore info: https://kubernetes.io/docs/tasks/administer-cluster/namespaces/\n+optional\n+listType=atomic",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/v1.FinalizerName"
-                    }
-                }
-            }
-        },
-        "v1.NamespaceStatus": {
-            "type": "object",
-            "properties": {
-                "conditions": {
-                    "description": "Represents the latest available observations of a namespace's current state.\n+optional\n+patchMergeKey=type\n+patchStrategy=merge\n+listType=map\n+listMapKey=type",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/v1.NamespaceCondition"
-                    }
-                },
-                "phase": {
-                    "description": "Phase is the current lifecycle phase of the namespace.\nMore info: https://kubernetes.io/docs/tasks/administer-cluster/namespaces/\n+optional",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.NamespacePhase"
-                        }
-                    ]
                 }
             }
         },
