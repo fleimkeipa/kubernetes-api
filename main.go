@@ -83,8 +83,8 @@ func serveApplication() {
 	var authRoutes = e.Group("/auth")
 	authRoutes.POST("/login", authHandlers.Login)
 
-	var googleAuthHandler = controller.NewGoogleAuthHandler(userUC)
 	var oauthRoutes = authRoutes.Group("")
+	var googleAuthHandler = controller.NewGoogleAuthHandler(userUC)
 	oauthRoutes.GET("/google_login", googleAuthHandler.GoogleLogin)
 	oauthRoutes.GET("/google_callback", googleAuthHandler.GoogleCallback)
 
