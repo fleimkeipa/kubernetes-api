@@ -3,7 +3,6 @@ package uc
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/fleimkeipa/kubernetes-api/model"
 	"github.com/fleimkeipa/kubernetes-api/repositories/interfaces"
@@ -32,10 +31,9 @@ func (rc *PodUC) Create(ctx context.Context, pod *model.Pod, opts metav1.CreateO
 	}
 
 	var event = model.Event{
-		Kind:         model.PodKind,
-		EventKind:    model.CreateEventKind,
-		CreationTime: time.Now(),
-		Owner:        model.User{},
+		Kind:      model.PodKind,
+		EventKind: model.CreateEventKind,
+		Owner:     model.User{},
 	}
 	_, err := rc.eventUC.Create(ctx, &event)
 	if err != nil {
@@ -47,17 +45,16 @@ func (rc *PodUC) Create(ctx context.Context, pod *model.Pod, opts metav1.CreateO
 	return rc.podsRepo.Create(ctx, kubePod, opts)
 }
 
-func (rc *PodUC) Update(ctx context.Context, id string, request *model.PodsUpdateRequest, opts metav1.UpdateOptions) (*corev1.Pod, error) {
+func (rc *PodUC) Update(ctx context.Context, id string, request *model.PodsUpdateRequest) (*corev1.Pod, error) {
 	existPod, err := rc.GetByNameOrUID(ctx, request.Pod.Namespace, id, metav1.ListOptions{})
 	if err != nil {
 		return nil, err
 	}
 
 	var event = model.Event{
-		Kind:         model.PodKind,
-		EventKind:    model.UpdateEventKind,
-		CreationTime: time.Now(),
-		Owner:        model.User{},
+		Kind:      model.PodKind,
+		EventKind: model.UpdateEventKind,
+		Owner:     model.User{},
 	}
 	_, err = rc.eventUC.Create(ctx, &event)
 	if err != nil {
@@ -66,7 +63,7 @@ func (rc *PodUC) Update(ctx context.Context, id string, request *model.PodsUpdat
 
 	var kubePod = rc.overwritePod(request, existPod)
 
-	return rc.podsRepo.Update(ctx, id, kubePod, opts)
+	return rc.podsRepo.Update(ctx, id, kubePod, request.Opts)
 }
 
 func (rc *PodUC) List(ctx context.Context, namespace string, opts metav1.ListOptions) (*corev1.PodList, error) {
@@ -110,10 +107,9 @@ func (rc *PodUC) Delete(ctx context.Context, namespace, name string, opts metav1
 	}
 
 	var event = model.Event{
-		Kind:         model.PodKind,
-		EventKind:    model.DeleteEventKind,
-		CreationTime: time.Now(),
-		Owner:        model.User{},
+		Kind:      model.PodKind,
+		EventKind: model.DeleteEventKind,
+		Owner:     model.User{},
 	}
 	_, err := rc.eventUC.Create(ctx, &event)
 	if err != nil {
