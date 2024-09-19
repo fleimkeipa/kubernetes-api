@@ -30,10 +30,10 @@ func NewAuthHandlers(uc *uc.UserUC) *AuthHandlers {
 //	@Tags			auth
 //	@Accept			json
 //	@Produce		json
-//	@Param			body	body		model.Login			true	"User login input"
-//	@Success		200		{object}	map[string]string	"Successfully logged in with JWT token"
-//	@Failure		400		{object}	FailureResponse		"Error message including details on failure"
-//	@Failure		500		{object}	FailureResponse		"Interval error"
+//	@Param			body	body		model.Login		true	"User login input"
+//	@Success		200		{object}	AuthResponse	"Successfully logged in with JWT token"
+//	@Failure		400		{object}	FailureResponse	"Error message including details on failure"
+//	@Failure		500		{object}	FailureResponse	"Interval error"
 //	@Router			/auth/login [post]
 func (rc *AuthHandlers) Login(c echo.Context) error {
 	var input model.Login
@@ -77,9 +77,10 @@ func (rc *AuthHandlers) Login(c echo.Context) error {
 		})
 	}
 
-	return c.JSON(http.StatusOK, echo.Map{
-		"token":    jwt,
-		"username": input.Username,
-		"message":  "Successfully logged in",
+	return c.JSON(http.StatusOK, AuthResponse{
+		Token:    jwt,
+		Type:     "jwt",
+		Username: input.Username,
+		Message:  "Successfully logged in",
 	})
 }
