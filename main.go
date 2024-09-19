@@ -79,9 +79,6 @@ func serveApplication() {
 	// Create Auth handlers and related components
 	var authHandlers = controller.NewAuthHandlers(userUC)
 
-	// Load Google OAuth2 configuration
-	config.GoogleConfig()
-
 	// Define authentication routes and handlers
 	var authRoutes = e.Group("/auth")
 	authRoutes.POST("/login", authHandlers.Login)
@@ -90,6 +87,10 @@ func serveApplication() {
 	var oauthRoutes = authRoutes.Group("")
 	oauthRoutes.GET("/google_login", googleAuthHandler.GoogleLogin)
 	oauthRoutes.GET("/google_callback", googleAuthHandler.GoogleCallback)
+
+	var githubAuthHandler = controller.NewGithubAuthHandler(userUC)
+	oauthRoutes.GET("/github_login", githubAuthHandler.GithubLogin)
+	oauthRoutes.GET("/github_callback", githubAuthHandler.GithubCallback)
 
 	// Add JWT authentication and authorization middleware
 	var restrictedRoutes = e.Group("")
