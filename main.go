@@ -68,7 +68,7 @@ func serveApplication() {
 
 	// Create Deployment handlers and related components
 	var deploymentRepo = repositories.NewDeploymentInterfaces(kubClient)
-	var deploymentUC = uc.NewDeploymentUC(deploymentRepo)
+	var deploymentUC = uc.NewDeploymentUC(deploymentRepo, eventUC)
 	var deploymentHandlers = controller.NewDeploymentHandler(deploymentUC)
 
 	// Create user handlers and related components
