@@ -20,8 +20,8 @@ type ObjectMeta struct {
 	DeletionGracePeriodSeconds *int64            `json:"deletionGracePeriodSeconds,omitempty"`
 	Labels                     map[string]string `json:"labels,omitempty"`
 	Annotations                map[string]string `json:"annotations,omitempty"`
-	OwnerReferences            []OwnerReference  `json:"ownerReferences,omitempty" patchStrategy:"merge" patchMergeKey:"uid"`
-	Finalizers                 []string          `json:"finalizers,omitempty" patchStrategy:"merge"`
+	OwnerReferences            []OwnerReference  `json:"ownerReferences,omitempty"`
+	Finalizers                 []string          `json:"finalizers,omitempty"`
 }
 
 type OwnerReference struct {
@@ -38,8 +38,8 @@ type Container struct {
 	Command                []string        `json:"command,omitempty"`
 	Args                   []string        `json:"args,omitempty"`
 	WorkingDir             string          `json:"workingDir,omitempty"`
-	Ports                  []ContainerPort `json:"ports,omitempty" patchStrategy:"merge" patchMergeKey:"containerPort"`
-	Env                    []EnvVar        `json:"env,omitempty" patchStrategy:"merge" patchMergeKey:"name"`
+	Ports                  []ContainerPort `json:"ports,omitempty"`
+	Env                    []EnvVar        `json:"env,omitempty"`
 	TerminationMessagePath string          `json:"terminationMessagePath,omitempty"`
 	Stdin                  bool            `json:"stdin,omitempty"`
 	StdinOnce              bool            `json:"stdinOnce,omitempty"`
