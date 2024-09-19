@@ -1,4 +1,16 @@
 definitions:
+  controller.AuthResponse:
+    properties:
+      message:
+        type: string
+      token:
+        type: string
+      type:
+        example: basic,oauth2
+        type: string
+      username:
+        type: string
+    type: object
   controller.FailureResponse:
     properties:
       error:
@@ -5591,7 +5603,7 @@ definitions:
 info:
   contact: {}
 paths:
-  /auth/Github_callback:
+  /auth/github_callback:
     get:
       description: This endpoint handles the callback from Github after a user authorizes
         the app. It exchanges the authorization code for an access token and retrieves
@@ -5611,9 +5623,7 @@ paths:
         "200":
           description: User's Github profile data
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/controller.AuthResponse'
         "400":
           description: Error message
           schema:
@@ -5625,7 +5635,7 @@ paths:
       summary: Github OAuth2 callback
       tags:
       - oAuth
-  /auth/Github_login:
+  /auth/github_login:
     get:
       description: This endpoint initiates the Github OAuth2 login process by redirecting
         the user to Githubs login page.
@@ -5663,9 +5673,7 @@ paths:
         "200":
           description: User's Google profile data
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/controller.AuthResponse'
         "400":
           description: Error message
           schema:
@@ -5714,9 +5722,7 @@ paths:
         "200":
           description: Successfully logged in with JWT token
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/controller.AuthResponse'
         "400":
           description: Error message including details on failure
           schema:

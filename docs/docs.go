@@ -15,7 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/auth/Github_callback": {
+        "/auth/github_callback": {
             "get": {
                 "description": "This endpoint handles the callback from Github after a user authorizes the app. It exchanges the authorization code for an access token and retrieves the users profile information.",
                 "tags": [
@@ -42,10 +42,7 @@ const docTemplate = `{
                     "200": {
                         "description": "User's Github profile data",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controller.AuthResponse"
                         }
                     },
                     "400": {
@@ -63,7 +60,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/auth/Github_login": {
+        "/auth/github_login": {
             "get": {
                 "description": "This endpoint initiates the Github OAuth2 login process by redirecting the user to Githubs login page.",
                 "tags": [
@@ -116,10 +113,7 @@ const docTemplate = `{
                     "200": {
                         "description": "User's Google profile data",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controller.AuthResponse"
                         }
                     },
                     "400": {
@@ -191,10 +185,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Successfully logged in with JWT token",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controller.AuthResponse"
                         }
                     },
                     "400": {
@@ -1323,6 +1314,24 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "controller.AuthResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string",
+                    "example": "basic,oauth2"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "controller.FailureResponse": {
             "type": "object",
             "properties": {
