@@ -24,8 +24,8 @@ func NewNamespaceUC(namespaceRepo interfaces.NamespaceInterfaces, eventUC *Event
 	}
 }
 
-func (rc *NamespaceUC) Create(ctx context.Context, namespace *corev1.Namespace, opts metav1.CreateOptions) (*corev1.Namespace, error) {
-	opts.TypeMeta.Kind = "namespace"
+func (rc *NamespaceUC) Create(ctx context.Context, request model.NamespaceCreateRequest) (*corev1.Namespace, error) {
+	request.Opts.TypeMeta.Kind = "namespace"
 
 	var event = model.Event{
 		Kind:      model.NamespaceKind,
@@ -37,7 +37,9 @@ func (rc *NamespaceUC) Create(ctx context.Context, namespace *corev1.Namespace, 
 		return nil, fmt.Errorf("failed to create event for %s: %w", event.EventKind, err)
 	}
 
-	return rc.namespaceRepo.Create(ctx, namespace, opts)
+	var kubeNamespace = rc.fillNamespace(&request.Namespace)
+
+	return rc.namespaceRepo.Create(ctx, kubeNamespace, request.Opts)
 }
 
 func (rc *NamespaceUC) Update(ctx context.Context, id string, request *model.NamespaceUpdateRequest) (*corev1.Namespace, error) {
@@ -105,6 +107,46 @@ func (rc *NamespaceUC) Delete(ctx context.Context, name string, opts metav1.Dele
 	}
 
 	return rc.namespaceRepo.Delete(ctx, name, opts)
+}
+
+func (rc *NamespaceUC) fillNamespace(namespace *model.Namespace) *corev1.Namespace {
+	var conditions = make([]corev1.NamespaceCondition, 0)
+	for _, v := range namespace.Status.Conditions {
+		conditions = append(conditions, corev1.NamespaceCondition{
+			Type:               corev1.NamespaceConditionType(v.Type),
+			Status:             corev1.ConditionStatus(v.Status),
+			LastTransitionTime: metav1.Time{Time: v.LastTransitionTime},
+			Reason:             v.Reason,
+			Message:            v.Message,
+		})
+	}
+
+	var finalizers = make([]corev1.FinalizerName, 0)
+	for _, v := range namespace.Finalizers {
+		finalizers = append(finalizers, corev1.FinalizerName(v))
+	}
+
+	return &corev1.Namespace{
+		TypeMeta: metav1.TypeMeta(namespace.TypeMeta),
+		ObjectMeta: metav1.ObjectMeta{
+			Name:                       namespace.Name,
+			GenerateName:               namespace.GenerateName,
+			Namespace:                  namespace.Namespace,
+			ResourceVersion:            namespace.ResourceVersion,
+			Generation:                 namespace.Generation,
+			DeletionGracePeriodSeconds: namespace.DeletionGracePeriodSeconds,
+			Labels:                     namespace.Labels,
+			Annotations:                namespace.Annotations,
+			Finalizers:                 namespace.Finalizers,
+		},
+		Spec: corev1.NamespaceSpec{
+			Finalizers: finalizers,
+		},
+		Status: corev1.NamespaceStatus{
+			Phase:      corev1.NamespacePhase(namespace.Status.Phase),
+			Conditions: conditions,
+		},
+	}
 }
 
 func (rc *NamespaceUC) overwriteNamespace(newNamespace *model.NamespaceUpdateRequest, existNamespace *corev1.Namespace) *corev1.Namespace {
