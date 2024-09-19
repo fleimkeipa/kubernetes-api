@@ -59,7 +59,7 @@ func (rc *Logger) LoggerMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		// If the response status code indicates a success (100-399),
 		// pass the request to the next handler without logging.
 		if res.Status > 99 && res.Status < 400 {
-			return next(c)
+			return err
 		}
 
 		// After the handler, check if there was an error in the response
