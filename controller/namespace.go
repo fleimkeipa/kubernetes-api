@@ -28,23 +28,23 @@ func NewNamespaceHandler(namespaceUC *uc.NamespaceUC) *NamespaceHandler {
 //	@Tags			namespaces
 //	@Accept			json
 //	@Produce		json
-//	@Param			Authorization	header		string					true	"Insert your access token"	default(Bearer <Add access token here>)
-//	@Param			namespace		body		model.NamespaceRequest	true	"Namespace request body"
-//	@Success		201				{object}	SuccessResponse			"Successfully created namespace"
-//	@Failure		400				{object}	FailureResponse			"Bad request or error message"
-//	@Failure		500				{object}	FailureResponse			"Interval error"
+//	@Param			Authorization	header		string							true	"Insert your access token"	default(Bearer <Add access token here>)
+//	@Param			namespace		body		model.NamespaceCreateRequest	true	"Namespace request body"
+//	@Success		201				{object}	SuccessResponse					"Successfully created namespace"
+//	@Failure		400				{object}	FailureResponse					"Bad request or error message"
+//	@Failure		500				{object}	FailureResponse					"Interval error"
 //	@Router			/namespaces [post]
 func (rc *NamespaceHandler) Create(c echo.Context) error {
-	var input model.NamespaceCreateRequest
+	var request model.NamespaceCreateRequest
 
-	if err := c.Bind(&input); err != nil {
+	if err := c.Bind(&request); err != nil {
 		return c.JSON(http.StatusBadRequest, FailureResponse{
 			Error:   fmt.Sprintf("Failed to bind namespace request: %v", err),
 			Message: "Invalid input. Please verify the data and try again.",
 		})
 	}
 
-	namespace, err := rc.namespaceUC.Create(c.Request().Context(), &input.Namespace, input.Opts)
+	namespace, err := rc.namespaceUC.Create(c.Request().Context(), request)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, FailureResponse{
 			Error:   fmt.Sprintf("Failed to create namespace: %v", err),
@@ -65,11 +65,11 @@ func (rc *NamespaceHandler) Create(c echo.Context) error {
 //	@Tags			namespaces
 //	@Accept			json
 //	@Produce		json
-//	@Param			Authorization	header		string					true	"Insert your access token"	default(Bearer <Add access token here>)
-//	@Param			namespace		body		model.NamespaceRequest	true	"Namespace request body"
-//	@Success		200				{object}	SuccessResponse			"Successfully updated the namespace"
-//	@Failure		400				{object}	FailureResponse			"Bad request or invalid data"
-//	@Failure		500				{object}	FailureResponse			"Interval error"
+//	@Param			Authorization	header		string							true	"Insert your access token"	default(Bearer <Add access token here>)
+//	@Param			namespace		body		model.NamespaceUpdateRequest	true	"Namespace request body"
+//	@Success		200				{object}	SuccessResponse					"Successfully updated the namespace"
+//	@Failure		400				{object}	FailureResponse					"Bad request or invalid data"
+//	@Failure		500				{object}	FailureResponse					"Interval error"
 //	@Router			/namespaces [put]
 func (rc *NamespaceHandler) Update(c echo.Context) error {
 	var id = c.Param("id")
