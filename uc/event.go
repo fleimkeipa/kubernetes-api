@@ -2,6 +2,7 @@ package uc
 
 import (
 	"context"
+	"time"
 
 	"github.com/fleimkeipa/kubernetes-api/model"
 	"github.com/fleimkeipa/kubernetes-api/repositories/interfaces"
@@ -18,6 +19,8 @@ func NewEventUC(eventRepo interfaces.EventInterfaces) *EventUC {
 }
 
 func (rc *EventUC) Create(ctx context.Context, event *model.Event) (*model.Event, error) {
+	event.CreationTime = time.Now()
+
 	return rc.eventRepo.Create(ctx, event)
 }
 
