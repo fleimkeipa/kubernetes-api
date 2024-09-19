@@ -87,7 +87,7 @@ func (rc *PodHandler) Update(c echo.Context) error {
 		})
 	}
 
-	pod, err := rc.podsUC.Update(c.Request().Context(), id, &request, metav1.UpdateOptions(request.Opts))
+	pod, err := rc.podsUC.Update(c.Request().Context(), id, &request)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, FailureResponse{
 			Error:   fmt.Sprintf("Failed to update pod: %v", err),
