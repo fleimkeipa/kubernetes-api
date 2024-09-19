@@ -9,8 +9,8 @@ import (
 type UserInterfaces interface {
 	Create(context.Context, model.User) (*model.User, error)
 	Update(context.Context, model.User) (*model.User, error)
-	Delete(context.Context, string) error
 	List(context.Context, *model.UserFindOpts) ([]model.User, error)
-	GetByUsernameOrEmail(context.Context, string) (*model.User, error)
 	GetByID(context.Context, string) (*model.User, error)
+	GetByUsernameOrEmail(context.Context, string) (*model.User, error)
+	Delete(context.Context, string) error
 }

@@ -37,13 +37,36 @@ func (rc *UserRepository) Update(ctx context.Context, user model.User) (*model.U
 	return &user, nil
 }
 
-func (rc *UserRepository) Delete(ctx context.Context, id string) error {
-	_, err := rc.db.Model(&model.User{}).Where("id = ?", id).Delete()
-	if err != nil {
-		return fmt.Errorf("failed to delete user: %w", err)
+func (rc *UserRepository) List(ctx context.Context, opts *model.UserFindOpts) ([]model.User, error) {
+	var users = make([]model.User, 0)
+	var filter = rc.fillFilter(opts)
+	var fields = rc.fillFields(opts)
+	if filter == "" {
+		err := rc.db.
+			Model(&users).
+			Column(fields...).
+			Limit(opts.Limit).
+			Offset(opts.Skip).
+			Select()
+		if err != nil {
+			return nil, err
+		}
+
+		return users, nil
 	}
 
-	return nil
+	err := rc.db.
+		Model(&users).
+		Column(fields...).
+		Where(filter).
+		Limit(opts.Limit).
+		Offset(opts.Skip).
+		Select()
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
 }
 
 func (rc *UserRepository) GetByID(ctx context.Context, id string) (*model.User, error) {
@@ -76,36 +99,13 @@ func (rc *UserRepository) GetByUsernameOrEmail(ctx context.Context, usernameOrEm
 	return user, nil
 }
 
-func (rc *UserRepository) List(ctx context.Context, opts *model.UserFindOpts) ([]model.User, error) {
-	var users = make([]model.User, 0)
-	var filter = rc.fillFilter(opts)
-	var fields = rc.fillFields(opts)
-	if filter == "" {
-		err := rc.db.
-			Model(&users).
-			Column(fields...).
-			Limit(opts.Limit).
-			Offset(opts.Skip).
-			Select()
-		if err != nil {
-			return nil, err
-		}
-
-		return users, nil
-	}
-
-	err := rc.db.
-		Model(&users).
-		Column(fields...).
-		Where(filter).
-		Limit(opts.Limit).
-		Offset(opts.Skip).
-		Select()
+func (rc *UserRepository) Delete(ctx context.Context, id string) error {
+	_, err := rc.db.Model(&model.User{}).Where("id = ?", id).Delete()
 	if err != nil {
-		return nil, err
+		return fmt.Errorf("failed to delete user: %w", err)
 	}
 
-	return users, nil
+	return nil
 }
 
 func (rc *UserRepository) fillFields(opts *model.UserFindOpts) []string {

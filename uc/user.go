@@ -39,17 +39,8 @@ func (rc *UserUC) Update(ctx context.Context, id string, user model.User) (*mode
 	return rc.userRepo.Update(ctx, user)
 }
 
-func (rc *UserUC) Delete(ctx context.Context, id string) error {
-	return rc.userRepo.Delete(ctx, id)
-}
-
-func (rc *UserUC) GetByUsernameOrEmail(ctx context.Context, usernameOrEmail string) (*model.User, error) {
-	user, err := rc.userRepo.GetByUsernameOrEmail(ctx, usernameOrEmail)
-	if err != nil {
-		return nil, err
-	}
-
-	return user, nil
+func (rc *UserUC) List(ctx context.Context, opts *model.UserFindOpts) ([]model.User, error) {
+	return rc.userRepo.List(ctx, opts)
 }
 
 func (rc *UserUC) GetByID(ctx context.Context, id string) (*model.User, error) {
@@ -61,6 +52,15 @@ func (rc *UserUC) GetByID(ctx context.Context, id string) (*model.User, error) {
 	return user, nil
 }
 
-func (rc *UserUC) List(ctx context.Context, opts *model.UserFindOpts) ([]model.User, error) {
-	return rc.userRepo.List(ctx, opts)
+func (rc *UserUC) GetByUsernameOrEmail(ctx context.Context, usernameOrEmail string) (*model.User, error) {
+	user, err := rc.userRepo.GetByUsernameOrEmail(ctx, usernameOrEmail)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (rc *UserUC) Delete(ctx context.Context, id string) error {
+	return rc.userRepo.Delete(ctx, id)
 }

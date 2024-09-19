@@ -20,14 +20,14 @@ func (rc *DeploymentInterfaces) Create(ctx context.Context, deployment *v1.Deplo
 	return rc.client.AppsV1().Deployments(deployment.Namespace).Create(ctx, deployment, opts)
 }
 
+func (rc *DeploymentInterfaces) Update(ctx context.Context, deployment *v1.Deployment, opts metav1.UpdateOptions) (*v1.Deployment, error) {
+	return rc.client.AppsV1().Deployments(deployment.Namespace).Update(ctx, deployment, opts)
+}
+
 func (rc *DeploymentInterfaces) List(ctx context.Context, namespace string, opts metav1.ListOptions) (*v1.DeploymentList, error) {
 	return rc.client.AppsV1().Deployments(namespace).List(ctx, opts)
 }
 
 func (rc *DeploymentInterfaces) Delete(ctx context.Context, namespace, name string, opts metav1.DeleteOptions) error {
 	return rc.client.AppsV1().Deployments(namespace).Delete(ctx, name, opts)
-}
-
-func (rc *DeploymentInterfaces) Update(ctx context.Context, deployment *v1.Deployment, opts metav1.UpdateOptions) (*v1.Deployment, error) {
-	return rc.client.AppsV1().Deployments(deployment.Namespace).Update(ctx, deployment, opts)
 }
