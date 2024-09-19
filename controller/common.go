@@ -18,6 +18,13 @@ type FailureResponse struct {
 	Message string `json:"message"`
 }
 
+type AuthResponse struct {
+	Type     string `json:"type" example:"basic,oauth2"`
+	Token    string `json:"token"`
+	Username string `json:"username"`
+	Message  string `json:"message"`
+}
+
 func getPagination(c echo.Context) model.PaginationOpts {
 	var limitQuery = c.QueryParam("limit")
 	var skipQuery = c.QueryParam("skip")
