@@ -35,7 +35,7 @@ func NewNamespaceHandler(namespaceUC *uc.NamespaceUC) *NamespaceHandler {
 //	@Failure		500				{object}	FailureResponse			"Interval error"
 //	@Router			/namespaces [post]
 func (rc *NamespaceHandler) Create(c echo.Context) error {
-	var input model.NamespaceRequest
+	var input model.NamespaceCreateRequest
 
 	if err := c.Bind(&input); err != nil {
 		return c.JSON(http.StatusBadRequest, FailureResponse{
@@ -72,8 +72,9 @@ func (rc *NamespaceHandler) Create(c echo.Context) error {
 //	@Failure		500				{object}	FailureResponse			"Interval error"
 //	@Router			/namespaces [put]
 func (rc *NamespaceHandler) Update(c echo.Context) error {
-	var request model.NamespaceRequest
+	var id = c.Param("id")
 
+	var request model.NamespaceUpdateRequest
 	if err := c.Bind(&request); err != nil {
 		return c.JSON(http.StatusBadRequest, FailureResponse{
 			Error:   fmt.Sprintf("Failed to bind namespace request: %v", err),
@@ -81,7 +82,7 @@ func (rc *NamespaceHandler) Update(c echo.Context) error {
 		})
 	}
 
-	namespace, err := rc.namespaceUC.Update(c.Request().Context(), &request.Namespace, metav1.UpdateOptions(request.Opts))
+	namespace, err := rc.namespaceUC.Update(c.Request().Context(), id, &request)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, FailureResponse{
 			Error:   fmt.Sprintf("Failed to update namespace: %v", err),
