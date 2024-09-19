@@ -63,7 +63,7 @@ func serveApplication() {
 
 	// Create Namespace handlers and related components
 	var namespaceRepo = repositories.NewNamespaceRepository(kubClient)
-	var namespaceUC = uc.NewNamespaceUC(namespaceRepo)
+	var namespaceUC = uc.NewNamespaceUC(namespaceRepo, eventUC)
 	var namespaceHandlers = controller.NewNamespaceHandler(namespaceUC)
 
 	// Create Deployment handlers and related components
