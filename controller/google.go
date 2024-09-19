@@ -34,6 +34,9 @@ func NewGoogleAuthHandler(userUC *uc.UserUC) *GoogleAuthHandler {
 //	@Failure		400	{object}	FailureResponse		"Error message"
 //	@Router			/auth/google_login [get]
 func (rc *GoogleAuthHandler) GoogleLogin(c echo.Context) error {
+	// Load Google OAuth2 configuration
+	config.GoogleConfig()
+
 	// Generate the Google OAuth2 login URL
 	var url = config.AppConfig.GoogleLoginConfig.AuthCodeURL("randomstate")
 
