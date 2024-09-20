@@ -23,10 +23,12 @@ func NewDeploymentUC(deploymentRepo interfaces.DeploymentInterfaces, eventUC *Ev
 	}
 }
 
-func (rc *DeploymentUC) Create(ctx context.Context, deployment *v1.Deployment, opts metav1.CreateOptions) (*v1.Deployment, error) {
-	deployment.TypeMeta.Kind = "deployment"
-	if deployment.ObjectMeta.Namespace == "" {
-		deployment.ObjectMeta.Namespace = "default"
+func (rc *DeploymentUC) Create(ctx context.Context, request *model.DeploymentCreateRequest) (*v1.Deployment, error) {
+	var newDeployment = request.Deployment
+
+	newDeployment.TypeMeta.Kind = "deployment"
+	if newDeployment.ObjectMeta.Namespace == "" {
+		newDeployment.ObjectMeta.Namespace = "default"
 	}
 
 	var event = model.Event{
@@ -39,13 +41,15 @@ func (rc *DeploymentUC) Create(ctx context.Context, deployment *v1.Deployment, o
 		return nil, fmt.Errorf("failed to create event for %s: %w", event.EventKind, err)
 	}
 
-	return rc.deploymentRepo.Create(ctx, deployment, opts)
+	var kubeDeployment = rc.fillDeployment(&newDeployment)
+
+	return rc.deploymentRepo.Create(ctx, kubeDeployment, request.Opts)
 }
 
-func (rc *DeploymentUC) Update(ctx context.Context, deployment *v1.Deployment, opts metav1.UpdateOptions) (*v1.Deployment, error) {
-	deployment.TypeMeta.Kind = "deployment"
-	if deployment.ObjectMeta.Namespace == "" {
-		deployment.ObjectMeta.Namespace = "default"
+func (rc *DeploymentUC) Update(ctx context.Context, id, namespace string, request *model.DeploymentUpdateRequest) (*v1.Deployment, error) {
+	existDeployment, err := rc.GetByNameOrUID(ctx, namespace, id, metav1.ListOptions{})
+	if err != nil {
+		return nil, err
 	}
 
 	var event = model.Event{
@@ -53,12 +57,14 @@ func (rc *DeploymentUC) Update(ctx context.Context, deployment *v1.Deployment, o
 		EventKind: model.UpdateEventKind,
 		Owner:     model.User{},
 	}
-	_, err := rc.eventUC.Create(ctx, &event)
+	_, err = rc.eventUC.Create(ctx, &event)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create event for %s: %w", event.EventKind, err)
 	}
 
-	return rc.deploymentRepo.Update(ctx, deployment, opts)
+	var kubeDeployment = rc.overwriteDeployment(&request.Deployment, existDeployment)
+
+	return rc.deploymentRepo.Update(ctx, kubeDeployment, request.Opts)
 }
 
 func (rc *DeploymentUC) List(ctx context.Context, namespace string, opts metav1.ListOptions) (*v1.DeploymentList, error) {
@@ -112,4 +118,37 @@ func (rc *DeploymentUC) Delete(ctx context.Context, namespace, name string, opts
 	}
 
 	return rc.deploymentRepo.Delete(ctx, namespace, name, opts)
+}
+
+func (rc *DeploymentUC) fillDeployment(newDeployment *model.Deployment) *v1.Deployment {
+	return &v1.Deployment{
+		TypeMeta: metav1.TypeMeta(newDeployment.TypeMeta),
+		ObjectMeta: metav1.ObjectMeta{
+			Name:                       newDeployment.ObjectMeta.Name,
+			GenerateName:               newDeployment.ObjectMeta.GenerateName,
+			Namespace:                  newDeployment.ObjectMeta.Namespace,
+			ResourceVersion:            newDeployment.ObjectMeta.ResourceVersion,
+			Generation:                 newDeployment.ObjectMeta.Generation,
+			DeletionGracePeriodSeconds: newDeployment.ObjectMeta.DeletionGracePeriodSeconds,
+			Labels:                     newDeployment.ObjectMeta.Labels,
+			Annotations:                newDeployment.ObjectMeta.Annotations,
+			Finalizers:                 newDeployment.ObjectMeta.Finalizers,
+		},
+		Spec: v1.DeploymentSpec{
+			Replicas:                new(int32),
+			Selector:                &metav1.LabelSelector{},
+			Strategy:                v1.DeploymentStrategy{},
+			MinReadySeconds:         0,
+			RevisionHistoryLimit:    new(int32),
+			Paused:                  false,
+			ProgressDeadlineSeconds: new(int32),
+		},
+		Status: v1.DeploymentStatus{},
+	}
+}
+
+func (rc *DeploymentUC) overwriteDeployment(newDeployment *model.Deployment, existDeployment *v1.Deployment) *v1.Deployment {
+	existDeployment.Name = newDeployment.Name
+
+	return existDeployment
 }
