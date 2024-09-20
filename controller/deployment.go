@@ -28,14 +28,14 @@ func NewDeploymentHandler(deploymentUC *uc.DeploymentUC) *DeploymentHandler {
 //	@Tags			deployments
 //	@Accept			json
 //	@Produce		json
-//	@Param			Authorization	header		string					true	"Insert your access token"	default(Bearer <Add access token here>)
-//	@Param			deployment		body		model.DeploymentRequest	true	"Deployment request body"
-//	@Success		201				{object}	map[string]string		"Suxccessfully created deployment"
-//	@Failure		400				{object}	FailureResponse			"Bad request or error message"
-//	@Failure		500				{object}	FailureResponse			"Interval error"
+//	@Param			Authorization	header		string							true	"Insert your access token"	default(Bearer <Add access token here>)
+//	@Param			deployment		body		model.DeploymentCreateRequest	true	"Deployment request body"
+//	@Success		201				{object}	map[string]string				"Suxccessfully created deployment"
+//	@Failure		400				{object}	FailureResponse					"Bad request or error message"
+//	@Failure		500				{object}	FailureResponse					"Interval error"
 //	@Router			/deployments [post]
 func (rc *DeploymentHandler) Create(c echo.Context) error {
-	var request model.DeploymentRequest
+	var request model.DeploymentCreateRequest
 
 	if err := c.Bind(&request); err != nil {
 		return c.JSON(http.StatusBadRequest, FailureResponse{
@@ -44,7 +44,7 @@ func (rc *DeploymentHandler) Create(c echo.Context) error {
 		})
 	}
 
-	deployment, err := rc.deploymentUC.Create(c.Request().Context(), &request.Deployment, request.Opts)
+	deployment, err := rc.deploymentUC.Create(c.Request().Context(), &request)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, FailureResponse{
 			Error:   fmt.Sprintf("Failed to create deployment: %v", err),
@@ -65,14 +65,16 @@ func (rc *DeploymentHandler) Create(c echo.Context) error {
 //	@Tags			deployments
 //	@Accept			json
 //	@Produce		json
-//	@Param			Authorization	header		string					true	"Insert your access token"	default(Bearer <Add access token here>)
-//	@Param			deployment		body		model.DeploymentRequest	true	"Deployment request body"
-//	@Success		200				{object}	SuccessResponse			"Successfully updated the deployment"
-//	@Failure		400				{object}	FailureResponse			"Bad request or invalid data"
-//	@Failure		500				{object}	FailureResponse			"Interval error"
+//	@Param			Authorization	header		string							true	"Insert your access token"	default(Bearer <Add access token here>)
+//	@Param			deployment		body		model.DeploymentUpdateRequest	true	"Deployment request body"
+//	@Success		200				{object}	SuccessResponse					"Successfully updated the deployment"
+//	@Failure		400				{object}	FailureResponse					"Bad request or invalid data"
+//	@Failure		500				{object}	FailureResponse					"Interval error"
 //	@Router			/deployments [put]
 func (rc *DeploymentHandler) Update(c echo.Context) error {
-	var request model.DeploymentRequest
+	var id = c.Param("id")
+
+	var request model.DeploymentUpdateRequest
 
 	if err := c.Bind(&request); err != nil {
 		return c.JSON(http.StatusBadRequest, FailureResponse{
@@ -81,7 +83,7 @@ func (rc *DeploymentHandler) Update(c echo.Context) error {
 		})
 	}
 
-	deployment, err := rc.deploymentUC.Update(c.Request().Context(), &request.Deployment, metav1.UpdateOptions(request.Opts))
+	deployment, err := rc.deploymentUC.Update(c.Request().Context(), "", id, &request)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, FailureResponse{
 			Error:   fmt.Sprintf("Failed to update deployment: %v", err),
