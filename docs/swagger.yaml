@@ -107,12 +107,213 @@ definitions:
       name:
         type: string
     type: object
-  model.DeploymentRequest:
+  model.Deployment:
+    properties:
+      apiVersion:
+        type: string
+      kind:
+        type: string
+      metadata:
+        allOf:
+        - $ref: '#/definitions/model.ObjectMeta'
+        description: |-
+          Standard object's metadata.
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+          +optional
+      spec:
+        allOf:
+        - $ref: '#/definitions/model.DeploymentSpec'
+        description: |-
+          Specification of the desired behavior of the Deployment.
+          +optional
+      status:
+        allOf:
+        - $ref: '#/definitions/model.DeploymentStatus'
+        description: |-
+          Most recently observed status of the Deployment.
+          +optional
+    type: object
+  model.DeploymentCondition:
+    properties:
+      lastTransitionTime:
+        description: Last time the condition transitioned from one status to another.
+        type: string
+      lastUpdateTime:
+        description: The last time this condition was updated.
+        type: string
+      message:
+        description: A human readable message indicating details about the transition.
+        type: string
+      reason:
+        description: The reason for the condition's last transition.
+        type: string
+      status:
+        allOf:
+        - $ref: '#/definitions/k8s_io_api_core_v1.ConditionStatus'
+        description: Status of the condition, one of True, False, Unknown.
+      type:
+        allOf:
+        - $ref: '#/definitions/model.DeploymentConditionType'
+        description: Type of deployment condition.
+    type: object
+  model.DeploymentConditionType:
+    enum:
+    - Available
+    - Progressing
+    - ReplicaFailure
+    type: string
+    x-enum-varnames:
+    - DeploymentAvailable
+    - DeploymentProgressing
+    - DeploymentReplicaFailure
+  model.DeploymentCreateRequest:
     properties:
       deployment:
-        $ref: '#/definitions/v1.Deployment'
+        $ref: '#/definitions/model.Deployment'
       opts:
         $ref: '#/definitions/v1.CreateOptions'
+    type: object
+  model.DeploymentSpec:
+    properties:
+      minReadySeconds:
+        description: |-
+          Minimum number of seconds for which a newly created pod should be ready
+          without any of its container crashing, for it to be considered available.
+          Defaults to 0 (pod will be considered available as soon as it is ready)
+          +optional
+        type: integer
+      paused:
+        description: |-
+          Indicates that the deployment is paused.
+          +optional
+        type: boolean
+      progressDeadlineSeconds:
+        description: |-
+          The maximum time in seconds for a deployment to make progress before it
+          is considered to be failed. The deployment controller will continue to
+          process failed deployments and a condition with a ProgressDeadlineExceeded
+          reason will be surfaced in the deployment status. Note that progress will
+          not be estimated during the time a deployment is paused. Defaults to 600s.
+        type: integer
+      replicas:
+        description: |-
+          Number of desired pods. This is a pointer to distinguish between explicit
+          zero and not specified. Defaults to 1.
+          +optional
+        type: integer
+      revisionHistoryLimit:
+        description: |-
+          The number of old ReplicaSets to retain to allow rollback.
+          This is a pointer to distinguish between explicit zero and not specified.
+          Defaults to 10.
+          +optional
+        type: integer
+      selector:
+        allOf:
+        - $ref: '#/definitions/model.LabelSelector'
+        description: |-
+          Label selector for pods. Existing ReplicaSets whose pods are
+          selected by this will be the ones affected by this deployment.
+          It must match the pod template's labels.
+      strategy:
+        allOf:
+        - $ref: '#/definitions/model.DeploymentStrategy'
+        description: |-
+          The deployment strategy to use to replace existing pods with new ones.
+          +optional
+          +patchStrategy=retainKeys
+      template:
+        allOf:
+        - $ref: '#/definitions/v1.PodTemplateSpec'
+        description: |-
+          Template describes the pods that will be created.
+          The only allowed template.spec.restartPolicy value is "Always".
+    type: object
+  model.DeploymentStatus:
+    properties:
+      availableReplicas:
+        description: |-
+          Total number of available pods (ready for at least minReadySeconds) targeted by this deployment.
+          +optional
+        type: integer
+      collisionCount:
+        description: |-
+          Count of hash collisions for the Deployment. The Deployment controller uses this
+          field as a collision avoidance mechanism when it needs to create the name for the
+          newest ReplicaSet.
+          +optional
+        type: integer
+      conditions:
+        description: |-
+          Represents the latest available observations of a deployment's current state.
+          +patchMergeKey=type
+          +patchStrategy=merge
+          +listType=map
+          +listMapKey=type
+        items:
+          $ref: '#/definitions/model.DeploymentCondition'
+        type: array
+      observedGeneration:
+        description: |-
+          The generation observed by the deployment controller.
+          +optional
+        type: integer
+      readyReplicas:
+        description: |-
+          readyReplicas is the number of pods targeted by this Deployment with a Ready Condition.
+          +optional
+        type: integer
+      replicas:
+        description: |-
+          Total number of non-terminated pods targeted by this deployment (their labels match the selector).
+          +optional
+        type: integer
+      unavailableReplicas:
+        description: |-
+          Total number of unavailable pods targeted by this deployment. This is the total number of
+          pods that are still required for the deployment to have 100% available capacity. They may
+          either be pods that are running but not yet available or pods that still have not been created.
+          +optional
+        type: integer
+      updatedReplicas:
+        description: |-
+          Total number of non-terminated pods targeted by this deployment that have the desired template spec.
+          +optional
+        type: integer
+    type: object
+  model.DeploymentStrategy:
+    properties:
+      rollingUpdate:
+        allOf:
+        - $ref: '#/definitions/model.RollingUpdateDeployment'
+        description: |-
+          Rolling update config params. Present only if DeploymentStrategyType =
+          RollingUpdate.
+          ---
+          TODO: Update this to follow our convention for oneOf, whatever we decide it
+          to be.
+          +optional
+      type:
+        allOf:
+        - $ref: '#/definitions/model.DeploymentStrategyType'
+        description: |-
+          Type of deployment. Can be "Recreate" or "RollingUpdate". Default is RollingUpdate.
+          +optional
+    type: object
+  model.DeploymentStrategyType:
+    enum:
+    - Recreate
+    - RollingUpdate
+    type: string
+    x-enum-varnames:
+    - RecreateDeploymentStrategyType
+    - RollingUpdateDeploymentStrategyType
+  model.DeploymentUpdateRequest:
+    properties:
+      deployment:
+        $ref: '#/definitions/model.Deployment'
+      opts:
+        $ref: '#/definitions/v1.UpdateOptions'
     type: object
   model.EnvVar:
     properties:
@@ -127,6 +328,61 @@ definitions:
     type: string
     x-enum-varnames:
     - FinalizerKubernetes
+  model.LabelSelector:
+    properties:
+      matchExpressions:
+        description: |-
+          matchExpressions is a list of label selector requirements. The requirements are ANDed.
+          +optional
+          +listType=atomic
+        items:
+          $ref: '#/definitions/model.LabelSelectorRequirement'
+        type: array
+      matchLabels:
+        additionalProperties:
+          type: string
+        description: |-
+          matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels
+          map is equivalent to an element of matchExpressions, whose key field is "key", the
+          operator is "In", and the values array contains only "value". The requirements are ANDed.
+          +optional
+        type: object
+    type: object
+  model.LabelSelectorOperator:
+    enum:
+    - In
+    - NotIn
+    - Exists
+    - DoesNotExist
+    type: string
+    x-enum-varnames:
+    - LabelSelectorOpIn
+    - LabelSelectorOpNotIn
+    - LabelSelectorOpExists
+    - LabelSelectorOpDoesNotExist
+  model.LabelSelectorRequirement:
+    properties:
+      key:
+        description: key is the label key that the selector applies to.
+        type: string
+      operator:
+        allOf:
+        - $ref: '#/definitions/model.LabelSelectorOperator'
+        description: |-
+          operator represents a key's relationship to a set of values.
+          Valid operators are In, NotIn, Exists and DoesNotExist.
+      values:
+        description: |-
+          values is an array of string values. If the operator is In or NotIn,
+          the values array must be non-empty. If the operator is Exists or DoesNotExist,
+          the values array must be empty. This array is replaced during a strategic
+          merge patch.
+          +optional
+          +listType=atomic
+        items:
+          type: string
+        type: array
+    type: object
   model.Login:
     properties:
       password:
@@ -376,6 +632,40 @@ definitions:
         $ref: '#/definitions/v1.UpdateOptions'
       pod:
         $ref: '#/definitions/model.PodUpdate'
+    type: object
+  model.RollingUpdateDeployment:
+    properties:
+      maxSurge:
+        allOf:
+        - $ref: '#/definitions/intstr.IntOrString'
+        description: |-
+          The maximum number of pods that can be scheduled above the desired number of
+          pods.
+          Value can be an absolute number (ex: 5) or a percentage of desired pods (ex: 10%).
+          This can not be 0 if MaxUnavailable is 0.
+          Absolute number is calculated from percentage by rounding up.
+          Defaults to 25%.
+          Example: when this is set to 30%, the new ReplicaSet can be scaled up immediately when
+          the rolling update starts, such that the total number of old and new pods do not exceed
+          130% of desired pods. Once old pods have been killed,
+          new ReplicaSet can be scaled up further, ensuring that total number of pods running
+          at any time during the update is at most 130% of desired pods.
+          +optional
+      maxUnavailable:
+        allOf:
+        - $ref: '#/definitions/intstr.IntOrString'
+        description: |-
+          The maximum number of pods that can be unavailable during the update.
+          Value can be an absolute number (ex: 5) or a percentage of desired pods (ex: 10%).
+          Absolute number is calculated from percentage by rounding down.
+          This can not be 0 if MaxSurge is 0.
+          Defaults to 25%.
+          Example: when this is set to 30%, the old ReplicaSet can be scaled down to 70% of desired pods
+          immediately when the rolling update starts. Once new pods are ready, old ReplicaSet
+          can be scaled down further, followed by scaling up the new ReplicaSet, ensuring
+          that the total number of pods available at all times during the update is at
+          least 70% of desired pods.
+          +optional
     type: object
   model.SpecRequest:
     properties:
@@ -1285,213 +1575,6 @@ definitions:
     - DNSClusterFirst
     - DNSDefault
     - DNSNone
-  v1.Deployment:
-    properties:
-      apiVersion:
-        description: |-
-          APIVersion defines the versioned schema of this representation of an object.
-          Servers should convert recognized schemas to the latest internal value, and
-          may reject unrecognized values.
-          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-          +optional
-        type: string
-      kind:
-        description: |-
-          Kind is a string value representing the REST resource this object represents.
-          Servers may infer this from the endpoint the client submits requests to.
-          Cannot be updated.
-          In CamelCase.
-          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-          +optional
-        type: string
-      metadata:
-        allOf:
-        - $ref: '#/definitions/v1.ObjectMeta'
-        description: |-
-          Standard object's metadata.
-          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
-          +optional
-      spec:
-        allOf:
-        - $ref: '#/definitions/v1.DeploymentSpec'
-        description: |-
-          Specification of the desired behavior of the Deployment.
-          +optional
-      status:
-        allOf:
-        - $ref: '#/definitions/v1.DeploymentStatus'
-        description: |-
-          Most recently observed status of the Deployment.
-          +optional
-    type: object
-  v1.DeploymentCondition:
-    properties:
-      lastTransitionTime:
-        description: Last time the condition transitioned from one status to another.
-        type: string
-      lastUpdateTime:
-        description: The last time this condition was updated.
-        type: string
-      message:
-        description: A human readable message indicating details about the transition.
-        type: string
-      reason:
-        description: The reason for the condition's last transition.
-        type: string
-      status:
-        allOf:
-        - $ref: '#/definitions/k8s_io_api_core_v1.ConditionStatus'
-        description: Status of the condition, one of True, False, Unknown.
-      type:
-        allOf:
-        - $ref: '#/definitions/v1.DeploymentConditionType'
-        description: Type of deployment condition.
-    type: object
-  v1.DeploymentConditionType:
-    enum:
-    - Available
-    - Progressing
-    - ReplicaFailure
-    type: string
-    x-enum-varnames:
-    - DeploymentAvailable
-    - DeploymentProgressing
-    - DeploymentReplicaFailure
-  v1.DeploymentSpec:
-    properties:
-      minReadySeconds:
-        description: |-
-          Minimum number of seconds for which a newly created pod should be ready
-          without any of its container crashing, for it to be considered available.
-          Defaults to 0 (pod will be considered available as soon as it is ready)
-          +optional
-        type: integer
-      paused:
-        description: |-
-          Indicates that the deployment is paused.
-          +optional
-        type: boolean
-      progressDeadlineSeconds:
-        description: |-
-          The maximum time in seconds for a deployment to make progress before it
-          is considered to be failed. The deployment controller will continue to
-          process failed deployments and a condition with a ProgressDeadlineExceeded
-          reason will be surfaced in the deployment status. Note that progress will
-          not be estimated during the time a deployment is paused. Defaults to 600s.
-        type: integer
-      replicas:
-        description: |-
-          Number of desired pods. This is a pointer to distinguish between explicit
-          zero and not specified. Defaults to 1.
-          +optional
-        type: integer
-      revisionHistoryLimit:
-        description: |-
-          The number of old ReplicaSets to retain to allow rollback.
-          This is a pointer to distinguish between explicit zero and not specified.
-          Defaults to 10.
-          +optional
-        type: integer
-      selector:
-        allOf:
-        - $ref: '#/definitions/v1.LabelSelector'
-        description: |-
-          Label selector for pods. Existing ReplicaSets whose pods are
-          selected by this will be the ones affected by this deployment.
-          It must match the pod template's labels.
-      strategy:
-        allOf:
-        - $ref: '#/definitions/v1.DeploymentStrategy'
-        description: |-
-          The deployment strategy to use to replace existing pods with new ones.
-          +optional
-          +patchStrategy=retainKeys
-      template:
-        allOf:
-        - $ref: '#/definitions/v1.PodTemplateSpec'
-        description: |-
-          Template describes the pods that will be created.
-          The only allowed template.spec.restartPolicy value is "Always".
-    type: object
-  v1.DeploymentStatus:
-    properties:
-      availableReplicas:
-        description: |-
-          Total number of available pods (ready for at least minReadySeconds) targeted by this deployment.
-          +optional
-        type: integer
-      collisionCount:
-        description: |-
-          Count of hash collisions for the Deployment. The Deployment controller uses this
-          field as a collision avoidance mechanism when it needs to create the name for the
-          newest ReplicaSet.
-          +optional
-        type: integer
-      conditions:
-        description: |-
-          Represents the latest available observations of a deployment's current state.
-          +patchMergeKey=type
-          +patchStrategy=merge
-          +listType=map
-          +listMapKey=type
-        items:
-          $ref: '#/definitions/v1.DeploymentCondition'
-        type: array
-      observedGeneration:
-        description: |-
-          The generation observed by the deployment controller.
-          +optional
-        type: integer
-      readyReplicas:
-        description: |-
-          readyReplicas is the number of pods targeted by this Deployment with a Ready Condition.
-          +optional
-        type: integer
-      replicas:
-        description: |-
-          Total number of non-terminated pods targeted by this deployment (their labels match the selector).
-          +optional
-        type: integer
-      unavailableReplicas:
-        description: |-
-          Total number of unavailable pods targeted by this deployment. This is the total number of
-          pods that are still required for the deployment to have 100% available capacity. They may
-          either be pods that are running but not yet available or pods that still have not been created.
-          +optional
-        type: integer
-      updatedReplicas:
-        description: |-
-          Total number of non-terminated pods targeted by this deployment that have the desired template spec.
-          +optional
-        type: integer
-    type: object
-  v1.DeploymentStrategy:
-    properties:
-      rollingUpdate:
-        allOf:
-        - $ref: '#/definitions/v1.RollingUpdateDeployment'
-        description: |-
-          Rolling update config params. Present only if DeploymentStrategyType =
-          RollingUpdate.
-          ---
-          TODO: Update this to follow our convention for oneOf, whatever we decide it
-          to be.
-          +optional
-      type:
-        allOf:
-        - $ref: '#/definitions/v1.DeploymentStrategyType'
-        description: |-
-          Type of deployment. Can be "Recreate" or "RollingUpdate". Default is RollingUpdate.
-          +optional
-    type: object
-  v1.DeploymentStrategyType:
-    enum:
-    - Recreate
-    - RollingUpdate
-    type: string
-    x-enum-varnames:
-    - RecreateDeploymentStrategyType
-    - RollingUpdateDeploymentStrategyType
   v1.DownwardAPIProjection:
     properties:
       items:
@@ -4302,40 +4385,6 @@ definitions:
     - RestartPolicyAlways
     - RestartPolicyOnFailure
     - RestartPolicyNever
-  v1.RollingUpdateDeployment:
-    properties:
-      maxSurge:
-        allOf:
-        - $ref: '#/definitions/intstr.IntOrString'
-        description: |-
-          The maximum number of pods that can be scheduled above the desired number of
-          pods.
-          Value can be an absolute number (ex: 5) or a percentage of desired pods (ex: 10%).
-          This can not be 0 if MaxUnavailable is 0.
-          Absolute number is calculated from percentage by rounding up.
-          Defaults to 25%.
-          Example: when this is set to 30%, the new ReplicaSet can be scaled up immediately when
-          the rolling update starts, such that the total number of old and new pods do not exceed
-          130% of desired pods. Once old pods have been killed,
-          new ReplicaSet can be scaled up further, ensuring that total number of pods running
-          at any time during the update is at most 130% of desired pods.
-          +optional
-      maxUnavailable:
-        allOf:
-        - $ref: '#/definitions/intstr.IntOrString'
-        description: |-
-          The maximum number of pods that can be unavailable during the update.
-          Value can be an absolute number (ex: 5) or a percentage of desired pods (ex: 10%).
-          Absolute number is calculated from percentage by rounding down.
-          This can not be 0 if MaxSurge is 0.
-          Defaults to 25%.
-          Example: when this is set to 30%, the old ReplicaSet can be scaled down to 70% of desired pods
-          immediately when the rolling update starts. Once new pods are ready, old ReplicaSet
-          can be scaled down further, followed by scaling up the new ReplicaSet, ensuring
-          that the total number of pods available at all times during the update is at
-          least 70% of desired pods.
-          +optional
-    type: object
   v1.SELinuxOptions:
     properties:
       level:
@@ -5759,7 +5808,7 @@ paths:
         name: deployment
         required: true
         schema:
-          $ref: '#/definitions/model.DeploymentRequest'
+          $ref: '#/definitions/model.DeploymentCreateRequest'
       produces:
       - application/json
       responses:
@@ -5796,7 +5845,7 @@ paths:
         name: deployment
         required: true
         schema:
-          $ref: '#/definitions/model.DeploymentRequest'
+          $ref: '#/definitions/model.DeploymentUpdateRequest'
       produces:
       - application/json
       responses:

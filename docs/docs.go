@@ -274,7 +274,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.DeploymentRequest"
+                            "$ref": "#/definitions/model.DeploymentUpdateRequest"
                         }
                     }
                 ],
@@ -326,7 +326,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.DeploymentRequest"
+                            "$ref": "#/definitions/model.DeploymentCreateRequest"
                         }
                     }
                 ],
@@ -1475,14 +1475,231 @@ const docTemplate = `{
                 }
             }
         },
-        "model.DeploymentRequest": {
+        "model.Deployment": {
+            "type": "object",
+            "properties": {
+                "apiVersion": {
+                    "type": "string"
+                },
+                "kind": {
+                    "type": "string"
+                },
+                "metadata": {
+                    "description": "Standard object's metadata.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata\n+optional",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.ObjectMeta"
+                        }
+                    ]
+                },
+                "spec": {
+                    "description": "Specification of the desired behavior of the Deployment.\n+optional",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.DeploymentSpec"
+                        }
+                    ]
+                },
+                "status": {
+                    "description": "Most recently observed status of the Deployment.\n+optional",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.DeploymentStatus"
+                        }
+                    ]
+                }
+            }
+        },
+        "model.DeploymentCondition": {
+            "type": "object",
+            "properties": {
+                "lastTransitionTime": {
+                    "description": "Last time the condition transitioned from one status to another.",
+                    "type": "string"
+                },
+                "lastUpdateTime": {
+                    "description": "The last time this condition was updated.",
+                    "type": "string"
+                },
+                "message": {
+                    "description": "A human readable message indicating details about the transition.",
+                    "type": "string"
+                },
+                "reason": {
+                    "description": "The reason for the condition's last transition.",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "Status of the condition, one of True, False, Unknown.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/k8s_io_api_core_v1.ConditionStatus"
+                        }
+                    ]
+                },
+                "type": {
+                    "description": "Type of deployment condition.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.DeploymentConditionType"
+                        }
+                    ]
+                }
+            }
+        },
+        "model.DeploymentConditionType": {
+            "type": "string",
+            "enum": [
+                "Available",
+                "Progressing",
+                "ReplicaFailure"
+            ],
+            "x-enum-varnames": [
+                "DeploymentAvailable",
+                "DeploymentProgressing",
+                "DeploymentReplicaFailure"
+            ]
+        },
+        "model.DeploymentCreateRequest": {
             "type": "object",
             "properties": {
                 "deployment": {
-                    "$ref": "#/definitions/v1.Deployment"
+                    "$ref": "#/definitions/model.Deployment"
                 },
                 "opts": {
                     "$ref": "#/definitions/v1.CreateOptions"
+                }
+            }
+        },
+        "model.DeploymentSpec": {
+            "type": "object",
+            "properties": {
+                "minReadySeconds": {
+                    "description": "Minimum number of seconds for which a newly created pod should be ready\nwithout any of its container crashing, for it to be considered available.\nDefaults to 0 (pod will be considered available as soon as it is ready)\n+optional",
+                    "type": "integer"
+                },
+                "paused": {
+                    "description": "Indicates that the deployment is paused.\n+optional",
+                    "type": "boolean"
+                },
+                "progressDeadlineSeconds": {
+                    "description": "The maximum time in seconds for a deployment to make progress before it\nis considered to be failed. The deployment controller will continue to\nprocess failed deployments and a condition with a ProgressDeadlineExceeded\nreason will be surfaced in the deployment status. Note that progress will\nnot be estimated during the time a deployment is paused. Defaults to 600s.",
+                    "type": "integer"
+                },
+                "replicas": {
+                    "description": "Number of desired pods. This is a pointer to distinguish between explicit\nzero and not specified. Defaults to 1.\n+optional",
+                    "type": "integer"
+                },
+                "revisionHistoryLimit": {
+                    "description": "The number of old ReplicaSets to retain to allow rollback.\nThis is a pointer to distinguish between explicit zero and not specified.\nDefaults to 10.\n+optional",
+                    "type": "integer"
+                },
+                "selector": {
+                    "description": "Label selector for pods. Existing ReplicaSets whose pods are\nselected by this will be the ones affected by this deployment.\nIt must match the pod template's labels.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.LabelSelector"
+                        }
+                    ]
+                },
+                "strategy": {
+                    "description": "The deployment strategy to use to replace existing pods with new ones.\n+optional\n+patchStrategy=retainKeys",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.DeploymentStrategy"
+                        }
+                    ]
+                },
+                "template": {
+                    "description": "Template describes the pods that will be created.\nThe only allowed template.spec.restartPolicy value is \"Always\".",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/v1.PodTemplateSpec"
+                        }
+                    ]
+                }
+            }
+        },
+        "model.DeploymentStatus": {
+            "type": "object",
+            "properties": {
+                "availableReplicas": {
+                    "description": "Total number of available pods (ready for at least minReadySeconds) targeted by this deployment.\n+optional",
+                    "type": "integer"
+                },
+                "collisionCount": {
+                    "description": "Count of hash collisions for the Deployment. The Deployment controller uses this\nfield as a collision avoidance mechanism when it needs to create the name for the\nnewest ReplicaSet.\n+optional",
+                    "type": "integer"
+                },
+                "conditions": {
+                    "description": "Represents the latest available observations of a deployment's current state.\n+patchMergeKey=type\n+patchStrategy=merge\n+listType=map\n+listMapKey=type",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.DeploymentCondition"
+                    }
+                },
+                "observedGeneration": {
+                    "description": "The generation observed by the deployment controller.\n+optional",
+                    "type": "integer"
+                },
+                "readyReplicas": {
+                    "description": "readyReplicas is the number of pods targeted by this Deployment with a Ready Condition.\n+optional",
+                    "type": "integer"
+                },
+                "replicas": {
+                    "description": "Total number of non-terminated pods targeted by this deployment (their labels match the selector).\n+optional",
+                    "type": "integer"
+                },
+                "unavailableReplicas": {
+                    "description": "Total number of unavailable pods targeted by this deployment. This is the total number of\npods that are still required for the deployment to have 100% available capacity. They may\neither be pods that are running but not yet available or pods that still have not been created.\n+optional",
+                    "type": "integer"
+                },
+                "updatedReplicas": {
+                    "description": "Total number of non-terminated pods targeted by this deployment that have the desired template spec.\n+optional",
+                    "type": "integer"
+                }
+            }
+        },
+        "model.DeploymentStrategy": {
+            "type": "object",
+            "properties": {
+                "rollingUpdate": {
+                    "description": "Rolling update config params. Present only if DeploymentStrategyType =\nRollingUpdate.\n---\nTODO: Update this to follow our convention for oneOf, whatever we decide it\nto be.\n+optional",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.RollingUpdateDeployment"
+                        }
+                    ]
+                },
+                "type": {
+                    "description": "Type of deployment. Can be \"Recreate\" or \"RollingUpdate\". Default is RollingUpdate.\n+optional",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.DeploymentStrategyType"
+                        }
+                    ]
+                }
+            }
+        },
+        "model.DeploymentStrategyType": {
+            "type": "string",
+            "enum": [
+                "Recreate",
+                "RollingUpdate"
+            ],
+            "x-enum-varnames": [
+                "RecreateDeploymentStrategyType",
+                "RollingUpdateDeploymentStrategyType"
+            ]
+        },
+        "model.DeploymentUpdateRequest": {
+            "type": "object",
+            "properties": {
+                "deployment": {
+                    "$ref": "#/definitions/model.Deployment"
+                },
+                "opts": {
+                    "$ref": "#/definitions/v1.UpdateOptions"
                 }
             }
         },
@@ -1505,6 +1722,64 @@ const docTemplate = `{
             "x-enum-varnames": [
                 "FinalizerKubernetes"
             ]
+        },
+        "model.LabelSelector": {
+            "type": "object",
+            "properties": {
+                "matchExpressions": {
+                    "description": "matchExpressions is a list of label selector requirements. The requirements are ANDed.\n+optional\n+listType=atomic",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.LabelSelectorRequirement"
+                    }
+                },
+                "matchLabels": {
+                    "description": "matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\nmap is equivalent to an element of matchExpressions, whose key field is \"key\", the\noperator is \"In\", and the values array contains only \"value\". The requirements are ANDed.\n+optional",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "model.LabelSelectorOperator": {
+            "type": "string",
+            "enum": [
+                "In",
+                "NotIn",
+                "Exists",
+                "DoesNotExist"
+            ],
+            "x-enum-varnames": [
+                "LabelSelectorOpIn",
+                "LabelSelectorOpNotIn",
+                "LabelSelectorOpExists",
+                "LabelSelectorOpDoesNotExist"
+            ]
+        },
+        "model.LabelSelectorRequirement": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "description": "key is the label key that the selector applies to.",
+                    "type": "string"
+                },
+                "operator": {
+                    "description": "operator represents a key's relationship to a set of values.\nValid operators are In, NotIn, Exists and DoesNotExist.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.LabelSelectorOperator"
+                        }
+                    ]
+                },
+                "values": {
+                    "description": "values is an array of string values. If the operator is In or NotIn,\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\nthe values array must be empty. This array is replaced during a strategic\nmerge patch.\n+optional\n+listType=atomic",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
         },
         "model.Login": {
             "type": "object",
@@ -1872,6 +2147,27 @@ const docTemplate = `{
                 },
                 "pod": {
                     "$ref": "#/definitions/model.PodUpdate"
+                }
+            }
+        },
+        "model.RollingUpdateDeployment": {
+            "type": "object",
+            "properties": {
+                "maxSurge": {
+                    "description": "The maximum number of pods that can be scheduled above the desired number of\npods.\nValue can be an absolute number (ex: 5) or a percentage of desired pods (ex: 10%).\nThis can not be 0 if MaxUnavailable is 0.\nAbsolute number is calculated from percentage by rounding up.\nDefaults to 25%.\nExample: when this is set to 30%, the new ReplicaSet can be scaled up immediately when\nthe rolling update starts, such that the total number of old and new pods do not exceed\n130% of desired pods. Once old pods have been killed,\nnew ReplicaSet can be scaled up further, ensuring that total number of pods running\nat any time during the update is at most 130% of desired pods.\n+optional",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/intstr.IntOrString"
+                        }
+                    ]
+                },
+                "maxUnavailable": {
+                    "description": "The maximum number of pods that can be unavailable during the update.\nValue can be an absolute number (ex: 5) or a percentage of desired pods (ex: 10%).\nAbsolute number is calculated from percentage by rounding down.\nThis can not be 0 if MaxSurge is 0.\nDefaults to 25%.\nExample: when this is set to 30%, the old ReplicaSet can be scaled down to 70% of desired pods\nimmediately when the rolling update starts. Once new pods are ready, old ReplicaSet\ncan be scaled down further, followed by scaling up the new ReplicaSet, ensuring\nthat the total number of pods available at all times during the update is at\nleast 70% of desired pods.\n+optional",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/intstr.IntOrString"
+                        }
+                    ]
                 }
             }
         },
@@ -2613,214 +2909,6 @@ const docTemplate = `{
                 "DNSClusterFirst",
                 "DNSDefault",
                 "DNSNone"
-            ]
-        },
-        "v1.Deployment": {
-            "type": "object",
-            "properties": {
-                "apiVersion": {
-                    "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources\n+optional",
-                    "type": "string"
-                },
-                "kind": {
-                    "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\n+optional",
-                    "type": "string"
-                },
-                "metadata": {
-                    "description": "Standard object's metadata.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata\n+optional",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.ObjectMeta"
-                        }
-                    ]
-                },
-                "spec": {
-                    "description": "Specification of the desired behavior of the Deployment.\n+optional",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.DeploymentSpec"
-                        }
-                    ]
-                },
-                "status": {
-                    "description": "Most recently observed status of the Deployment.\n+optional",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.DeploymentStatus"
-                        }
-                    ]
-                }
-            }
-        },
-        "v1.DeploymentCondition": {
-            "type": "object",
-            "properties": {
-                "lastTransitionTime": {
-                    "description": "Last time the condition transitioned from one status to another.",
-                    "type": "string"
-                },
-                "lastUpdateTime": {
-                    "description": "The last time this condition was updated.",
-                    "type": "string"
-                },
-                "message": {
-                    "description": "A human readable message indicating details about the transition.",
-                    "type": "string"
-                },
-                "reason": {
-                    "description": "The reason for the condition's last transition.",
-                    "type": "string"
-                },
-                "status": {
-                    "description": "Status of the condition, one of True, False, Unknown.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/k8s_io_api_core_v1.ConditionStatus"
-                        }
-                    ]
-                },
-                "type": {
-                    "description": "Type of deployment condition.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.DeploymentConditionType"
-                        }
-                    ]
-                }
-            }
-        },
-        "v1.DeploymentConditionType": {
-            "type": "string",
-            "enum": [
-                "Available",
-                "Progressing",
-                "ReplicaFailure"
-            ],
-            "x-enum-varnames": [
-                "DeploymentAvailable",
-                "DeploymentProgressing",
-                "DeploymentReplicaFailure"
-            ]
-        },
-        "v1.DeploymentSpec": {
-            "type": "object",
-            "properties": {
-                "minReadySeconds": {
-                    "description": "Minimum number of seconds for which a newly created pod should be ready\nwithout any of its container crashing, for it to be considered available.\nDefaults to 0 (pod will be considered available as soon as it is ready)\n+optional",
-                    "type": "integer"
-                },
-                "paused": {
-                    "description": "Indicates that the deployment is paused.\n+optional",
-                    "type": "boolean"
-                },
-                "progressDeadlineSeconds": {
-                    "description": "The maximum time in seconds for a deployment to make progress before it\nis considered to be failed. The deployment controller will continue to\nprocess failed deployments and a condition with a ProgressDeadlineExceeded\nreason will be surfaced in the deployment status. Note that progress will\nnot be estimated during the time a deployment is paused. Defaults to 600s.",
-                    "type": "integer"
-                },
-                "replicas": {
-                    "description": "Number of desired pods. This is a pointer to distinguish between explicit\nzero and not specified. Defaults to 1.\n+optional",
-                    "type": "integer"
-                },
-                "revisionHistoryLimit": {
-                    "description": "The number of old ReplicaSets to retain to allow rollback.\nThis is a pointer to distinguish between explicit zero and not specified.\nDefaults to 10.\n+optional",
-                    "type": "integer"
-                },
-                "selector": {
-                    "description": "Label selector for pods. Existing ReplicaSets whose pods are\nselected by this will be the ones affected by this deployment.\nIt must match the pod template's labels.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.LabelSelector"
-                        }
-                    ]
-                },
-                "strategy": {
-                    "description": "The deployment strategy to use to replace existing pods with new ones.\n+optional\n+patchStrategy=retainKeys",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.DeploymentStrategy"
-                        }
-                    ]
-                },
-                "template": {
-                    "description": "Template describes the pods that will be created.\nThe only allowed template.spec.restartPolicy value is \"Always\".",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.PodTemplateSpec"
-                        }
-                    ]
-                }
-            }
-        },
-        "v1.DeploymentStatus": {
-            "type": "object",
-            "properties": {
-                "availableReplicas": {
-                    "description": "Total number of available pods (ready for at least minReadySeconds) targeted by this deployment.\n+optional",
-                    "type": "integer"
-                },
-                "collisionCount": {
-                    "description": "Count of hash collisions for the Deployment. The Deployment controller uses this\nfield as a collision avoidance mechanism when it needs to create the name for the\nnewest ReplicaSet.\n+optional",
-                    "type": "integer"
-                },
-                "conditions": {
-                    "description": "Represents the latest available observations of a deployment's current state.\n+patchMergeKey=type\n+patchStrategy=merge\n+listType=map\n+listMapKey=type",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/v1.DeploymentCondition"
-                    }
-                },
-                "observedGeneration": {
-                    "description": "The generation observed by the deployment controller.\n+optional",
-                    "type": "integer"
-                },
-                "readyReplicas": {
-                    "description": "readyReplicas is the number of pods targeted by this Deployment with a Ready Condition.\n+optional",
-                    "type": "integer"
-                },
-                "replicas": {
-                    "description": "Total number of non-terminated pods targeted by this deployment (their labels match the selector).\n+optional",
-                    "type": "integer"
-                },
-                "unavailableReplicas": {
-                    "description": "Total number of unavailable pods targeted by this deployment. This is the total number of\npods that are still required for the deployment to have 100% available capacity. They may\neither be pods that are running but not yet available or pods that still have not been created.\n+optional",
-                    "type": "integer"
-                },
-                "updatedReplicas": {
-                    "description": "Total number of non-terminated pods targeted by this deployment that have the desired template spec.\n+optional",
-                    "type": "integer"
-                }
-            }
-        },
-        "v1.DeploymentStrategy": {
-            "type": "object",
-            "properties": {
-                "rollingUpdate": {
-                    "description": "Rolling update config params. Present only if DeploymentStrategyType =\nRollingUpdate.\n---\nTODO: Update this to follow our convention for oneOf, whatever we decide it\nto be.\n+optional",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.RollingUpdateDeployment"
-                        }
-                    ]
-                },
-                "type": {
-                    "description": "Type of deployment. Can be \"Recreate\" or \"RollingUpdate\". Default is RollingUpdate.\n+optional",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/v1.DeploymentStrategyType"
-                        }
-                    ]
-                }
-            }
-        },
-        "v1.DeploymentStrategyType": {
-            "type": "string",
-            "enum": [
-                "Recreate",
-                "RollingUpdate"
-            ],
-            "x-enum-varnames": [
-                "RecreateDeploymentStrategyType",
-                "RollingUpdateDeploymentStrategyType"
             ]
         },
         "v1.DownwardAPIProjection": {
@@ -5019,27 +5107,6 @@ const docTemplate = `{
                 "RestartPolicyOnFailure",
                 "RestartPolicyNever"
             ]
-        },
-        "v1.RollingUpdateDeployment": {
-            "type": "object",
-            "properties": {
-                "maxSurge": {
-                    "description": "The maximum number of pods that can be scheduled above the desired number of\npods.\nValue can be an absolute number (ex: 5) or a percentage of desired pods (ex: 10%).\nThis can not be 0 if MaxUnavailable is 0.\nAbsolute number is calculated from percentage by rounding up.\nDefaults to 25%.\nExample: when this is set to 30%, the new ReplicaSet can be scaled up immediately when\nthe rolling update starts, such that the total number of old and new pods do not exceed\n130% of desired pods. Once old pods have been killed,\nnew ReplicaSet can be scaled up further, ensuring that total number of pods running\nat any time during the update is at most 130% of desired pods.\n+optional",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/intstr.IntOrString"
-                        }
-                    ]
-                },
-                "maxUnavailable": {
-                    "description": "The maximum number of pods that can be unavailable during the update.\nValue can be an absolute number (ex: 5) or a percentage of desired pods (ex: 10%).\nAbsolute number is calculated from percentage by rounding down.\nThis can not be 0 if MaxSurge is 0.\nDefaults to 25%.\nExample: when this is set to 30%, the old ReplicaSet can be scaled down to 70% of desired pods\nimmediately when the rolling update starts. Once new pods are ready, old ReplicaSet\ncan be scaled down further, followed by scaling up the new ReplicaSet, ensuring\nthat the total number of pods available at all times during the update is at\nleast 70% of desired pods.\n+optional",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/intstr.IntOrString"
-                        }
-                    ]
-                }
-            }
         },
         "v1.SELinuxOptions": {
             "type": "object",
