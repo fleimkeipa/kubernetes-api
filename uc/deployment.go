@@ -121,6 +121,31 @@ func (rc *DeploymentUC) Delete(ctx context.Context, namespace, name string, opts
 }
 
 func (rc *DeploymentUC) fillDeployment(newDeployment *model.Deployment) *v1.Deployment {
+	var matchExpressions = make([]metav1.LabelSelectorRequirement, 0)
+	for _, v := range newDeployment.Spec.Selector.MatchExpressions {
+		matchExpressions = append(matchExpressions, metav1.LabelSelectorRequirement{
+			Key:      v.Key,
+			Operator: metav1.LabelSelectorOperator(v.Operator),
+			Values:   v.Values,
+		})
+	}
+	var selector = metav1.LabelSelector{
+		MatchLabels:      newDeployment.Spec.Selector.MatchLabels,
+		MatchExpressions: matchExpressions,
+	}
+
+	var conditions = make([]v1.DeploymentCondition, 0)
+	for _, v := range newDeployment.Status.Conditions {
+		conditions = append(conditions, v1.DeploymentCondition{
+			Type:               v1.DeploymentConditionType(v.Type),
+			Status:             v.Status,
+			LastUpdateTime:     metav1.Time{Time: v.LastUpdateTime},
+			LastTransitionTime: metav1.Time{Time: v.LastTransitionTime},
+			Reason:             v.Reason,
+			Message:            v.Message,
+		})
+	}
+
 	return &v1.Deployment{
 		TypeMeta: metav1.TypeMeta(newDeployment.TypeMeta),
 		ObjectMeta: metav1.ObjectMeta{
@@ -135,15 +160,27 @@ func (rc *DeploymentUC) fillDeployment(newDeployment *model.Deployment) *v1.Depl
 			Finalizers:                 newDeployment.ObjectMeta.Finalizers,
 		},
 		Spec: v1.DeploymentSpec{
-			Replicas:                new(int32),
-			Selector:                &metav1.LabelSelector{},
-			Strategy:                v1.DeploymentStrategy{},
-			MinReadySeconds:         0,
-			RevisionHistoryLimit:    new(int32),
-			Paused:                  false,
-			ProgressDeadlineSeconds: new(int32),
+			Replicas: newDeployment.Spec.Replicas,
+			Selector: &selector,
+			Strategy: v1.DeploymentStrategy{
+				Type:          v1.DeploymentStrategyType(newDeployment.Spec.Strategy.Type),
+				RollingUpdate: (*v1.RollingUpdateDeployment)(newDeployment.Spec.Strategy.RollingUpdate),
+			},
+			MinReadySeconds:         newDeployment.Spec.MinReadySeconds,
+			RevisionHistoryLimit:    newDeployment.Spec.RevisionHistoryLimit,
+			Paused:                  newDeployment.Spec.Paused,
+			ProgressDeadlineSeconds: newDeployment.Spec.ProgressDeadlineSeconds,
 		},
-		Status: v1.DeploymentStatus{},
+		Status: v1.DeploymentStatus{
+			ObservedGeneration:  newDeployment.Status.ObservedGeneration,
+			Replicas:            newDeployment.Status.Replicas,
+			UpdatedReplicas:     newDeployment.Status.UpdatedReplicas,
+			ReadyReplicas:       newDeployment.Status.ReadyReplicas,
+			AvailableReplicas:   newDeployment.Status.AvailableReplicas,
+			UnavailableReplicas: newDeployment.Status.UnavailableReplicas,
+			Conditions:          conditions,
+			CollisionCount:      newDeployment.Status.CollisionCount,
+		},
 	}
 }
 
