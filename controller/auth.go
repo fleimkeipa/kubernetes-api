@@ -79,7 +79,7 @@ func (rc *AuthHandlers) Login(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, AuthResponse{
 		Token:    jwt,
-		Type:     "jwt",
+		Type:     "basic",
 		Username: input.Username,
 		Message:  "Successfully logged in",
 	})
