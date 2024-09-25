@@ -50,6 +50,7 @@ func serveApplication() {
 
 	// Initialize PostgreSQL client
 	var dbClient = initDB()
+	defer dbClient.Close()
 
 	// Create Event handlers and related components
 	var eventRepo = repositories.NewEventRepository(dbClient)
