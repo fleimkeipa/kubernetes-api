@@ -123,7 +123,7 @@ To set up the PostgreSQL database for the Kubernetes API, follow these steps:
 1. Clone the repository:
 
    ```sh
-   git clone https://github.com/your-username/kubernetes-api.git
+   git clone https://github.com/fleimkeipa/kubernetes-api.git
    cd kubernetes-api
    ```
 
