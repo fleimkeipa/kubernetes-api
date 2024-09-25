@@ -3,7 +3,7 @@ database:
   name: kubernetes-api
   username: postgres
   password: password
-  addr: localhost:5432
+  addr: localhost:5432 # postgres:5432 if api working on container
 
 # UI service options
 ui_service:
