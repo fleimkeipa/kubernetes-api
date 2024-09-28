@@ -1,21 +1,20 @@
-version: '3.9'  # Docker Compose version
+version: "3.9" # Docker Compose version
 
 services:
   myapp:
-    image: kubernetes-api:latest  # Docker image for your Go application
+    build: .
+    # image: kubernetes-api:latest  # Docker image for your Go application
     container_name: myapp-container
     environment:
-      - KUBECONFIG=/root/.kube/config  # Location of the Kubernetes configuration file
+      - KUBECONFIG=/root/.kube/config # Location of the Kubernetes configuration file
     volumes:
-      - ~/.kube/config:/root/.kube/config  # Mount the local kubeconfig file to the container
+      - ~/.kube/config:/root/.kube/config # Mount the local kubeconfig file to the container
     ports:
-      - "8080:8080"  # Expose necessary ports
+      - "8080:8080" # Expose necessary ports
       # - "6443:6443"  # Expose additional ports if needed
     networks:
       - mynetwork
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
 
 networks:
   mynetwork:
-    driver: bridge  # Use bridge network to enable communication between services
+    driver: bridge # Use bridge network to enable communication between services
