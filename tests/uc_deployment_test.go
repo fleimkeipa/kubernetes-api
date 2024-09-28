@@ -5,7 +5,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/fleimkeipa/kubernetes-api/pkg"
 	"github.com/fleimkeipa/kubernetes-api/repositories"
 	"github.com/fleimkeipa/kubernetes-api/repositories/interfaces"
 	"github.com/fleimkeipa/kubernetes-api/uc"
@@ -14,15 +13,8 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-var deploymentTestRepo interfaces.DeploymentInterfaces
-
-func init() {
-	deploymentTestRepo = repositories.NewDeploymentInterfaces(initTestKubernetes())
-}
-
 func TestDeploymentUC_List(t *testing.T) {
-	test_db, terminateDB = pkg.GetTestInstance(context.TODO())
-	defer terminateDB()
+	deploymentTestRepo := repositories.NewDeploymentInterfaces(initTestKubernetes())
 
 	type fields struct {
 		deploymentRepo interfaces.DeploymentInterfaces
@@ -44,7 +36,7 @@ func TestDeploymentUC_List(t *testing.T) {
 			name: "success",
 			fields: fields{
 				deploymentRepo: deploymentTestRepo,
-				eventUC:        uc.NewEventUC(repositories.NewEventRepository(test_db)),
+				eventUC:        &uc.EventUC{},
 			},
 			args: args{
 				ctx:       context.TODO(),
@@ -71,6 +63,7 @@ func TestDeploymentUC_List(t *testing.T) {
 }
 
 func TestDeploymentUC_GetByNameOrUID(t *testing.T) {
+	deploymentTestRepo := repositories.NewDeploymentInterfaces(initTestKubernetes())
 	type fields struct {
 		deploymentRepo interfaces.DeploymentInterfaces
 		eventUC        *uc.EventUC
@@ -92,7 +85,7 @@ func TestDeploymentUC_GetByNameOrUID(t *testing.T) {
 			name: "success",
 			fields: fields{
 				deploymentRepo: deploymentTestRepo,
-				eventUC:        uc.NewEventUC(repositories.NewEventRepository(test_db)),
+				eventUC:        &uc.EventUC{},
 			},
 			args: args{
 				ctx:       context.TODO(),
