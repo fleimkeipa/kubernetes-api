@@ -36,7 +36,7 @@ func TestPodsUC_GetByName(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "",
+			name: "success",
 			fields: fields{
 				podsRepo: repositories.NewPodRepository(initTestKubernetes()),
 				eventUC:  uc.NewEventUC(repositories.NewEventRepository(test_db)),

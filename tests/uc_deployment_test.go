@@ -41,7 +41,7 @@ func TestDeploymentUC_List(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "",
+			name: "success",
 			fields: fields{
 				deploymentRepo: deploymentTestRepo,
 				eventUC:        uc.NewEventUC(repositories.NewEventRepository(test_db)),
@@ -89,7 +89,7 @@ func TestDeploymentUC_GetByNameOrUID(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "",
+			name: "success",
 			fields: fields{
 				deploymentRepo: deploymentTestRepo,
 				eventUC:        uc.NewEventUC(repositories.NewEventRepository(test_db)),

@@ -31,7 +31,7 @@ func TestEventUC_List(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "",
+			name: "success",
 			fields: fields{
 				eventRepo: repositories.NewEventRepository(test_db),
 			},
