@@ -1,4 +1,4 @@
-package repositories
+package tests
 
 import (
 	"context"
@@ -7,12 +7,19 @@ import (
 	"time"
 
 	"github.com/fleimkeipa/kubernetes-api/model"
+	"github.com/fleimkeipa/kubernetes-api/pkg"
+	"github.com/fleimkeipa/kubernetes-api/repositories"
 
 	"github.com/go-pg/pg"
 	_ "github.com/lib/pq"
 )
 
 func TestEventRepository_Create(t *testing.T) {
+	test_db, terminateDB = pkg.GetTestInstance(context.TODO())
+	defer terminateDB()
+
+	now := time.Now()
+
 	type fields struct {
 		db *pg.DB
 	}
@@ -28,7 +35,7 @@ func TestEventRepository_Create(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "",
+			name: "success - pod create",
 			fields: fields{
 				db: test_db,
 			},
@@ -37,7 +44,7 @@ func TestEventRepository_Create(t *testing.T) {
 				event: &model.Event{
 					Kind:         "pod",
 					EventKind:    "create",
-					CreationTime: time.Now(),
+					CreationTime: now,
 					Owner: model.User{
 						ID:       1,
 						Username: "test_username",
@@ -46,11 +53,22 @@ func TestEventRepository_Create(t *testing.T) {
 					},
 				},
 			},
-			want:    &model.Event{},
+			want: &model.Event{
+				Kind:         "pod",
+				EventKind:    "create",
+				CreationTime: now,
+				Owner: model.User{
+					ID:       1,
+					Username: "test_username",
+					Email:    "test@mail.com",
+					RoleID:   1,
+				},
+				DeletedAt: time.Time{},
+			},
 			wantErr: false,
 		},
 		{
-			name: "",
+			name: "success - namespace create",
 			fields: fields{
 				db: test_db,
 			},
@@ -59,7 +77,7 @@ func TestEventRepository_Create(t *testing.T) {
 				event: &model.Event{
 					Kind:         "namespace",
 					EventKind:    "create",
-					CreationTime: time.Now(),
+					CreationTime: now,
 					Owner: model.User{
 						ID:       1,
 						Username: "test_username",
@@ -68,15 +86,23 @@ func TestEventRepository_Create(t *testing.T) {
 					},
 				},
 			},
-			want:    &model.Event{},
+			want: &model.Event{
+				Kind:         "namespace",
+				EventKind:    "create",
+				CreationTime: now,
+				Owner: model.User{
+					ID:       1,
+					Username: "test_username",
+					Email:    "test@mail.com",
+					RoleID:   1,
+				},
+			},
 			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			rc := &EventRepository{
-				db: tt.fields.db,
-			}
+			rc := repositories.NewEventRepository(tt.fields.db)
 			got, err := rc.Create(tt.args.ctx, tt.args.event)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("EventRepository.Create() error = %v, wantErr %v", err, tt.wantErr)
@@ -85,11 +111,18 @@ func TestEventRepository_Create(t *testing.T) {
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("EventRepository.Create() = %v, want %v", got, tt.want)
 			}
+			if err := clearTable("events"); err != nil {
+				t.Errorf("EventRepository.Create() clearTable error = %v", err)
+				return
+			}
 		})
 	}
 }
 
 func TestEventRepository_List(t *testing.T) {
+	test_db, terminateDB = pkg.GetTestInstance(context.TODO())
+	defer terminateDB()
+
 	type fields struct {
 		db *pg.DB
 	}
@@ -106,7 +139,7 @@ func TestEventRepository_List(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "",
+			name: "success",
 			fields: fields{
 				db: test_db,
 			},
@@ -163,9 +196,7 @@ func TestEventRepository_List(t *testing.T) {
 					return
 				}
 			}
-			rc := &EventRepository{
-				db: tt.fields.db,
-			}
+			rc := repositories.NewEventRepository(tt.fields.db)
 			got, err := rc.List(tt.args.ctx, tt.args.opts)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("EventRepository.List() error = %v, wantErr %v", err, tt.wantErr)

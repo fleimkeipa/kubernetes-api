@@ -1,10 +1,11 @@
-package repositories
+package tests
 
 import (
 	"context"
 	"reflect"
 	"testing"
 
+	"github.com/fleimkeipa/kubernetes-api/repositories"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -40,9 +41,7 @@ func TestNamespaceRepository_Get(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			rc := &NamespaceRepository{
-				client: tt.fields.client,
-			}
+			rc := repositories.NewNamespaceRepository(tt.fields.client)
 			got, err := rc.List(tt.args.ctx, tt.args.opts)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("NamespaceRepository.Get() error = %v, wantErr %v", err, tt.wantErr)

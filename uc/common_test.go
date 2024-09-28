@@ -20,7 +20,7 @@ func loadEnv() {
 func initTestKubernetes() *kubernetes.Clientset {
 	client, err := pkg.NewKubernetesClient()
 	if err != nil {
-		panic(err.Error())
+		log.Fatalf("Failed to init kubernetes client: %v", err)
 	}
 
 	return client

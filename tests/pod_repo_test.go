@@ -1,11 +1,13 @@
-package repositories
+package tests
 
 import (
 	"context"
+	"log"
 	"reflect"
 	"testing"
 
 	"github.com/fleimkeipa/kubernetes-api/pkg"
+	"github.com/fleimkeipa/kubernetes-api/repositories"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -15,7 +17,7 @@ import (
 func initTestKubernetes() *kubernetes.Clientset {
 	client, err := pkg.NewKubernetesClient()
 	if err != nil {
-		panic(err.Error())
+		log.Fatalf("Failed to init kubernetes client: %v", err)
 	}
 
 	return client
@@ -59,9 +61,7 @@ func TestPodsRepository_Get(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			rc := &PodRepository{
-				client: tt.fields.client,
-			}
+			rc := repositories.NewPodRepository(tt.fields.client)
 			got, err := rc.List(tt.args.ctx, tt.args.namespace, tt.args.opts)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("PodsRepository.Get() error = %v, wantErr %v", err, tt.wantErr)
