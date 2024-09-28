@@ -1,12 +1,15 @@
-package uc
+package tests
 
 import (
 	"context"
 	"reflect"
 	"testing"
 
+	"github.com/fleimkeipa/kubernetes-api/pkg"
 	"github.com/fleimkeipa/kubernetes-api/repositories"
 	"github.com/fleimkeipa/kubernetes-api/repositories/interfaces"
+	"github.com/fleimkeipa/kubernetes-api/uc"
+
 	v1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -18,9 +21,12 @@ func init() {
 }
 
 func TestDeploymentUC_List(t *testing.T) {
+	test_db, terminateDB = pkg.GetTestInstance(context.TODO())
+	defer terminateDB()
+
 	type fields struct {
 		deploymentRepo interfaces.DeploymentInterfaces
-		eventUC        *EventUC
+		eventUC        *uc.EventUC
 	}
 	type args struct {
 		ctx       context.Context
@@ -38,7 +44,7 @@ func TestDeploymentUC_List(t *testing.T) {
 			name: "",
 			fields: fields{
 				deploymentRepo: deploymentTestRepo,
-				eventUC:        &EventUC{},
+				eventUC:        uc.NewEventUC(repositories.NewEventRepository(test_db)),
 			},
 			args: args{
 				ctx:       context.TODO(),
@@ -51,10 +57,7 @@ func TestDeploymentUC_List(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			rc := &DeploymentUC{
-				deploymentRepo: tt.fields.deploymentRepo,
-				eventUC:        tt.fields.eventUC,
-			}
+			rc := uc.NewDeploymentUC(tt.fields.deploymentRepo, tt.fields.eventUC)
 			got, err := rc.List(tt.args.ctx, tt.args.namespace, tt.args.opts)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("DeploymentUC.List() error = %v, wantErr %v", err, tt.wantErr)
@@ -70,7 +73,7 @@ func TestDeploymentUC_List(t *testing.T) {
 func TestDeploymentUC_GetByNameOrUID(t *testing.T) {
 	type fields struct {
 		deploymentRepo interfaces.DeploymentInterfaces
-		eventUC        *EventUC
+		eventUC        *uc.EventUC
 	}
 	type args struct {
 		ctx       context.Context
@@ -89,7 +92,7 @@ func TestDeploymentUC_GetByNameOrUID(t *testing.T) {
 			name: "",
 			fields: fields{
 				deploymentRepo: deploymentTestRepo,
-				eventUC:        &EventUC{},
+				eventUC:        uc.NewEventUC(repositories.NewEventRepository(test_db)),
 			},
 			args: args{
 				ctx:       context.TODO(),
@@ -103,10 +106,7 @@ func TestDeploymentUC_GetByNameOrUID(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			rc := &DeploymentUC{
-				deploymentRepo: tt.fields.deploymentRepo,
-				eventUC:        tt.fields.eventUC,
-			}
+			rc := uc.NewDeploymentUC(tt.fields.deploymentRepo, tt.fields.eventUC)
 			got, err := rc.GetByNameOrUID(tt.args.ctx, tt.args.namespace, tt.args.nameOrUID, tt.args.opts)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("DeploymentUC.GetByNameOrUID() error = %v, wantErr %v", err, tt.wantErr)

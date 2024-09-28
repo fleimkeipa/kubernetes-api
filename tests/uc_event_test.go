@@ -1,4 +1,4 @@
-package uc
+package tests
 
 import (
 	"context"
@@ -6,11 +6,16 @@ import (
 	"testing"
 
 	"github.com/fleimkeipa/kubernetes-api/model"
+	"github.com/fleimkeipa/kubernetes-api/pkg"
 	"github.com/fleimkeipa/kubernetes-api/repositories"
 	"github.com/fleimkeipa/kubernetes-api/repositories/interfaces"
+	"github.com/fleimkeipa/kubernetes-api/uc"
 )
 
 func TestEventUC_List(t *testing.T) {
+	test_db, terminateDB = pkg.GetTestInstance(context.TODO())
+	defer terminateDB()
+
 	type fields struct {
 		eventRepo interfaces.EventInterfaces
 	}
@@ -28,7 +33,7 @@ func TestEventUC_List(t *testing.T) {
 		{
 			name: "",
 			fields: fields{
-				eventRepo: repositories.NewEventRepository(initTestDB()),
+				eventRepo: repositories.NewEventRepository(test_db),
 			},
 			args: args{
 				ctx:  context.TODO(),
@@ -40,9 +45,7 @@ func TestEventUC_List(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			rc := &EventUC{
-				eventRepo: tt.fields.eventRepo,
-			}
+			rc := uc.NewEventUC(tt.fields.eventRepo)
 			got, err := rc.List(tt.args.ctx, tt.args.opts)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("EventUC.List() error = %v, wantErr %v", err, tt.wantErr)
