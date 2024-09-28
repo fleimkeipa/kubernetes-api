@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Function to load YAML file using Viper
+// LoadEnv load YAML file using Viper
 func LoadEnv() error {
 	// Set the file name and type
 	viper.SetConfigName("config") // config.yaml
