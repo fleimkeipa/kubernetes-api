@@ -2,11 +2,9 @@ package tests
 
 import (
 	"context"
-	"log"
 	"reflect"
 	"testing"
 
-	"github.com/fleimkeipa/kubernetes-api/pkg"
 	"github.com/fleimkeipa/kubernetes-api/repositories"
 
 	corev1 "k8s.io/api/core/v1"
@@ -14,13 +12,77 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-func initTestKubernetes() *kubernetes.Clientset {
-	client, err := pkg.NewKubernetesClient()
-	if err != nil {
-		log.Fatalf("Failed to init kubernetes client: %v", err)
-	}
+func TestPodRepository_Create(t *testing.T) {
+	client := initTestKubernetes()
+	defer deleteTestNamespace(client)
 
-	return client
+	type fields struct {
+		client *kubernetes.Clientset
+	}
+	type args struct {
+		ctx  context.Context
+		pod  *corev1.Pod
+		opts metav1.CreateOptions
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    *corev1.Pod
+		wantErr bool
+	}{
+		{
+			name: "success",
+			fields: fields{
+				client: client,
+			},
+			args: args{
+				ctx: context.TODO(),
+				pod: &corev1.Pod{
+					TypeMeta: metav1.TypeMeta{
+						Kind:       "pod",
+						APIVersion: "v1",
+					},
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "pod1",
+						Namespace: "test",
+					},
+					Spec: corev1.PodSpec{
+						Containers: []corev1.Container{
+							{
+								Name:  "nginx",
+								Image: "nginx:latest",
+							},
+						},
+					},
+					Status: corev1.PodStatus{},
+				},
+				opts: metav1.CreateOptions{},
+			},
+			want: &corev1.Pod{
+				TypeMeta: metav1.TypeMeta{},
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "pod1",
+				},
+				Spec:   corev1.PodSpec{},
+				Status: corev1.PodStatus{},
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rc := repositories.NewPodRepository(tt.fields.client)
+			got, err := rc.Create(tt.args.ctx, tt.args.pod, tt.args.opts)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("PodRepository.Create() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got.ObjectMeta.Name != tt.args.pod.ObjectMeta.Name {
+				t.Errorf("PodRepository.Create() = %v, want %v", got.ObjectMeta.Name, tt.want.ObjectMeta.Name)
+			}
+		})
+	}
 }
 
 func TestPodsRepository_Get(t *testing.T) {
