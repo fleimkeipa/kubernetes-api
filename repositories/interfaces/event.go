@@ -7,7 +7,7 @@ import (
 )
 
 type EventInterfaces interface {
-	Create(context.Context, *model.Event) (*model.Event, error)
-	List(context.Context, *model.EventFindOpts) ([]model.Event, error)
-	GetByID(context.Context, string) (*model.Event, error)
+	Create(ctx context.Context, event *model.Event) (*model.Event, error)
+	List(ctx context.Context, event *model.EventFindOpts) ([]model.Event, error)
+	GetByID(ctx context.Context, eventID string) (*model.Event, error)
 }

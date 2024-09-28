@@ -8,8 +8,8 @@ import (
 )
 
 type DeploymentInterfaces interface {
-	Create(context.Context, *v1.Deployment, metav1.CreateOptions) (*v1.Deployment, error)
-	Update(context.Context, *v1.Deployment, metav1.UpdateOptions) (*v1.Deployment, error)
-	List(context.Context, string, metav1.ListOptions) (*v1.DeploymentList, error)
-	Delete(context.Context, string, string, metav1.DeleteOptions) error
+	Create(ctx context.Context, deployment *v1.Deployment, opts metav1.CreateOptions) (*v1.Deployment, error)
+	Update(ctx context.Context, deployment *v1.Deployment, opts metav1.UpdateOptions) (*v1.Deployment, error)
+	List(ctx context.Context, namespace string, opts metav1.ListOptions) (*v1.DeploymentList, error)
+	Delete(ctx context.Context, namespace string, deploymentID string, opts metav1.DeleteOptions) error
 }

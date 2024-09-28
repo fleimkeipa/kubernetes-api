@@ -8,8 +8,8 @@ import (
 )
 
 type PodInterfaces interface {
-	Create(context.Context, *corev1.Pod, metav1.CreateOptions) (*corev1.Pod, error)
-	Update(context.Context, string, *corev1.Pod, metav1.UpdateOptions) (*corev1.Pod, error)
-	List(context.Context, string, metav1.ListOptions) (*corev1.PodList, error)
-	Delete(context.Context, string, string, metav1.DeleteOptions) error
+	Create(ctx context.Context, pod *corev1.Pod, opts metav1.CreateOptions) (*corev1.Pod, error)
+	Update(ctx context.Context, namespace string, pod *corev1.Pod, opts metav1.UpdateOptions) (*corev1.Pod, error)
+	List(ctx context.Context, namespace string, opts metav1.ListOptions) (*corev1.PodList, error)
+	Delete(ctx context.Context, namespace string, podID string, opts metav1.DeleteOptions) error
 }
