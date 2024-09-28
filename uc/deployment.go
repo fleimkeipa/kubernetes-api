@@ -20,18 +20,19 @@ type DeploymentUC struct {
 func NewDeploymentUC(deploymentRepo interfaces.DeploymentInterfaces, eventUC *EventUC) *DeploymentUC {
 	return &DeploymentUC{
 		deploymentRepo: deploymentRepo,
+		eventUC:        eventUC,
 	}
 }
 
 func (rc *DeploymentUC) Create(ctx context.Context, request *model.DeploymentCreateRequest) (*v1.Deployment, error) {
-	var newDeployment = request.Deployment
+	newDeployment := request.Deployment
 
 	newDeployment.TypeMeta.Kind = "deployment"
 	if newDeployment.ObjectMeta.Namespace == "" {
 		newDeployment.ObjectMeta.Namespace = "default"
 	}
 
-	var event = model.Event{
+	event := model.Event{
 		Kind:      model.DeploymentKind,
 		EventKind: model.CreateEventKind,
 		Owner:     model.User{},
@@ -41,7 +42,7 @@ func (rc *DeploymentUC) Create(ctx context.Context, request *model.DeploymentCre
 		return nil, fmt.Errorf("failed to create event for %s: %w", event.EventKind, err)
 	}
 
-	var kubeDeployment = rc.fillDeployment(&newDeployment)
+	kubeDeployment := rc.fillDeployment(&newDeployment)
 
 	return rc.deploymentRepo.Create(ctx, kubeDeployment, request.Opts)
 }
@@ -52,7 +53,7 @@ func (rc *DeploymentUC) Update(ctx context.Context, id, namespace string, reques
 		return nil, err
 	}
 
-	var event = model.Event{
+	event := model.Event{
 		Kind:      model.DeploymentKind,
 		EventKind: model.UpdateEventKind,
 		Owner:     model.User{},
@@ -62,7 +63,7 @@ func (rc *DeploymentUC) Update(ctx context.Context, id, namespace string, reques
 		return nil, fmt.Errorf("failed to create event for %s: %w", event.EventKind, err)
 	}
 
-	var kubeDeployment = rc.overwriteDeployment(&request.Deployment, existDeployment)
+	kubeDeployment := rc.overwriteDeployment(&request.Deployment, existDeployment)
 
 	return rc.deploymentRepo.Update(ctx, kubeDeployment, request.Opts)
 }
@@ -107,7 +108,7 @@ func (rc *DeploymentUC) Delete(ctx context.Context, namespace, name string, opts
 		namespace = "default"
 	}
 
-	var event = model.Event{
+	event := model.Event{
 		Kind:      model.DeploymentKind,
 		EventKind: model.DeleteEventKind,
 		Owner:     model.User{},
@@ -121,7 +122,7 @@ func (rc *DeploymentUC) Delete(ctx context.Context, namespace, name string, opts
 }
 
 func (rc *DeploymentUC) fillDeployment(newDeployment *model.Deployment) *v1.Deployment {
-	var matchExpressions = make([]metav1.LabelSelectorRequirement, 0)
+	matchExpressions := make([]metav1.LabelSelectorRequirement, 0)
 	for _, v := range newDeployment.Spec.Selector.MatchExpressions {
 		matchExpressions = append(matchExpressions, metav1.LabelSelectorRequirement{
 			Key:      v.Key,
@@ -129,12 +130,12 @@ func (rc *DeploymentUC) fillDeployment(newDeployment *model.Deployment) *v1.Depl
 			Values:   v.Values,
 		})
 	}
-	var selector = metav1.LabelSelector{
+	selector := metav1.LabelSelector{
 		MatchLabels:      newDeployment.Spec.Selector.MatchLabels,
 		MatchExpressions: matchExpressions,
 	}
 
-	var conditions = make([]v1.DeploymentCondition, 0)
+	conditions := make([]v1.DeploymentCondition, 0)
 	for _, v := range newDeployment.Status.Conditions {
 		conditions = append(conditions, v1.DeploymentCondition{
 			Type:               v1.DeploymentConditionType(v.Type),
