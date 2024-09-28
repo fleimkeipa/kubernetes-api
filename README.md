@@ -1,39 +1,39 @@
-# kubernetes-api
+# 🚀 Kubernetes API
 
-This project provides a Kubernetes API wrapper with authentication and various Kubernetes resource management endpoints.
+This project provides a Kubernetes API wrapper with authentication and various Kubernetes resource management endpoints. 🎯
 
-## Features
+## ✨ Features
 
-- Authentication (Basic Auth, Google, and GitHub)
-- User management
-- Kubernetes resource management (Pods, Deployments, Namespaces)
-- Event viewing
-- Swagger documentation
+- 🔐 Authentication (Basic Auth, Google, and GitHub)
+- 👥 User management
+- 📅 Event viewing
+- 📦 Kubernetes resource management (Pods, Deployments, Namespaces)
+- 📚 Swagger documentation
 
-## Technologies Used
+## 🛠️ Technologies Used
 
-- **Web Framework**: Echo v4
-- **Logging**: ZapLogger
-- **Kubernetes Client**: k8s.io/client-go
-- **Database**: PostgreSQL
-- **Configuration**: yaml and viper for environment mapping
+- **Web Framework**: Echo v4 🌐
+- **Logging**: ZapLogger 📄
+- **Kubernetes Client**: k8s.io/client-go 🐳
+- **Database**: PostgreSQL 🗄️
+- **Configuration**: yaml and viper for environment mapping 📑
 
-## API Endpoints
+## 📡 API Endpoints
 
-### Authentication
+### 🔐 Authentication
 
 #### Basic Auth
 
-- `/auth/login` - Log in with basic auth
+- `/auth/login` - Log in with basic authentication 🔑
 
 #### OAuth2
 
-- `/auth/google_login` - Log in with Google
+- `/auth/google_login` - Log in with Google 🌍
 - `/auth/google_callback` - Google login callback
-- `/auth/github_login` - Log in with GitHub
+- `/auth/github_login` - Log in with GitHub 🐙
 - `/auth/github_callback` - GitHub login callback
 
-### User Management
+### 👥 User Management
 
 - `/users`
   - Create users
@@ -42,14 +42,14 @@ This project provides a Kubernetes API wrapper with authentication and various K
   - Retrieve user details
   - Delete users
 
-### Kubernetes Resources
-
-#### Events
+### 📝 Events
 
 - `/events` - List events
 - `/events/:id` - Get event details
 
-#### Pods
+### ⚙️ Kubernetes Resources
+
+#### 🛠️ Pods
 
 - `/pods`
   - Create pods
@@ -58,7 +58,7 @@ This project provides a Kubernetes API wrapper with authentication and various K
   - Retrieve pod details
   - Delete pods
 
-#### Deployments
+#### 📦 Deployments
 
 - `/deployments`
   - Create deployments
@@ -67,7 +67,7 @@ This project provides a Kubernetes API wrapper with authentication and various K
   - Retrieve deployment details
   - Delete deployments
 
-#### Namespaces
+#### 🏷️ Namespaces
 
 - `/namespaces`
   - Create namespaces
@@ -76,7 +76,7 @@ This project provides a Kubernetes API wrapper with authentication and various K
   - Retrieve namespace details
   - Delete namespaces
 
-## Swagger Documentation
+## 📚 Swagger Documentation
 
 You can access the Swagger documentation at the following URL:
 
@@ -88,9 +88,9 @@ You can access the Swagger documentation at the following URL:
 
 ### Prerequisites
 
-- Docker
-- Go (version 1.22.3 or later)
-- kubectl configured with access to your Kubernetes cluster
+- Docker 🐋
+- Go (version 1.22.3 or later) ⚙️
+- kubectl configured with access to your Kubernetes cluster 📡
 
 ### Postgres Setup
 
@@ -145,7 +145,7 @@ To set up the PostgreSQL database for the Kubernetes API, follow these steps:
    ./kubernetes-api
    ```
 
-## Usage
+## 🧑‍💻 Usage
 
 Here are some example API calls using curl:
 
@@ -155,22 +155,22 @@ Here are some example API calls using curl:
    curl -X POST http://localhost:8080/auth/login -u username:password
    ```
 
-## Contributing
+## 🤝 Contributing
 
 We welcome contributions to the kubernetes-api project! Here's how you can contribute:
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+1. Fork the repository 🍴
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`) 🌿
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`) 💬
+4. Push to the branch (`git push origin feature/AmazingFeature`) 🚀
+5. Open a Pull Request 📝
 
 Please make sure to update tests as appropriate and adhere to the project's coding standards.
 
-## License
+## 📜 License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
-## Support
+## 🛠️ Support
 
 If you encounter any problems or have any questions, please open an issue in the GitHub repository.
