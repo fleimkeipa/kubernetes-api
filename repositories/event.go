@@ -29,8 +29,8 @@ func (rc *EventRepository) Create(ctx context.Context, event *model.Event) (*mod
 }
 
 func (rc *EventRepository) List(ctx context.Context, opts *model.EventFindOpts) ([]model.Event, error) {
-	var events = make([]model.Event, 0)
-	var filter = rc.fillFilter(opts)
+	events := make([]model.Event, 0)
+	filter := rc.fillFilter(opts)
 	if filter == "" {
 		err := rc.db.
 			Model(&events).
@@ -52,9 +52,9 @@ func (rc *EventRepository) List(ctx context.Context, opts *model.EventFindOpts) 
 }
 
 func (rc *EventRepository) GetByID(ctx context.Context, id string) (*model.Event, error) {
-	var event = new(model.Event)
+	event := new(model.Event)
 
-	var fields = []string{}
+	fields := []string{}
 	err := rc.db.
 		Model(event).
 		Where("id = ?", id).
