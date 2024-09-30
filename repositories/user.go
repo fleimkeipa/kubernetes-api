@@ -57,7 +57,7 @@ func (rc *UserRepository) List(ctx context.Context, opts *model.UserFindOpts) ([
 
 	err := q.Select()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to list users: %w", err)
 	}
 
 	return users, nil
@@ -127,15 +127,15 @@ func (rc *UserRepository) fillFilter(opts *model.UserFindOpts) string {
 	filter := ""
 
 	if opts.Username.IsSended {
-		filter = addInFilter(filter, "username", opts.Username.Value)
+		filter = addFilterClause(filter, "username", opts.Username.Value)
 	}
 
 	if opts.Email.IsSended {
-		filter = addInFilter(filter, "email", opts.Email.Value)
+		filter = addFilterClause(filter, "email", opts.Email.Value)
 	}
 
 	if opts.RoleID.IsSended {
-		filter = addInFilter(filter, "role_id", opts.RoleID.Value)
+		filter = addFilterClause(filter, "role_id", opts.RoleID.Value)
 	}
 
 	return filter
