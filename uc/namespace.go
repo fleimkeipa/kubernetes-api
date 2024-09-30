@@ -2,7 +2,6 @@ package uc
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/fleimkeipa/kubernetes-api/model"
 	"github.com/fleimkeipa/kubernetes-api/repositories/interfaces"
@@ -27,17 +26,17 @@ func NewNamespaceUC(namespaceRepo interfaces.NamespaceInterfaces, eventUC *Event
 func (rc *NamespaceUC) Create(ctx context.Context, request model.NamespaceCreateRequest) (*corev1.Namespace, error) {
 	request.Opts.TypeMeta.Kind = "namespace"
 
-	var event = model.Event{
-		Kind:      model.NamespaceKind,
-		EventKind: model.CreateEventKind,
-		Owner:     model.User{},
+	event := model.Event{
+		Category: model.NamespaceKind,
+		Type:     model.CreateEventKind,
+		Owner:    model.User{},
 	}
 	_, err := rc.eventUC.Create(ctx, &event)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create event for %s: %w", event.EventKind, err)
+		return nil, err
 	}
 
-	var kubeNamespace = rc.fillNamespace(&request.Namespace)
+	kubeNamespace := rc.fillNamespace(&request.Namespace)
 
 	return rc.namespaceRepo.Create(ctx, kubeNamespace, request.Opts)
 }
@@ -50,17 +49,17 @@ func (rc *NamespaceUC) Update(ctx context.Context, id string, request *model.Nam
 
 	request.Namespace.TypeMeta.Kind = "namespace"
 
-	var event = model.Event{
-		Kind:      model.NamespaceKind,
-		EventKind: model.UpdateEventKind,
-		Owner:     model.User{},
+	event := model.Event{
+		Category: model.NamespaceKind,
+		Type:     model.UpdateEventKind,
+		Owner:    model.User{},
 	}
 	_, err = rc.eventUC.Create(ctx, &event)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create event for %s: %w", event.EventKind, err)
+		return nil, err
 	}
 
-	var kubeNamespace = rc.overwriteNamespace(request, existNamespace)
+	kubeNamespace := rc.overwriteNamespace(request, existNamespace)
 
 	return rc.namespaceRepo.Update(ctx, kubeNamespace, request.Opts)
 }
@@ -96,21 +95,21 @@ func (rc *NamespaceUC) GetByNameOrUID(ctx context.Context, nameOrUID string, opt
 func (rc *NamespaceUC) Delete(ctx context.Context, name string, opts metav1.DeleteOptions) error {
 	opts.TypeMeta.Kind = "namespace"
 
-	var event = model.Event{
-		Kind:      model.NamespaceKind,
-		EventKind: model.DeleteEventKind,
-		Owner:     model.User{},
+	event := model.Event{
+		Category: model.NamespaceKind,
+		Type:     model.DeleteEventKind,
+		Owner:    model.User{},
 	}
 	_, err := rc.eventUC.Create(ctx, &event)
 	if err != nil {
-		return fmt.Errorf("failed to create event for %s: %w", event.EventKind, err)
+		return err
 	}
 
 	return rc.namespaceRepo.Delete(ctx, name, opts)
 }
 
 func (rc *NamespaceUC) fillNamespace(namespace *model.Namespace) *corev1.Namespace {
-	var conditions = make([]corev1.NamespaceCondition, 0)
+	conditions := make([]corev1.NamespaceCondition, 0)
 	for _, v := range namespace.Status.Conditions {
 		conditions = append(conditions, corev1.NamespaceCondition{
 			Type:               corev1.NamespaceConditionType(v.Type),
@@ -121,7 +120,7 @@ func (rc *NamespaceUC) fillNamespace(namespace *model.Namespace) *corev1.Namespa
 		})
 	}
 
-	var finalizers = make([]corev1.FinalizerName, 0)
+	finalizers := make([]corev1.FinalizerName, 0)
 	for _, v := range namespace.Finalizers {
 		finalizers = append(finalizers, corev1.FinalizerName(v))
 	}

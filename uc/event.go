@@ -19,7 +19,7 @@ func NewEventUC(eventRepo interfaces.EventInterfaces) *EventUC {
 }
 
 func (rc *EventUC) Create(ctx context.Context, event *model.Event) (*model.Event, error) {
-	event.CreationTime = time.Now()
+	event.CreatedAt = time.Now()
 
 	return rc.eventRepo.Create(ctx, event)
 }

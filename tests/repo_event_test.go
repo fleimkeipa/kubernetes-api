@@ -42,9 +42,9 @@ func TestEventRepository_Create(t *testing.T) {
 			args: args{
 				ctx: context.Background(),
 				event: &model.Event{
-					Kind:         "pod",
-					EventKind:    "create",
-					CreationTime: now,
+					Category:  "pod",
+					Type:      "create",
+					CreatedAt: now,
 					Owner: model.User{
 						ID:       1,
 						Username: "test_username",
@@ -54,9 +54,9 @@ func TestEventRepository_Create(t *testing.T) {
 				},
 			},
 			want: &model.Event{
-				Kind:         "pod",
-				EventKind:    "create",
-				CreationTime: now,
+				Category:  "pod",
+				Type:      "create",
+				CreatedAt: now,
 				Owner: model.User{
 					ID:       1,
 					Username: "test_username",
@@ -75,9 +75,9 @@ func TestEventRepository_Create(t *testing.T) {
 			args: args{
 				ctx: context.Background(),
 				event: &model.Event{
-					Kind:         "namespace",
-					EventKind:    "create",
-					CreationTime: now,
+					Category:  "namespace",
+					Type:      "create",
+					CreatedAt: now,
 					Owner: model.User{
 						ID:       1,
 						Username: "test_username",
@@ -87,9 +87,9 @@ func TestEventRepository_Create(t *testing.T) {
 				},
 			},
 			want: &model.Event{
-				Kind:         "namespace",
-				EventKind:    "create",
-				CreationTime: now,
+				Category:  "namespace",
+				Type:      "create",
+				CreatedAt: now,
 				Owner: model.User{
 					ID:       1,
 					Username: "test_username",
@@ -161,9 +161,9 @@ func TestEventRepository_List(t *testing.T) {
 				},
 				events: []model.Event{
 					{
-						Kind:         "namespace",
-						EventKind:    "create",
-						CreationTime: time.Now(),
+						Category:  "namespace",
+						Type:      "create",
+						CreatedAt: time.Now(),
 						Owner: model.User{
 							ID:       1,
 							Username: "test_username",
@@ -172,9 +172,9 @@ func TestEventRepository_List(t *testing.T) {
 						},
 					},
 					{
-						Kind:         "pod",
-						EventKind:    "update",
-						CreationTime: time.Now(),
+						Category:  "pod",
+						Type:      "update",
+						CreatedAt: time.Now(),
 						Owner: model.User{
 							ID:       1,
 							Username: "test_username",

@@ -42,8 +42,8 @@ func TestEventUC_List(t *testing.T) {
 			tempDatas: []tempData{
 				{
 					ticket: &model.Event{
-						Kind:      "pod",
-						EventKind: "create",
+						Category: "pod",
+						Type:     "create",
 						Owner: model.User{
 							ID:       1,
 							Username: "test_username",
@@ -59,8 +59,8 @@ func TestEventUC_List(t *testing.T) {
 			},
 			want: []model.Event{
 				{
-					Kind:      "pod",
-					EventKind: "create",
+					Category: "pod",
+					Type:     "create",
 					Owner: model.User{
 						ID:       1,
 						Username: "test_username",

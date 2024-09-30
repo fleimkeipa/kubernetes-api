@@ -2,7 +2,6 @@ package uc
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/fleimkeipa/kubernetes-api/model"
 	"github.com/fleimkeipa/kubernetes-api/repositories/interfaces"
@@ -33,13 +32,13 @@ func (rc *DeploymentUC) Create(ctx context.Context, request *model.DeploymentCre
 	}
 
 	event := model.Event{
-		Kind:      model.DeploymentKind,
-		EventKind: model.CreateEventKind,
-		Owner:     model.User{},
+		Category: model.DeploymentKind,
+		Type:     model.CreateEventKind,
+		Owner:    model.User{},
 	}
 	_, err := rc.eventUC.Create(ctx, &event)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create event for %s: %w", event.EventKind, err)
+		return nil, err
 	}
 
 	kubeDeployment := rc.fillDeployment(&newDeployment)
@@ -54,13 +53,13 @@ func (rc *DeploymentUC) Update(ctx context.Context, id, namespace string, reques
 	}
 
 	event := model.Event{
-		Kind:      model.DeploymentKind,
-		EventKind: model.UpdateEventKind,
-		Owner:     model.User{},
+		Category: model.DeploymentKind,
+		Type:     model.UpdateEventKind,
+		Owner:    model.User{},
 	}
 	_, err = rc.eventUC.Create(ctx, &event)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create event for %s: %w", event.EventKind, err)
+		return nil, err
 	}
 
 	kubeDeployment := rc.overwriteDeployment(&request.Deployment, existDeployment)
@@ -109,13 +108,13 @@ func (rc *DeploymentUC) Delete(ctx context.Context, namespace, name string, opts
 	}
 
 	event := model.Event{
-		Kind:      model.DeploymentKind,
-		EventKind: model.DeleteEventKind,
-		Owner:     model.User{},
+		Category: model.DeploymentKind,
+		Type:     model.DeleteEventKind,
+		Owner:    model.User{},
 	}
 	_, err := rc.eventUC.Create(ctx, &event)
 	if err != nil {
-		return fmt.Errorf("failed to create event for %s: %w", event.EventKind, err)
+		return err
 	}
 
 	return rc.deploymentRepo.Delete(ctx, namespace, name, opts)

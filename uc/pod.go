@@ -30,17 +30,17 @@ func (rc *PodUC) Create(ctx context.Context, pod *model.Pod, opts metav1.CreateO
 		pod.ObjectMeta.Namespace = "default"
 	}
 
-	var event = model.Event{
-		Kind:      model.PodKind,
-		EventKind: model.CreateEventKind,
-		Owner:     model.User{},
+	event := model.Event{
+		Category: model.PodKind,
+		Type:     model.CreateEventKind,
+		Owner:    model.User{},
 	}
 	_, err := rc.eventUC.Create(ctx, &event)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create event for %s: %w", event.EventKind, err)
+		return nil, err
 	}
 
-	var kubePod = rc.fillPod(pod)
+	kubePod := rc.fillPod(pod)
 
 	return rc.podsRepo.Create(ctx, kubePod, opts)
 }
@@ -51,17 +51,17 @@ func (rc *PodUC) Update(ctx context.Context, id string, request *model.PodsUpdat
 		return nil, err
 	}
 
-	var event = model.Event{
-		Kind:      model.PodKind,
-		EventKind: model.UpdateEventKind,
-		Owner:     model.User{},
+	event := model.Event{
+		Category: model.PodKind,
+		Type:     model.UpdateEventKind,
+		Owner:    model.User{},
 	}
 	_, err = rc.eventUC.Create(ctx, &event)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create event for %s: %w", event.EventKind, err)
+		return nil, fmt.Errorf("failed to create event for %s: %w", event.Type, err)
 	}
 
-	var kubePod = rc.overwritePod(request, existPod)
+	kubePod := rc.overwritePod(request, existPod)
 
 	return rc.podsRepo.Update(ctx, id, kubePod, request.Opts)
 }
@@ -106,21 +106,21 @@ func (rc *PodUC) Delete(ctx context.Context, namespace, name string, opts metav1
 		namespace = "default"
 	}
 
-	var event = model.Event{
-		Kind:      model.PodKind,
-		EventKind: model.DeleteEventKind,
-		Owner:     model.User{},
+	event := model.Event{
+		Category: model.PodKind,
+		Type:     model.DeleteEventKind,
+		Owner:    model.User{},
 	}
 	_, err := rc.eventUC.Create(ctx, &event)
 	if err != nil {
-		return fmt.Errorf("failed to create event for %s: %w", event.EventKind, err)
+		return fmt.Errorf("failed to create event for %s: %w", event.Type, err)
 	}
 
 	return rc.podsRepo.Delete(ctx, namespace, name, opts)
 }
 
 func (rc *PodUC) fillPod(pod *model.Pod) *corev1.Pod {
-	var volumes = make([]corev1.Volume, 0)
+	volumes := make([]corev1.Volume, 0)
 	for _, v := range pod.Spec.Volumes {
 		volumes = append(volumes, corev1.Volume{
 			Name:         v.Name,
@@ -128,7 +128,7 @@ func (rc *PodUC) fillPod(pod *model.Pod) *corev1.Pod {
 		})
 	}
 
-	var containers = make([]corev1.Container, 0)
+	containers := make([]corev1.Container, 0)
 	for _, v := range pod.Spec.Containers {
 		containers = append(containers, corev1.Container{
 			Name:                   v.Name,
@@ -143,7 +143,7 @@ func (rc *PodUC) fillPod(pod *model.Pod) *corev1.Pod {
 		})
 	}
 
-	var conditions = make([]corev1.PodCondition, 0)
+	conditions := make([]corev1.PodCondition, 0)
 	for _, v := range pod.Status.Conditions {
 		conditions = append(conditions, corev1.PodCondition{
 			Type:               corev1.PodConditionType(v.Type),
@@ -191,7 +191,7 @@ func (rc *PodUC) overwritePod(newPod *model.PodsUpdateRequest, existPod *corev1.
 
 	existPod.Spec.ActiveDeadlineSeconds = newPod.Pod.Spec.ActiveDeadlineSeconds
 
-	var graceSeconds = existPod.Spec.TerminationGracePeriodSeconds
+	graceSeconds := existPod.Spec.TerminationGracePeriodSeconds
 	if graceSeconds == nil { // (allow it to be set to 1 if it was previously negative)
 		existPod.Spec.TerminationGracePeriodSeconds = newPod.Pod.Spec.TerminationGracePeriodSeconds
 	}
@@ -201,7 +201,7 @@ func (rc *PodUC) overwritePod(newPod *model.PodsUpdateRequest, existPod *corev1.
 
 // overwriteContainers change only images
 func (rc *PodUC) overwriteContainers(newContainers []model.ContainerRequest, existContainers []corev1.Container) []corev1.Container {
-	var containersMap = make(map[string]model.Container, 0)
+	containersMap := make(map[string]model.Container, 0)
 	for _, v := range newContainers {
 		containersMap[v.Name] = model.Container{
 			Name:  v.Name,
@@ -224,7 +224,7 @@ func (rc *PodUC) overwriteContainers(newContainers []model.ContainerRequest, exi
 
 // addToleration only additions to existing tolerations
 func (rc *PodUC) addTolerations(newTolerations []model.Toleration, existTolerations []corev1.Toleration) []corev1.Toleration {
-	var additions = make([]corev1.Toleration, 0)
+	additions := make([]corev1.Toleration, 0)
 	for _, v := range newTolerations {
 		additions = append(additions, corev1.Toleration{
 			Key:               v.Key,
