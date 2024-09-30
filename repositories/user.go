@@ -19,49 +19,43 @@ func NewUserRepository(db *pg.DB) *UserRepository {
 	}
 }
 
-func (rc *UserRepository) Create(ctx context.Context, user model.User) (*model.User, error) {
-	_, err := rc.db.Model(&user).Insert()
+func (rc *UserRepository) Create(ctx context.Context, newUser model.User) (*model.User, error) {
+	_, err := rc.db.Model(&newUser).Returning("*").Insert()
 	if err != nil {
 		return nil, fmt.Errorf("failed to create user: %w", err)
 	}
 
-	return &user, nil
+	return &newUser, nil
 }
 
-func (rc *UserRepository) Update(ctx context.Context, user model.User) (*model.User, error) {
-	_, err := rc.db.Model(&user).WherePK().Update()
+func (rc *UserRepository) Update(ctx context.Context, updatedUser model.User) (*model.User, error) {
+	result, err := rc.db.Model(&updatedUser).WherePK().Update()
 	if err != nil {
 		return nil, fmt.Errorf("failed to update user: %w", err)
 	}
 
-	return &user, nil
+	if result.RowsAffected() == 0 {
+		return nil, fmt.Errorf("no user updated")
+	}
+
+	return &updatedUser, nil
 }
 
 func (rc *UserRepository) List(ctx context.Context, opts *model.UserFindOpts) ([]model.User, error) {
-	var users = make([]model.User, 0)
-	var filter = rc.fillFilter(opts)
-	var fields = rc.fillFields(opts)
-	if filter == "" {
-		err := rc.db.
-			Model(&users).
-			Column(fields...).
-			Limit(opts.Limit).
-			Offset(opts.Skip).
-			Select()
-		if err != nil {
-			return nil, err
-		}
+	var users []model.User
 
-		return users, nil
+	filter := rc.fillFilter(opts)
+	fields := rc.fillFields(opts)
+
+	q := rc.db.Model(&users).Column(fields...)
+
+	if filter != "" {
+		q = q.Where(filter)
 	}
 
-	err := rc.db.
-		Model(&users).
-		Column(fields...).
-		Where(filter).
-		Limit(opts.Limit).
-		Offset(opts.Skip).
-		Select()
+	q = q.Limit(opts.Limit).Offset(opts.Skip)
+
+	err := q.Select()
 	if err != nil {
 		return nil, err
 	}
@@ -70,68 +64,76 @@ func (rc *UserRepository) List(ctx context.Context, opts *model.UserFindOpts) ([
 }
 
 func (rc *UserRepository) GetByID(ctx context.Context, id string) (*model.User, error) {
-	var user = new(model.User)
+	var user model.User
 
-	var fields = []string{}
 	err := rc.db.
-		Model(user).
+		Model(&user).
 		Where("id = ?", id).
-		Column(fields...).
 		Select()
 	if err != nil {
-		return nil, fmt.Errorf("failed to find user [%s] id, error: %w", id, err)
+		return nil, fmt.Errorf("failed to find user by id [%s]: %w", id, err)
 	}
 
-	return user, nil
+	return &user, nil
 }
 
 func (rc *UserRepository) GetByUsernameOrEmail(ctx context.Context, usernameOrEmail string) (*model.User, error) {
-	var user = new(model.User)
+	var user model.User
 
 	err := rc.db.
-		Model(user).
+		Model(&user).
 		Where("username = ? OR email = ?", usernameOrEmail, usernameOrEmail).
 		Select()
 	if err != nil {
-		return nil, fmt.Errorf("failed to find user by [%s], error: %w", usernameOrEmail, err)
+		return nil, fmt.Errorf("failed to get user by [%s]: %w", usernameOrEmail, err)
 	}
 
-	return user, nil
+	return &user, nil
 }
 
 func (rc *UserRepository) Delete(ctx context.Context, id string) error {
-	_, err := rc.db.Model(&model.User{}).Where("id = ?", id).Delete()
+	result, err := rc.db.Model(&model.User{}).Where("id = ?", id).Delete()
 	if err != nil {
 		return fmt.Errorf("failed to delete user: %w", err)
+	}
+	if result.RowsAffected() == 0 {
+		return fmt.Errorf("no user deleted")
 	}
 
 	return nil
 }
 
 func (rc *UserRepository) fillFields(opts *model.UserFindOpts) []string {
-	if len(opts.Fields) == 0 {
-		return []string{}
+	fields := opts.Fields
+
+	if len(fields) == 0 {
+		return nil
 	}
 
-	if len(opts.Fields) == 1 {
-		if opts.Fields[0] == model.ZeroCreds {
-			return []string{
-				"id", "username", "email", "role_id", "deleted_at",
-			}
+	if len(fields) == 1 && fields[0] == model.ZeroCreds {
+		return []string{
+			"id",
+			"username",
+			"email",
+			"role_id",
+			"deleted_at",
 		}
 	}
 
-	return opts.Fields
+	return fields
 }
 
 func (rc *UserRepository) fillFilter(opts *model.UserFindOpts) string {
-	var filter string
+	filter := ""
+
 	if opts.Username.IsSended {
 		filter = addInFilter(filter, "username", opts.Username.Value)
 	}
+
 	if opts.Email.IsSended {
 		filter = addInFilter(filter, "email", opts.Email.Value)
 	}
+
 	if opts.RoleID.IsSended {
 		filter = addInFilter(filter, "role_id", opts.RoleID.Value)
 	}
