@@ -20,7 +20,7 @@ func NewUserRepository(db *pg.DB) *UserRepository {
 }
 
 func (rc *UserRepository) Create(ctx context.Context, newUser model.User) (*model.User, error) {
-	_, err := rc.db.Model(&newUser).Returning("*").Insert()
+	_, err := rc.db.Model(&newUser).Insert()
 	if err != nil {
 		return nil, fmt.Errorf("failed to create user: %w", err)
 	}
