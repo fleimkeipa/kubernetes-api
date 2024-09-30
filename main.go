@@ -33,7 +33,7 @@ func main() {
 
 func serveApplication() {
 	// Create a new Echo instance
-	var e = echo.New()
+	e := echo.New()
 
 	// Configure Echo settings
 	configureEcho(e)
@@ -42,64 +42,64 @@ func serveApplication() {
 	configureCORS(e)
 
 	// Configure the logger
-	var sugar = configureLogger(e)
+	sugar := configureLogger(e)
 	defer sugar.Sync() // Clean up logger at the end
 
 	// Initialize Kubernetes client
-	var kubClient = initKubernetes()
+	kubClient := initKubernetes()
 
 	// Initialize PostgreSQL client
-	var dbClient = initDB()
+	dbClient := initDB()
 	defer dbClient.Close()
 
 	// Create Event handlers and related components
-	var eventRepo = repositories.NewEventRepository(dbClient)
-	var eventUC = uc.NewEventUC(eventRepo)
-	var eventHandler = controller.NewEventHandler(eventUC)
+	eventRepo := repositories.NewEventRepository(dbClient)
+	eventUC := uc.NewEventUC(eventRepo)
+	eventHandler := controller.NewEventHandler(eventUC)
 
 	// Create Pod handlers and related components
-	var podRepo = repositories.NewPodRepository(kubClient)
-	var podUC = uc.NewPodUC(podRepo, eventUC)
-	var podHandlers = controller.NewPodHandler(podUC)
+	podRepo := repositories.NewPodRepository(kubClient)
+	podUC := uc.NewPodUC(podRepo, eventUC)
+	podHandlers := controller.NewPodHandler(podUC)
 
 	// Create Namespace handlers and related components
-	var namespaceRepo = repositories.NewNamespaceRepository(kubClient)
-	var namespaceUC = uc.NewNamespaceUC(namespaceRepo, eventUC)
-	var namespaceHandlers = controller.NewNamespaceHandler(namespaceUC)
+	namespaceRepo := repositories.NewNamespaceRepository(kubClient)
+	namespaceUC := uc.NewNamespaceUC(namespaceRepo, eventUC)
+	namespaceHandlers := controller.NewNamespaceHandler(namespaceUC)
 
 	// Create Deployment handlers and related components
-	var deploymentRepo = repositories.NewDeploymentInterfaces(kubClient)
-	var deploymentUC = uc.NewDeploymentUC(deploymentRepo, eventUC)
-	var deploymentHandlers = controller.NewDeploymentHandler(deploymentUC)
+	deploymentRepo := repositories.NewDeploymentInterfaces(kubClient)
+	deploymentUC := uc.NewDeploymentUC(deploymentRepo, eventUC)
+	deploymentHandlers := controller.NewDeploymentHandler(deploymentUC)
 
 	// Create user handlers and related components
-	var userRepo = repositories.NewUserRepository(dbClient)
-	var userUC = uc.NewUserUC(userRepo)
-	var userHandlers = controller.NewUserHandlers(userUC)
+	userRepo := repositories.NewUserRepository(dbClient)
+	userUC := uc.NewUserUC(userRepo)
+	userHandlers := controller.NewUserHandlers(userUC)
 
 	// Create Auth handlers and related components
-	var authHandlers = controller.NewAuthHandlers(userUC)
+	authHandlers := controller.NewAuthHandlers(userUC)
 
 	// Define authentication routes and handlers
-	var authRoutes = e.Group("/auth")
+	authRoutes := e.Group("/auth")
 	authRoutes.POST("/login", authHandlers.Login)
 
-	var oauthRoutes = authRoutes.Group("")
-	var googleAuthHandler = controller.NewGoogleAuthHandler(userUC)
+	oauthRoutes := authRoutes.Group("")
+	googleAuthHandler := controller.NewGoogleAuthHandler(userUC)
 	oauthRoutes.GET("/google_login", googleAuthHandler.GoogleLogin)
 	oauthRoutes.GET("/google_callback", googleAuthHandler.GoogleCallback)
 
-	var githubAuthHandler = controller.NewGithubAuthHandler(userUC)
+	githubAuthHandler := controller.NewGithubAuthHandler(userUC)
 	oauthRoutes.GET("/github_login", githubAuthHandler.GithubLogin)
 	oauthRoutes.GET("/github_callback", githubAuthHandler.GithubCallback)
 
 	// Add JWT authentication and authorization middleware
-	var restrictedRoutes = e.Group("")
+	restrictedRoutes := e.Group("")
 	restrictedRoutes.Use(util.JWTAuth)
 	restrictedRoutes.Use(util.JWTAuthViewer)
 
 	// Define user routes
-	var usersRoutes = restrictedRoutes.Group("/users")
+	usersRoutes := restrictedRoutes.Group("/users")
 	usersRoutes.GET("", userHandlers.List)
 	usersRoutes.GET("/:id", userHandlers.GetByID)
 	usersRoutes.POST("", userHandlers.CreateUser)
@@ -107,7 +107,7 @@ func serveApplication() {
 	usersRoutes.DELETE("/:id", userHandlers.DeleteUser)
 
 	// Define pod routes
-	var podsRoutes = restrictedRoutes.Group("/pods")
+	podsRoutes := restrictedRoutes.Group("/pods")
 	podsRoutes.GET("", podHandlers.List)
 	podsRoutes.GET("/:id", podHandlers.GetByNameOrUID)
 	podsRoutes.POST("", podHandlers.Create)
@@ -115,7 +115,7 @@ func serveApplication() {
 	podsRoutes.DELETE("/:id", podHandlers.Delete)
 
 	// Define namespace routes
-	var namespacesRoutes = restrictedRoutes.Group("/namespaces")
+	namespacesRoutes := restrictedRoutes.Group("/namespaces")
 	namespacesRoutes.GET("", namespaceHandlers.List)
 	namespacesRoutes.GET("/:id", namespaceHandlers.GetByNameOrUID)
 	namespacesRoutes.POST("", namespaceHandlers.Create)
@@ -123,7 +123,7 @@ func serveApplication() {
 	namespacesRoutes.DELETE("/:id", namespaceHandlers.Delete)
 
 	// Define deployment routes
-	var deploymentsRoutes = restrictedRoutes.Group("/deployments")
+	deploymentsRoutes := restrictedRoutes.Group("/deployments")
 	deploymentsRoutes.GET("", deploymentHandlers.List)
 	deploymentsRoutes.GET("/:id", deploymentHandlers.GetByNameOrUID)
 	deploymentsRoutes.POST("", deploymentHandlers.Create)
@@ -131,7 +131,7 @@ func serveApplication() {
 	deploymentsRoutes.DELETE("/:id", deploymentHandlers.Delete)
 
 	// Define event routes
-	var eventsRoutes = restrictedRoutes.Group("/events")
+	eventsRoutes := restrictedRoutes.Group("/events")
 	eventsRoutes.GET("", eventHandler.List)
 	eventsRoutes.GET("/:id", eventHandler.GetByID)
 
@@ -153,7 +153,7 @@ func configureEcho(e *echo.Echo) {
 
 // Configures CORS settings
 func configureCORS(e *echo.Echo) {
-	var corsConfig = middleware.CORSWithConfig(middleware.CORSConfig{
+	corsConfig := middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{viper.GetString("ui_service.allow_origin")},
 		AllowMethods: []string{echo.GET, echo.POST, echo.PUT, echo.DELETE},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
@@ -171,8 +171,8 @@ func configureLogger(e *echo.Echo) *zap.SugaredLogger {
 
 	e.Use(pkg.ZapLogger(logger))
 
-	var sugar = logger.Sugar()
-	var loggerHandler = controller.NewLogger(sugar)
+	sugar := logger.Sugar()
+	loggerHandler := controller.NewLogger(sugar)
 	e.Use(loggerHandler.LoggerMiddleware)
 
 	return sugar
@@ -191,7 +191,7 @@ func initKubernetes() *kubernetes.Clientset {
 
 // Initializes the PostgreSQL client
 func initDB() *pg.DB {
-	var db = pkg.NewPSQLClient()
+	db := pkg.NewPSQLClient()
 	if db == nil {
 		log.Fatal("Failed to initialize PostgreSQL client")
 	}
