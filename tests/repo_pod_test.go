@@ -25,10 +25,10 @@ func TestPodRepository_Create(t *testing.T) {
 		opts metav1.CreateOptions
 	}
 	tests := []struct {
-		name    string
 		fields  fields
-		args    args
 		want    *corev1.Pod
+		args    args
+		name    string
 		wantErr bool
 	}{
 		{
@@ -90,15 +90,15 @@ func TestPodsRepository_Get(t *testing.T) {
 		client *kubernetes.Clientset
 	}
 	type args struct {
+		opts      metav1.ListOptions
 		ctx       context.Context
 		namespace string
-		opts      metav1.ListOptions
 	}
 	tests := []struct {
-		name    string
-		fields  fields
 		args    args
+		fields  fields
 		want    *corev1.PodList
+		name    string
 		wantErr bool
 	}{
 		{

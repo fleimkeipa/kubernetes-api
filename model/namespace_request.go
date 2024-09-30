@@ -5,11 +5,11 @@ import (
 )
 
 type NamespaceCreateRequest struct {
-	Namespace Namespace            `json:"namespace"`
 	Opts      metav1.CreateOptions `json:"opts"`
+	Namespace Namespace            `json:"namespace"`
 }
 
 type NamespaceUpdateRequest struct {
-	Namespace Namespace            `json:"namespace"`
 	Opts      metav1.UpdateOptions `json:"opts"`
+	Namespace Namespace            `json:"namespace"`
 }

@@ -5,11 +5,11 @@ import (
 )
 
 type DeploymentCreateRequest struct {
-	Deployment Deployment
 	Opts       metav1.CreateOptions
+	Deployment Deployment
 }
 
 type DeploymentUpdateRequest struct {
-	Deployment Deployment
 	Opts       metav1.UpdateOptions
+	Deployment Deployment
 }

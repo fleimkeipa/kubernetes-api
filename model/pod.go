@@ -6,9 +6,9 @@ import (
 
 type Pod struct {
 	TypeMeta   `json:",inline"`
-	ObjectMeta `json:"metadata,omitempty"`
 	Spec       PodSpec   `json:"spec,omitempty"`
 	Status     PodStatus `json:"status,omitempty"`
+	ObjectMeta `json:"metadata,omitempty"`
 }
 
 type PodSpec struct {
@@ -27,11 +27,11 @@ type (
 
 	PodStatus struct {
 		Phase             PodPhase       `json:"phase,omitempty"`
-		Conditions        []PodCondition `json:"conditions,omitempty"`
 		Message           string         `json:"message,omitempty"`
 		Reason            string         `json:"reason,omitempty"`
 		NominatedNodeName string         `json:"nominatedNodeName,omitempty"`
 		HostIP            string         `json:"hostIP,omitempty"`
+		Conditions        []PodCondition `json:"conditions,omitempty"`
 	}
 )
 

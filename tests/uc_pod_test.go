@@ -23,16 +23,16 @@ func TestPodsUC_GetByName(t *testing.T) {
 		eventUC  *uc.EventUC
 	}
 	type args struct {
+		opts      metav1.ListOptions
 		ctx       context.Context
 		namespace string
 		name      string
-		opts      metav1.ListOptions
 	}
 	tests := []struct {
-		name    string
-		fields  fields
 		args    args
+		fields  fields
 		want    *corev1.Pod
+		name    string
 		wantErr bool
 	}{
 		{

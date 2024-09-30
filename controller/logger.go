@@ -20,8 +20,8 @@ func NewLogger(logger *zap.SugaredLogger) *Logger {
 
 // responseWriter wraps echo.Response to capture the response body
 type responseWriter struct {
-	echo.Response
 	body *bytes.Buffer
+	echo.Response
 }
 
 // Write captures the response body while continuing to write to the original response

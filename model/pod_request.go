@@ -4,15 +4,15 @@ import metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 type (
 	PodsCreateRequest struct {
-		Pod  Pod                  `json:"pod"`
 		Opts metav1.CreateOptions `json:"opts"`
+		Pod  Pod                  `json:"pod"`
 	}
 )
 
 type (
 	PodsUpdateRequest struct {
-		Pod  PodUpdate            `json:"pod"`
 		Opts metav1.UpdateOptions `json:"opts"`
+		Pod  PodUpdate            `json:"pod"`
 	}
 
 	PodUpdate struct {

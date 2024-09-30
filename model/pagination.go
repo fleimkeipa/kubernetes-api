@@ -6,8 +6,8 @@ type PaginationOpts struct {
 }
 
 type Filter struct {
-	IsSended bool
 	Value    string
+	IsSended bool
 }
 
 type FieldsOpts struct {

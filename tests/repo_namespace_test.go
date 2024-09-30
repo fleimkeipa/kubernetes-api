@@ -20,10 +20,10 @@ func TestNamespaceRepository_Get(t *testing.T) {
 		opts metav1.ListOptions
 	}
 	tests := []struct {
-		name    string
-		fields  fields
 		args    args
+		fields  fields
 		want    *corev1.NamespaceList
+		name    string
 		wantErr bool
 	}{
 		{

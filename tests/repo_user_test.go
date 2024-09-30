@@ -21,14 +21,14 @@ func TestUserRepository_GetUserByUsername(t *testing.T) {
 	}
 	type args struct {
 		ctx      context.Context
-		username string
 		user     *model.User
+		username string
 	}
 	tests := []struct {
-		name    string
-		fields  fields
 		args    args
+		fields  fields
 		want    *model.User
+		name    string
 		wantErr bool
 	}{
 		{
@@ -114,14 +114,14 @@ func TestUserRepository_GetByID(t *testing.T) {
 	}
 	type args struct {
 		ctx  context.Context
-		id   string
 		user *model.User
+		id   string
 	}
 	tests := []struct {
-		name    string
-		fields  fields
 		args    args
+		fields  fields
 		want    *model.User
+		name    string
 		wantErr bool
 	}{
 		{
@@ -175,13 +175,13 @@ func TestUserRepository_Delete(t *testing.T) {
 	}
 	type args struct {
 		ctx  context.Context
-		id   string
 		user *model.User
+		id   string
 	}
 	tests := []struct {
-		name    string
-		fields  fields
 		args    args
+		fields  fields
+		name    string
 		wantErr bool
 	}{
 		{

@@ -10,37 +10,37 @@ type TypeMeta struct {
 }
 
 type ObjectMeta struct {
-	Name                       string            `json:"name,omitempty"`
-	GenerateName               string            `json:"generateName,omitempty"`
-	Namespace                  string            `json:"namespace,omitempty"`
-	ResourceVersion            string            `json:"resourceVersion,omitempty"`
-	Generation                 int64             `json:"generation,omitempty"`
 	CreationTimestamp          time.Time         `json:"creationTimestamp,omitempty"`
 	DeletionTimestamp          *time.Time        `json:"deletionTimestamp,omitempty"`
 	DeletionGracePeriodSeconds *int64            `json:"deletionGracePeriodSeconds,omitempty"`
 	Labels                     map[string]string `json:"labels,omitempty"`
 	Annotations                map[string]string `json:"annotations,omitempty"`
+	Name                       string            `json:"name,omitempty"`
+	GenerateName               string            `json:"generateName,omitempty"`
+	Namespace                  string            `json:"namespace,omitempty"`
+	ResourceVersion            string            `json:"resourceVersion,omitempty"`
 	OwnerReferences            []OwnerReference  `json:"ownerReferences,omitempty"`
 	Finalizers                 []string          `json:"finalizers,omitempty"`
+	Generation                 int64             `json:"generation,omitempty"`
 }
 
 type OwnerReference struct {
+	Controller         *bool  `json:"controller,omitempty"`
+	BlockOwnerDeletion *bool  `json:"blockOwnerDeletion,omitempty"`
 	APIVersion         string `json:"apiVersion"`
 	Kind               string `json:"kind"`
 	Name               string `json:"name"`
-	Controller         *bool  `json:"controller,omitempty"`
-	BlockOwnerDeletion *bool  `json:"blockOwnerDeletion,omitempty"`
 }
 
 type Container struct {
 	Name                   string          `json:"name"`
 	Image                  string          `json:"image,omitempty"`
+	WorkingDir             string          `json:"workingDir,omitempty"`
+	TerminationMessagePath string          `json:"terminationMessagePath,omitempty"`
 	Command                []string        `json:"command,omitempty"`
 	Args                   []string        `json:"args,omitempty"`
-	WorkingDir             string          `json:"workingDir,omitempty"`
 	Ports                  []ContainerPort `json:"ports,omitempty"`
 	Env                    []EnvVar        `json:"env,omitempty"`
-	TerminationMessagePath string          `json:"terminationMessagePath,omitempty"`
 	Stdin                  bool            `json:"stdin,omitempty"`
 	StdinOnce              bool            `json:"stdinOnce,omitempty"`
 	TTY                    bool            `json:"tty,omitempty"`
@@ -55,14 +55,14 @@ type Protocol string
 
 type ContainerPort struct {
 	Name          string   `json:"name,omitempty"`
-	HostPort      int32    `json:"hostPort,omitempty"`
-	ContainerPort int32    `json:"containerPort"`
 	Protocol      Protocol `json:"protocol,omitempty"`
 	HostIP        string   `json:"hostIP,omitempty"`
+	HostPort      int32    `json:"hostPort,omitempty"`
+	ContainerPort int32    `json:"containerPort"`
 }
 type Volume struct {
-	Name         string `json:"name"`
 	VolumeSource `json:",inline"`
+	Name         string `json:"name"`
 }
 
 type VolumeSource struct {
@@ -73,11 +73,11 @@ type TaintEffect string
 type TolerationOperator string
 
 type Toleration struct {
+	TolerationSeconds *int64             `json:"tolerationSeconds,omitempty"`
 	Key               string             `json:"key,omitempty"`
 	Operator          TolerationOperator `json:"operator,omitempty"`
 	Value             string             `json:"value,omitempty"`
 	Effect            TaintEffect        `json:"effect,omitempty"`
-	TolerationSeconds *int64             `json:"tolerationSeconds,omitempty"`
 }
 
 // Note:

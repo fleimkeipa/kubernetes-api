@@ -5,14 +5,14 @@ import (
 )
 
 type Namespace struct {
-	TypeMeta   `json:",inline"`
-	ObjectMeta `json:"metadata,omitempty"`
-	// Spec defines the behavior of the Namespace.
-	// +optional
-	Spec NamespaceSpec `json:"spec,omitempty"`
+	TypeMeta `json:",inline"`
 	// Status describes the current status of a Namespace.
 	// +optional
 	Status NamespaceStatus `json:"status,omitempty"`
+	// Spec defines the behavior of the Namespace.
+	// +optional
+	Spec       NamespaceSpec `json:"spec,omitempty"`
+	ObjectMeta `json:"metadata,omitempty"`
 }
 
 // FinalizerName is the name identifying a finalizer during namespace lifecycle.

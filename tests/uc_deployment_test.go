@@ -21,15 +21,15 @@ func TestDeploymentUC_List(t *testing.T) {
 		eventUC        *uc.EventUC
 	}
 	type args struct {
+		opts      metav1.ListOptions
 		ctx       context.Context
 		namespace string
-		opts      metav1.ListOptions
 	}
 	tests := []struct {
-		name    string
-		fields  fields
 		args    args
+		fields  fields
 		want    *v1.DeploymentList
+		name    string
 		wantErr bool
 	}{
 		{
@@ -69,16 +69,16 @@ func TestDeploymentUC_GetByNameOrUID(t *testing.T) {
 		eventUC        *uc.EventUC
 	}
 	type args struct {
+		opts      metav1.ListOptions
 		ctx       context.Context
 		namespace string
 		nameOrUID string
-		opts      metav1.ListOptions
 	}
 	tests := []struct {
-		name    string
-		fields  fields
 		args    args
+		fields  fields
 		want    *v1.Deployment
+		name    string
 		wantErr bool
 	}{
 		{

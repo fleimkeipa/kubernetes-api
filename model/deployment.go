@@ -9,14 +9,12 @@ import (
 
 type Deployment struct {
 	TypeMeta `json:",inline"`
-	// Standard object's metadata.
-	// +optional
-	ObjectMeta `json:"metadata,omitempty"`
-
 	// Specification of the desired behavior of the Deployment.
 	// +optional
 	Spec DeploymentSpec `json:"spec,omitempty"`
-
+	// Standard object's metadata.
+	// +optional
+	ObjectMeta `json:"metadata,omitempty"`
 	// Most recently observed status of the Deployment.
 	// +optional
 	Status DeploymentStatus `json:"status,omitempty"`
@@ -24,55 +22,44 @@ type Deployment struct {
 
 // DeploymentSpec is the specification of the desired behavior of the Deployment.
 type DeploymentSpec struct {
-	// Number of desired pods. This is a pointer to distinguish between explicit
-	// zero and not specified. Defaults to 1.
-	// +optional
-	Replicas *int32 `json:"replicas,omitempty"`
-
-	// Label selector for pods. Existing ReplicaSets whose pods are
-	// selected by this will be the ones affected by this deployment.
-	// It must match the pod template's labels.
-	Selector *LabelSelector `json:"selector"`
-
-	// Template describes the pods that will be created.
-	// The only allowed template.spec.restartPolicy value is "Always".
-	Template v1.PodTemplateSpec `json:"template"`
-
 	// The deployment strategy to use to replace existing pods with new ones.
 	// +optional
 	// s
 	Strategy DeploymentStrategy `json:"strategy,omitempty"`
-
-	// Minimum number of seconds for which a newly created pod should be ready
-	// without any of its container crashing, for it to be considered available.
-	// Defaults to 0 (pod will be considered available as soon as it is ready)
+	// Number of desired pods. This is a pointer to distinguish between explicit
+	// zero and not specified. Defaults to 1.
 	// +optional
-	MinReadySeconds int32 `json:"minReadySeconds,omitempty"`
-
+	Replicas *int32 `json:"replicas,omitempty"`
+	// Label selector for pods. Existing ReplicaSets whose pods are
+	// selected by this will be the ones affected by this deployment.
+	// It must match the pod template's labels.
+	Selector *LabelSelector `json:"selector"`
 	// The number of old ReplicaSets to retain to allow rollback.
 	// This is a pointer to distinguish between explicit zero and not specified.
 	// Defaults to 10.
 	// +optional
 	RevisionHistoryLimit *int32 `json:"revisionHistoryLimit,omitempty"`
-
-	// Indicates that the deployment is paused.
-	// +optional
-	Paused bool `json:"paused,omitempty"`
-
 	// The maximum time in seconds for a deployment to make progress before it
 	// is considered to be failed. The deployment controller will continue to
 	// process failed deployments and a condition with a ProgressDeadlineExceeded
 	// reason will be surfaced in the deployment status. Note that progress will
 	// not be estimated during the time a deployment is paused. Defaults to 600s.
 	ProgressDeadlineSeconds *int32 `json:"progressDeadlineSeconds,omitempty"`
+	// Template describes the pods that will be created.
+	// The only allowed template.spec.restartPolicy value is "Always".
+	Template v1.PodTemplateSpec `json:"template"`
+	// Minimum number of seconds for which a newly created pod should be ready
+	// without any of its container crashing, for it to be considered available.
+	// Defaults to 0 (pod will be considered available as soon as it is ready)
+	// +optional
+	MinReadySeconds int32 `json:"minReadySeconds,omitempty"`
+	// Indicates that the deployment is paused.
+	// +optional
+	Paused bool `json:"paused,omitempty"`
 }
 
 // DeploymentStrategy describes how to replace existing pods with new ones.
 type DeploymentStrategy struct {
-	// Type of deployment. Can be "Recreate" or "RollingUpdate". Default is RollingUpdate.
-	// +optional
-	Type DeploymentStrategyType `json:"type,omitempty"`
-
 	// Rolling update config params. Present only if DeploymentStrategyType =
 	// RollingUpdate.
 	//---
@@ -80,6 +67,9 @@ type DeploymentStrategy struct {
 	// to be.
 	// +optional
 	RollingUpdate *RollingUpdateDeployment `json:"rollingUpdate,omitempty"`
+	// Type of deployment. Can be "Recreate" or "RollingUpdate". Default is RollingUpdate.
+	// +optional
+	Type DeploymentStrategyType `json:"type,omitempty"`
 }
 
 // +enum
@@ -125,40 +115,33 @@ type RollingUpdateDeployment struct {
 
 // DeploymentStatus is the most recently observed status of the Deployment.
 type DeploymentStatus struct {
-	// The generation observed by the deployment controller.
-	// +optional
-	ObservedGeneration int64 `json:"observedGeneration,omitempty"`
-
-	// Total number of non-terminated pods targeted by this deployment (their labels match the selector).
-	// +optional
-	Replicas int32 `json:"replicas,omitempty"`
-
-	// Total number of non-terminated pods targeted by this deployment that have the desired template spec.
-	// +optional
-	UpdatedReplicas int32 `json:"updatedReplicas,omitempty"`
-
-	// readyReplicas is the number of pods targeted by this Deployment with a Ready Condition.
-	// +optional
-	ReadyReplicas int32 `json:"readyReplicas,omitempty"`
-
-	// Total number of available pods (ready for at least minReadySeconds) targeted by this deployment.
-	// +optional
-	AvailableReplicas int32 `json:"availableReplicas,omitempty"`
-
-	// Total number of unavailable pods targeted by this deployment. This is the total number of
-	// pods that are still required for the deployment to have 100% available capacity. They may
-	// either be pods that are running but not yet available or pods that still have not been created.
-	// +optional
-	UnavailableReplicas int32 `json:"unavailableReplicas,omitempty"`
-
-	// Represents the latest available observations of a deployment's current state.
-	Conditions []DeploymentCondition `json:"conditions,omitempty"`
-
 	// Count of hash collisions for the Deployment. The Deployment controller uses this
 	// field as a collision avoidance mechanism when it needs to create the name for the
 	// newest ReplicaSet.
 	// +optional
 	CollisionCount *int32 `json:"collisionCount,omitempty"`
+	// Represents the latest available observations of a deployment's current state.
+	Conditions []DeploymentCondition `json:"conditions,omitempty"`
+	// The generation observed by the deployment controller.
+	// +optional
+	ObservedGeneration int64 `json:"observedGeneration,omitempty"`
+	// Total number of non-terminated pods targeted by this deployment (their labels match the selector).
+	// +optional
+	Replicas int32 `json:"replicas,omitempty"`
+	// Total number of non-terminated pods targeted by this deployment that have the desired template spec.
+	// +optional
+	UpdatedReplicas int32 `json:"updatedReplicas,omitempty"`
+	// readyReplicas is the number of pods targeted by this Deployment with a Ready Condition.
+	// +optional
+	ReadyReplicas int32 `json:"readyReplicas,omitempty"`
+	// Total number of available pods (ready for at least minReadySeconds) targeted by this deployment.
+	// +optional
+	AvailableReplicas int32 `json:"availableReplicas,omitempty"`
+	// Total number of unavailable pods targeted by this deployment. This is the total number of
+	// pods that are still required for the deployment to have 100% available capacity. They may
+	// either be pods that are running but not yet available or pods that still have not been created.
+	// +optional
+	UnavailableReplicas int32 `json:"unavailableReplicas,omitempty"`
 }
 
 type DeploymentConditionType string
