@@ -22,7 +22,7 @@ func NewEventRepository(db *pg.DB) *EventRepository {
 func (rc *EventRepository) Create(ctx context.Context, newEvent *model.Event) (*model.Event, error) {
 	_, err := rc.db.Model(newEvent).Insert()
 	if err != nil {
-		return nil, fmt.Errorf("failed to create event: %w", err)
+		return nil, fmt.Errorf("failed to create event (kind: [%s], event kind: [%s]): %v", newEvent.Category, newEvent.Type, err)
 	}
 
 	return newEvent, nil
