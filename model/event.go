@@ -15,11 +15,11 @@ const (
 )
 
 type Event struct {
-	Kind         string    `json:"kind"`
-	EventKind    string    `json:"event_kind"`
-	CreationTime time.Time `json:"creation_time"`
-	Owner        User      `json:"owner" pg:"rel:has-one"`
-	DeletedAt    time.Time `json:"deleted_at" pg:",soft_delete"`
+	CreatedAt time.Time `json:"created_at"`
+	DeletedAt time.Time `json:"deleted_at" pg:",soft_delete"`
+	Owner     User      `json:"owner" pg:"rel:has-one"`
+	Type      string    `json:"type"`
+	Category  string    `json:"category"`
 }
 
 type EventFindOpts struct {
