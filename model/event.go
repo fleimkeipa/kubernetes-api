@@ -24,6 +24,7 @@ type Event struct {
 
 type EventFindOpts struct {
 	PaginationOpts
+	FieldsOpts
 	Kind          Filter
 	EventKind     Filter
 	CreationTime  Filter
