@@ -24,7 +24,7 @@ func NewPodUC(podsRepo interfaces.PodInterfaces, eventUC *EventUC) *PodUC {
 	}
 }
 
-func (rc *PodUC) Create(ctx context.Context, pod *model.Pod, opts metav1.CreateOptions) (*corev1.Pod, error) {
+func (rc *PodUC) Create(ctx context.Context, pod *model.Pod, opts model.CreateOptions) (*corev1.Pod, error) {
 	pod.TypeMeta.Kind = "pod"
 	if pod.ObjectMeta.Namespace == "" {
 		pod.ObjectMeta.Namespace = "default"
@@ -46,7 +46,7 @@ func (rc *PodUC) Create(ctx context.Context, pod *model.Pod, opts metav1.CreateO
 }
 
 func (rc *PodUC) Update(ctx context.Context, id string, request *model.PodsUpdateRequest) (*corev1.Pod, error) {
-	existPod, err := rc.GetByNameOrUID(ctx, request.Pod.Namespace, id, metav1.ListOptions{})
+	existPod, err := rc.GetByNameOrUID(ctx, request.Pod.Namespace, id, model.ListOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +66,7 @@ func (rc *PodUC) Update(ctx context.Context, id string, request *model.PodsUpdat
 	return rc.podsRepo.Update(ctx, id, kubePod, request.Opts)
 }
 
-func (rc *PodUC) List(ctx context.Context, namespace string, opts metav1.ListOptions) (*corev1.PodList, error) {
+func (rc *PodUC) List(ctx context.Context, namespace string, opts model.ListOptions) (*corev1.PodList, error) {
 	opts.TypeMeta.Kind = "pod"
 	if namespace == "" {
 		namespace = "default"
@@ -75,7 +75,7 @@ func (rc *PodUC) List(ctx context.Context, namespace string, opts metav1.ListOpt
 	return rc.podsRepo.List(ctx, namespace, opts)
 }
 
-func (rc *PodUC) GetByNameOrUID(ctx context.Context, namespace, nameOrUID string, opts metav1.ListOptions) (*corev1.Pod, error) {
+func (rc *PodUC) GetByNameOrUID(ctx context.Context, namespace, nameOrUID string, opts model.ListOptions) (*corev1.Pod, error) {
 	opts.TypeMeta.Kind = "pod"
 	if namespace == "" {
 		namespace = "default"
@@ -100,7 +100,7 @@ func (rc *PodUC) GetByNameOrUID(ctx context.Context, namespace, nameOrUID string
 	return rc.GetByNameOrUID(ctx, namespace, nameOrUID, opts)
 }
 
-func (rc *PodUC) Delete(ctx context.Context, namespace, name string, opts metav1.DeleteOptions) error {
+func (rc *PodUC) Delete(ctx context.Context, namespace, name string, opts model.DeleteOptions) error {
 	opts.TypeMeta.Kind = "pod"
 	if namespace == "" {
 		namespace = "default"

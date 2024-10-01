@@ -1,18 +1,16 @@
 package model
 
-import metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
 type (
 	PodsCreateRequest struct {
-		Opts metav1.CreateOptions `json:"opts"`
-		Pod  Pod                  `json:"pod"`
+		Opts CreateOptions `json:"opts"`
+		Pod  Pod           `json:"pod"`
 	}
 )
 
 type (
 	PodsUpdateRequest struct {
-		Opts metav1.UpdateOptions `json:"opts"`
-		Pod  PodUpdate            `json:"pod"`
+		Opts UpdateOptions `json:"opts"`
+		Pod  PodUpdate     `json:"pod"`
 	}
 
 	PodUpdate struct {

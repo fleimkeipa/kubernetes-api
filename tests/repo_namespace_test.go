@@ -5,9 +5,9 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/fleimkeipa/kubernetes-api/model"
 	"github.com/fleimkeipa/kubernetes-api/repositories"
 	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 )
 
@@ -17,13 +17,13 @@ func TestNamespaceRepository_Get(t *testing.T) {
 	}
 	type args struct {
 		ctx  context.Context
-		opts metav1.ListOptions
+		opts model.ListOptions
 	}
 	tests := []struct {
-		args    args
 		fields  fields
 		want    *corev1.NamespaceList
 		name    string
+		args    args
 		wantErr bool
 	}{
 		{
@@ -33,7 +33,7 @@ func TestNamespaceRepository_Get(t *testing.T) {
 			},
 			args: args{
 				ctx:  context.Background(),
-				opts: metav1.ListOptions{},
+				opts: model.ListOptions{},
 			},
 			want:    &corev1.NamespaceList{},
 			wantErr: false,

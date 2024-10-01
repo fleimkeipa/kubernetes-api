@@ -47,7 +47,7 @@ func (rc *DeploymentUC) Create(ctx context.Context, request *model.DeploymentCre
 }
 
 func (rc *DeploymentUC) Update(ctx context.Context, id, namespace string, request *model.DeploymentUpdateRequest) (*v1.Deployment, error) {
-	existDeployment, err := rc.GetByNameOrUID(ctx, namespace, id, metav1.ListOptions{})
+	existDeployment, err := rc.GetByNameOrUID(ctx, namespace, id, model.ListOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +67,7 @@ func (rc *DeploymentUC) Update(ctx context.Context, id, namespace string, reques
 	return rc.deploymentRepo.Update(ctx, kubeDeployment, request.Opts)
 }
 
-func (rc *DeploymentUC) List(ctx context.Context, namespace string, opts metav1.ListOptions) (*v1.DeploymentList, error) {
+func (rc *DeploymentUC) List(ctx context.Context, namespace string, opts model.ListOptions) (*v1.DeploymentList, error) {
 	opts.TypeMeta.Kind = "deployment"
 	if namespace == "" {
 		namespace = "default"
@@ -76,7 +76,7 @@ func (rc *DeploymentUC) List(ctx context.Context, namespace string, opts metav1.
 	return rc.deploymentRepo.List(ctx, namespace, opts)
 }
 
-func (rc *DeploymentUC) GetByNameOrUID(ctx context.Context, namespace, nameOrUID string, opts metav1.ListOptions) (*v1.Deployment, error) {
+func (rc *DeploymentUC) GetByNameOrUID(ctx context.Context, namespace, nameOrUID string, opts model.ListOptions) (*v1.Deployment, error) {
 	opts.TypeMeta.Kind = "deployment"
 	if namespace == "" {
 		namespace = "default"
@@ -101,7 +101,7 @@ func (rc *DeploymentUC) GetByNameOrUID(ctx context.Context, namespace, nameOrUID
 	return rc.GetByNameOrUID(ctx, namespace, nameOrUID, opts)
 }
 
-func (rc *DeploymentUC) Delete(ctx context.Context, namespace, name string, opts metav1.DeleteOptions) error {
+func (rc *DeploymentUC) Delete(ctx context.Context, namespace, name string, opts model.DeleteOptions) error {
 	opts.TypeMeta.Kind = "deployment"
 	if namespace == "" {
 		namespace = "default"

@@ -5,12 +5,12 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/fleimkeipa/kubernetes-api/model"
 	"github.com/fleimkeipa/kubernetes-api/repositories"
 	"github.com/fleimkeipa/kubernetes-api/repositories/interfaces"
 	"github.com/fleimkeipa/kubernetes-api/uc"
 
 	v1 "k8s.io/api/apps/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 func TestDeploymentUC_List(t *testing.T) {
@@ -21,15 +21,15 @@ func TestDeploymentUC_List(t *testing.T) {
 		eventUC        *uc.EventUC
 	}
 	type args struct {
-		opts      metav1.ListOptions
 		ctx       context.Context
 		namespace string
+		opts      model.ListOptions
 	}
 	tests := []struct {
-		args    args
 		fields  fields
 		want    *v1.DeploymentList
 		name    string
+		args    args
 		wantErr bool
 	}{
 		{
@@ -41,7 +41,7 @@ func TestDeploymentUC_List(t *testing.T) {
 			args: args{
 				ctx:       context.TODO(),
 				namespace: "",
-				opts:      metav1.ListOptions{},
+				opts:      model.ListOptions{},
 			},
 			want:    &v1.DeploymentList{},
 			wantErr: false,
@@ -69,16 +69,16 @@ func TestDeploymentUC_GetByNameOrUID(t *testing.T) {
 		eventUC        *uc.EventUC
 	}
 	type args struct {
-		opts      metav1.ListOptions
 		ctx       context.Context
 		namespace string
 		nameOrUID string
+		opts      model.ListOptions
 	}
 	tests := []struct {
-		args    args
 		fields  fields
 		want    *v1.Deployment
 		name    string
+		args    args
 		wantErr bool
 	}{
 		{
@@ -91,7 +91,7 @@ func TestDeploymentUC_GetByNameOrUID(t *testing.T) {
 				ctx:       context.TODO(),
 				namespace: "",
 				nameOrUID: "",
-				opts:      metav1.ListOptions{},
+				opts:      model.ListOptions{},
 			},
 			want:    &v1.Deployment{},
 			wantErr: false,

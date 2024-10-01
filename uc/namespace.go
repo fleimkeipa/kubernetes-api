@@ -42,7 +42,7 @@ func (rc *NamespaceUC) Create(ctx context.Context, request model.NamespaceCreate
 }
 
 func (rc *NamespaceUC) Update(ctx context.Context, id string, request *model.NamespaceUpdateRequest) (*corev1.Namespace, error) {
-	existNamespace, err := rc.GetByNameOrUID(ctx, id, metav1.ListOptions{})
+	existNamespace, err := rc.GetByNameOrUID(ctx, id, model.ListOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -64,13 +64,13 @@ func (rc *NamespaceUC) Update(ctx context.Context, id string, request *model.Nam
 	return rc.namespaceRepo.Update(ctx, kubeNamespace, request.Opts)
 }
 
-func (rc *NamespaceUC) List(ctx context.Context, opts metav1.ListOptions) (*corev1.NamespaceList, error) {
+func (rc *NamespaceUC) List(ctx context.Context, opts model.ListOptions) (*corev1.NamespaceList, error) {
 	opts.TypeMeta.Kind = "namespace"
 
 	return rc.namespaceRepo.List(ctx, opts)
 }
 
-func (rc *NamespaceUC) GetByNameOrUID(ctx context.Context, nameOrUID string, opts metav1.ListOptions) (*corev1.Namespace, error) {
+func (rc *NamespaceUC) GetByNameOrUID(ctx context.Context, nameOrUID string, opts model.ListOptions) (*corev1.Namespace, error) {
 	opts.TypeMeta.Kind = "namespace"
 
 	opts.Limit = 100
@@ -92,7 +92,7 @@ func (rc *NamespaceUC) GetByNameOrUID(ctx context.Context, nameOrUID string, opt
 	return rc.GetByNameOrUID(ctx, nameOrUID, opts)
 }
 
-func (rc *NamespaceUC) Delete(ctx context.Context, name string, opts metav1.DeleteOptions) error {
+func (rc *NamespaceUC) Delete(ctx context.Context, name string, opts model.DeleteOptions) error {
 	opts.TypeMeta.Kind = "namespace"
 
 	event := model.Event{

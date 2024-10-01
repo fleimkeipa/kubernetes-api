@@ -8,7 +8,6 @@ import (
 	"github.com/fleimkeipa/kubernetes-api/uc"
 
 	"github.com/labstack/echo/v4"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 type NamespaceHandler struct {
@@ -72,7 +71,7 @@ func (rc *NamespaceHandler) Create(c echo.Context) error {
 //	@Failure		500				{object}	FailureResponse					"Interval error"
 //	@Router			/namespaces [put]
 func (rc *NamespaceHandler) Update(c echo.Context) error {
-	var id = c.Param("id")
+	id := c.Param("id")
 
 	var request model.NamespaceUpdateRequest
 	if err := c.Bind(&request); err != nil {
@@ -108,7 +107,7 @@ func (rc *NamespaceHandler) Update(c echo.Context) error {
 //	@Failure		500				{object}	FailureResponse	"Bad request or error message"
 //	@Router			/namespaces [get]
 func (rc *NamespaceHandler) List(c echo.Context) error {
-	var opts = metav1.ListOptions{}
+	opts := model.ListOptions{}
 	list, err := rc.namespaceUC.List(c.Request().Context(), opts)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, FailureResponse{
@@ -136,9 +135,9 @@ func (rc *NamespaceHandler) List(c echo.Context) error {
 //	@Failure		500				{object}	FailureResponse	"Interval error"
 //	@Router			/namespaces/{id} [get]
 func (rc *NamespaceHandler) GetByNameOrUID(c echo.Context) error {
-	var nameOrUID = c.Param("id")
+	nameOrUID := c.Param("id")
 
-	var opts = metav1.ListOptions{}
+	opts := model.ListOptions{}
 
 	list, err := rc.namespaceUC.GetByNameOrUID(c.Request().Context(), nameOrUID, opts)
 	if err != nil {
@@ -167,9 +166,9 @@ func (rc *NamespaceHandler) GetByNameOrUID(c echo.Context) error {
 //	@Failure		500				{object}	FailureResponse	"Interval error"
 //	@Router			/namespaces/{id} [delete]
 func (rc *NamespaceHandler) Delete(c echo.Context) error {
-	var nameOrUID = c.Param("id")
+	nameOrUID := c.Param("id")
 
-	var opts = metav1.DeleteOptions{}
+	opts := model.DeleteOptions{}
 
 	if err := rc.namespaceUC.Delete(c.Request().Context(), nameOrUID, opts); err != nil {
 		return c.JSON(http.StatusInternalServerError, FailureResponse{

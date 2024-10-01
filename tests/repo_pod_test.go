@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/fleimkeipa/kubernetes-api/model"
 	"github.com/fleimkeipa/kubernetes-api/repositories"
 
 	corev1 "k8s.io/api/core/v1"
@@ -22,13 +23,13 @@ func TestPodRepository_Create(t *testing.T) {
 	type args struct {
 		ctx  context.Context
 		pod  *corev1.Pod
-		opts metav1.CreateOptions
+		opts model.CreateOptions
 	}
 	tests := []struct {
 		fields  fields
 		want    *corev1.Pod
-		args    args
 		name    string
+		args    args
 		wantErr bool
 	}{
 		{
@@ -57,7 +58,7 @@ func TestPodRepository_Create(t *testing.T) {
 					},
 					Status: corev1.PodStatus{},
 				},
-				opts: metav1.CreateOptions{},
+				opts: model.CreateOptions{},
 			},
 			want: &corev1.Pod{
 				TypeMeta: metav1.TypeMeta{},
@@ -90,15 +91,15 @@ func TestPodsRepository_Get(t *testing.T) {
 		client *kubernetes.Clientset
 	}
 	type args struct {
-		opts      metav1.ListOptions
 		ctx       context.Context
 		namespace string
+		opts      model.ListOptions
 	}
 	tests := []struct {
-		args    args
 		fields  fields
 		want    *corev1.PodList
 		name    string
+		args    args
 		wantErr bool
 	}{
 		{
@@ -109,8 +110,8 @@ func TestPodsRepository_Get(t *testing.T) {
 			args: args{
 				ctx:       context.Background(),
 				namespace: "default",
-				opts: metav1.ListOptions{
-					TypeMeta: metav1.TypeMeta{
+				opts: model.ListOptions{
+					TypeMeta: model.TypeMeta{
 						Kind:       "pod",
 						APIVersion: "v1",
 					},

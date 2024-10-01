@@ -8,7 +8,6 @@ import (
 	"github.com/fleimkeipa/kubernetes-api/uc"
 
 	"github.com/labstack/echo/v4"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 type PodHandler struct {
@@ -77,7 +76,7 @@ func (rc *PodHandler) Create(c echo.Context) error {
 //	@Failure		500				{object}	FailureResponse			"Interval error"
 //	@Router			/pods/{id} [put]
 func (rc *PodHandler) Update(c echo.Context) error {
-	var id = c.Param("id")
+	id := c.Param("id")
 
 	var request model.PodsUpdateRequest
 	if err := c.Bind(&request); err != nil {
@@ -114,9 +113,9 @@ func (rc *PodHandler) Update(c echo.Context) error {
 //	@Failure		500				{object}	FailureResponse	"Interval error"
 //	@Router			/pods [get]
 func (rc *PodHandler) List(c echo.Context) error {
-	var namespace = c.QueryParam("namespace")
+	namespace := c.QueryParam("namespace")
 
-	var opts = metav1.ListOptions{}
+	opts := model.ListOptions{}
 
 	list, err := rc.podsUC.List(c.Request().Context(), namespace, opts)
 	if err != nil {
@@ -146,10 +145,10 @@ func (rc *PodHandler) List(c echo.Context) error {
 //	@Failure		500				{object}	FailureResponse	"Interval error"
 //	@Router			/pods/{id} [get]
 func (rc *PodHandler) GetByNameOrUID(c echo.Context) error {
-	var namespace = c.QueryParam("namespace")
-	var nameOrUID = c.Param("id")
+	namespace := c.QueryParam("namespace")
+	nameOrUID := c.Param("id")
 
-	var opts = metav1.ListOptions{}
+	opts := model.ListOptions{}
 
 	list, err := rc.podsUC.GetByNameOrUID(c.Request().Context(), namespace, nameOrUID, opts)
 	if err != nil {
@@ -179,10 +178,10 @@ func (rc *PodHandler) GetByNameOrUID(c echo.Context) error {
 //	@Failure		500				{object}	FailureResponse	"Interval error"
 //	@Router			/pods/{id} [delete]
 func (rc *PodHandler) Delete(c echo.Context) error {
-	var namespace = c.QueryParam("namespace")
-	var nameOrUID = c.Param("id")
+	namespace := c.QueryParam("namespace")
+	nameOrUID := c.Param("id")
 
-	var opts = metav1.DeleteOptions{}
+	opts := model.DeleteOptions{}
 
 	if err := rc.podsUC.Delete(c.Request().Context(), namespace, nameOrUID, opts); err != nil {
 		return c.JSON(http.StatusInternalServerError, FailureResponse{

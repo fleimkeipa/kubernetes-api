@@ -8,7 +8,6 @@ import (
 	"github.com/fleimkeipa/kubernetes-api/uc"
 
 	"github.com/labstack/echo/v4"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 type DeploymentHandler struct {
@@ -72,7 +71,7 @@ func (rc *DeploymentHandler) Create(c echo.Context) error {
 //	@Failure		500				{object}	FailureResponse					"Interval error"
 //	@Router			/deployments [put]
 func (rc *DeploymentHandler) Update(c echo.Context) error {
-	var id = c.Param("id")
+	id := c.Param("id")
 
 	var request model.DeploymentUpdateRequest
 
@@ -110,9 +109,9 @@ func (rc *DeploymentHandler) Update(c echo.Context) error {
 //	@Failure		500				{object}	FailureResponse	"Interval error"
 //	@Router			/deployments [get]
 func (rc *DeploymentHandler) List(c echo.Context) error {
-	var namespace = c.QueryParam("namespace")
+	namespace := c.QueryParam("namespace")
 
-	var opts = metav1.ListOptions{}
+	opts := model.ListOptions{}
 
 	list, err := rc.deploymentUC.List(c.Request().Context(), namespace, opts)
 	if err != nil {
@@ -142,10 +141,10 @@ func (rc *DeploymentHandler) List(c echo.Context) error {
 //	@Failure		500				{object}	FailureResponse	"Interval error"
 //	@Router			/deployments/{id} [get]
 func (rc *DeploymentHandler) GetByNameOrUID(c echo.Context) error {
-	var namespace = c.QueryParam("namespace")
-	var nameOrUID = c.Param("id")
+	namespace := c.QueryParam("namespace")
+	nameOrUID := c.Param("id")
 
-	var opts = metav1.ListOptions{}
+	opts := model.ListOptions{}
 
 	list, err := rc.deploymentUC.GetByNameOrUID(c.Request().Context(), namespace, nameOrUID, opts)
 	if err != nil {
@@ -175,10 +174,10 @@ func (rc *DeploymentHandler) GetByNameOrUID(c echo.Context) error {
 //	@Failure		500				{object}	FailureResponse	"Bad request or error message"
 //	@Router			/deployments/{id} [delete]
 func (rc *DeploymentHandler) Delete(c echo.Context) error {
-	var namespace = c.QueryParam("namespace")
-	var nameOrUID = c.Param("id")
+	namespace := c.QueryParam("namespace")
+	nameOrUID := c.Param("id")
 
-	var opts = metav1.DeleteOptions{}
+	opts := model.DeleteOptions{}
 
 	if err := rc.deploymentUC.Delete(c.Request().Context(), namespace, nameOrUID, opts); err != nil {
 		return c.JSON(http.StatusInternalServerError, FailureResponse{
