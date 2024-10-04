@@ -2,84 +2,100 @@ package tests
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
-	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/fleimkeipa/kubernetes-api/controller"
 	"github.com/fleimkeipa/kubernetes-api/model"
-	"github.com/fleimkeipa/kubernetes-api/pkg"
 	"github.com/fleimkeipa/kubernetes-api/repositories"
 	"github.com/fleimkeipa/kubernetes-api/uc"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
-
-	"github.com/stretchr/testify/mock"
 )
 
 func TestCreateUser(t *testing.T) {
-	// Setup
-	test_db, terminateDB := pkg.GetTestInstance(context.TODO())
-	defer terminateDB()
-
-	userRepo := repositories.NewUserRepository(test_db)
-	userUC := uc.NewUserUC(userRepo)
-
-	rc := controller.NewUserHandlers(userUC)
-	e := echo.New()
-	req := httptest.NewRequest(http.MethodPost, "/users", bytes.NewBuffer([]byte(`{"username":"test","email":"test@example.com","password":"password","role_id":1}`)))
-	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-	rec := httptest.NewRecorder()
-	c := e.NewContext(req, rec)
-
-	// Test with valid input
-	if userUC == nil {
-		t.Fatal("userUC is nil")
-	}
-	userUC.On(
-		"Create",
-		mock.Anything,
-		model.User{
-			Username: "test",
-			Email:    "test@example.com",
-			Password: "password",
-			RoleID:   1,
+	tests := []struct {
+		name       string
+		request    model.UserRequest
+		wantStatus int
+		wantJSON   string
+	}{
+		{
+			name: "successful creation",
+			request: model.UserRequest{
+				Username: "test-user-1",
+				Email:    "test@example.com",
+				Password: "password",
+				RoleID:   7,
+			},
+			wantStatus: http.StatusCreated,
+			wantJSON:   `{"data":"test-user-1","message":"User created successfully."}`,
 		},
-	).Return(nil)
-	err := rc.CreateUser(c)
-	assert.NoError(t, err)
-	assert.Equal(t, http.StatusCreated, rec.Code)
-	var resp controller.SuccessResponse
-	json.Unmarshal(rec.Body.Bytes(), &resp)
-	assert.Equal(t, "test", resp.Data)
-
-	// Test with invalid input (binding error)
-	req = httptest.NewRequest(http.MethodPost, "/users", bytes.NewBuffer([]byte(`{"username":"test","email":"test@example.com","password":""}`)))
-	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-	rec = httptest.NewRecorder()
-	c = e.NewContext(req, rec)
-	err = rc.CreateUser(c)
-	assert.NoError(t, err)
-	assert.Equal(t, http.StatusBadRequest, rec.Code)
-	var failureResp controller.FailureResponse
-	json.Unmarshal(rec.Body.Bytes(), &failureResp)
-	assert.NotNil(t, failureResp.Error)
-
-	// Test with internal server error (userUC.Create error)
-	if userUC == nil {
-		t.Fatal("userUC is nil")
+		{
+			name: "invalid request data",
+			request: model.UserRequest{
+				Username: "test-user-1",
+				Email:    "test@example.com",
+				Password: "password",
+				RoleID:   7,
+			},
+			wantStatus: http.StatusBadRequest,
+			wantJSON:   `{"error":"Failed to bind request: ...","message":"Invalid request data. Please check your input and try again."}`,
+		},
+		{
+			name: "user creation failure",
+			request: model.UserRequest{
+				Username: "test-user-1",
+				Email:    "test@example.com",
+				Password: "password",
+				RoleID:   7,
+			},
+			wantStatus: http.StatusInternalServerError,
+			wantJSON:   `{"error":"Failed to create user: user creation failed","message":"User creation failed. Please verify the details and try again."}`,
+		},
+		{
+			name: "nil echo.Context object",
+			request: model.UserRequest{
+				Username: "test-user-1",
+				Email:    "test@example.com",
+				Password: "password",
+				RoleID:   7,
+			},
+			wantStatus: http.StatusInternalServerError,
+			wantJSON:   `{"error":"...","message":"..."}`,
+		},
 	}
-	userUC.On("Create", mock.Anything, model.User{Username: "test", Email: "test@example.com", Password: "password", RoleID: 1}).Return(errors.New("internal error"))
-	req = httptest.NewRequest(http.MethodPost, "/users", bytes.NewBuffer([]byte(`{"username":"test","email":"test@example.com","password":"password","role_id":1}`)))
-	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-	rec = httptest.NewRecorder()
-	c = e.NewContext(req, rec)
-	err = rc.CreateUser(c)
-	assert.NoError(t, err)
-	assert.Equal(t, http.StatusInternalServerError, rec.Code)
-	json.Unmarshal(rec.Body.Bytes(), &failureResp)
-	assert.NotNil(t, failureResp.Error)
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// create a new echo context
+			e := echo.New()
+			reqBody, err := json.Marshal(tt.request)
+			assert.NoError(t, err)
+			req := httptest.NewRequest(http.MethodPost, "/users", bytes.NewBuffer(reqBody))
+			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+			rec := httptest.NewRecorder()
+			c := e.NewContext(req, rec)
+
+			// create a new UserHandler
+			userRepo := repositories.NewUserRepository(test_db)
+			userUC := uc.NewUserUC(userRepo)
+			userHandler := controller.NewUserHandlers(userUC)
+
+			// call the Create function
+			err = userHandler.CreateUser(c)
+			assert.NoError(t, err)
+
+			// check the status code
+			assert.Equal(t, tt.wantStatus, rec.Code)
+
+			// check the response JSON
+			var respJSON string
+			err = json.Unmarshal(rec.Body.Bytes(), &respJSON)
+			assert.NoError(t, err)
+			assert.JSONEq(t, tt.wantJSON, respJSON)
+		})
+	}
 }
