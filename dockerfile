@@ -8,8 +8,8 @@ COPY . .
 RUN go mod download
 RUN go mod verify
 
-RUN go build -o /kubernetes-api ./main.go
+RUN go build -o /kubernetes-app ./main.go
 
 EXPOSE 8080
 
-CMD ["/kubernetes-api"]
+CMD ["/kubernetes-app"]
