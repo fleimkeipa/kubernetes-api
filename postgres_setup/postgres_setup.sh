@@ -33,7 +33,8 @@ BEGIN
             email VARCHAR(100) UNIQUE,
             password VARCHAR(255) NOT NULL,
             role_id INTEGER,
-            deleted_at TIMESTAMPTZ
+            deleted_at TIMESTAMPTZ,
+            created_at TIMESTAMPTZ
         );
     END IF;
 END
