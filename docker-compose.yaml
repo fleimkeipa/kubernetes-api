@@ -1,17 +1,31 @@
 version: "3.9" # Docker Compose version
 
 services:
-  myapp:
+  app:
     build: .
     # image: kubernetes-api:latest  # Docker image for your Go application
-    container_name: myapp-container
+    container_name: app-container
     environment:
       - KUBECONFIG=/root/.kube/config # Location of the Kubernetes configuration file
     volumes:
       - ~/.kube/config:/root/.kube/config # Mount the local kubeconfig file to the container
     ports:
       - "8080:8080" # Expose necessary ports
-      # - "6443:6443"  # Expose additional ports if needed
+    networks:
+      - mynetwork
+    depends_on:
+      - postgres
+    restart: on-failure
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=kubernetes-api
+      - POSTGRES_USER=postgres
+    ports:
+      - "5432:5432"
     networks:
       - mynetwork
 
