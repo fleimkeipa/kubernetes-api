@@ -65,18 +65,28 @@ func (rc *DeploymentInterfaces) List(ctx context.Context, namespace string, opts
 }
 
 func (rc *DeploymentInterfaces) Delete(ctx context.Context, namespace, name string, opts model.DeleteOptions) error {
+	gracePeriodSeconds := new(int64)
+	if opts.GracePeriodSeconds != nil {
+		gracePeriodSeconds = opts.GracePeriodSeconds
+	}
+
+	preconditions := new(model.Preconditions)
+	if opts.Preconditions != nil {
+		preconditions = opts.Preconditions
+	}
+
 	metaOpts := metav1.DeleteOptions{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       opts.TypeMeta.Kind,
 			APIVersion: opts.TypeMeta.APIVersion,
 		},
-		GracePeriodSeconds: opts.GracePeriodSeconds,
+		GracePeriodSeconds: gracePeriodSeconds,
 		Preconditions: &metav1.Preconditions{
-			UID:             opts.Preconditions.UID,
-			ResourceVersion: opts.Preconditions.ResourceVersion,
+			UID:             preconditions.UID,
+			ResourceVersion: preconditions.ResourceVersion,
 		},
-		OrphanDependents: opts.OrphanDependents,
-		DryRun:           opts.DryRun,
+		DryRun: opts.DryRun,
 	}
+
 	return rc.client.AppsV1().Deployments(namespace).Delete(ctx, name, metaOpts)
 }
