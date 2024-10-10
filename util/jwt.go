@@ -1,6 +1,7 @@
 package util
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strings"
@@ -18,9 +19,10 @@ var privateKey = []byte(viper.GetString("jwt.private_key"))
 
 // generate JWT token
 func GenerateJWT(user *model.User) (string, error) {
-	var token = jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id":       user.ID,
 		"username": user.Username,
+		"email":    user.Email,
 		"role":     user.RoleID,
 		"iat":      time.Now().Unix(),
 		"eat":      time.Now().Add(time.Second * time.Duration(viper.GetInt("jwt.token_ttl"))).Unix(),
