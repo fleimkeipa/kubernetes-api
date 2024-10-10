@@ -11,6 +11,15 @@ type TypeMeta struct {
 	APIVersion string `json:"apiVersion,omitempty"`
 }
 
+// ListMeta describes metadata that synthetic resources must have, including lists and
+// various status objects. A resource may have only one of {ObjectMeta, ListMeta}.
+type ListMeta struct {
+	SelfLink           string `json:"selfLink,omitempty"`
+	ResourceVersion    string `json:"resourceVersion,omitempty"`
+	Continue           string `json:"continue,omitempty"`
+	RemainingItemCount *int64 `json:"remainingItemCount,omitempty"`
+}
+
 type ObjectMeta struct {
 	UID                        string            `json:"uid,omitempty"`
 	CreationTimestamp          time.Time         `json:"creationTimestamp,omitempty"`
@@ -169,17 +178,17 @@ const (
 
 // ListOptions is the query options to a standard REST list call.
 type ListOptions struct {
-	TimeoutSeconds       *int64 `json:"timeoutSeconds,omitempty" protobuf:"varint,5,opt,name=timeoutSeconds"`
-	SendInitialEvents    *bool  `json:"sendInitialEvents,omitempty" protobuf:"varint,11,opt,name=sendInitialEvents"`
+	TimeoutSeconds       *int64 `json:"timeoutSeconds,omitempty"`
+	SendInitialEvents    *bool  `json:"sendInitialEvents,omitempty"`
 	TypeMeta             `json:",inline"`
-	LabelSelector        string               `json:"labelSelector,omitempty" protobuf:"bytes,1,opt,name=labelSelector"`
-	FieldSelector        string               `json:"fieldSelector,omitempty" protobuf:"bytes,2,opt,name=fieldSelector"`
-	ResourceVersion      string               `json:"resourceVersion,omitempty" protobuf:"bytes,4,opt,name=resourceVersion"`
-	ResourceVersionMatch ResourceVersionMatch `json:"resourceVersionMatch,omitempty" protobuf:"bytes,10,opt,name=resourceVersionMatch,casttype=ResourceVersionMatch"`
-	Continue             string               `json:"continue,omitempty" protobuf:"bytes,8,opt,name=continue"`
-	Limit                int64                `json:"limit,omitempty" protobuf:"varint,7,opt,name=limit"`
-	Watch                bool                 `json:"watch,omitempty" protobuf:"varint,3,opt,name=watch"`
-	AllowWatchBookmarks  bool                 `json:"allowWatchBookmarks,omitempty" protobuf:"varint,9,opt,name=allowWatchBookmarks"`
+	LabelSelector        string               `json:"labelSelector,omitempty"`
+	FieldSelector        string               `json:"fieldSelector,omitempty"`
+	ResourceVersion      string               `json:"resourceVersion,omitempty"`
+	ResourceVersionMatch ResourceVersionMatch `json:"resourceVersionMatch,omitempty"`
+	Continue             string               `json:"continue,omitempty"`
+	Limit                int64                `json:"limit,omitempty"`
+	Watch                bool                 `json:"watch,omitempty"`
+	AllowWatchBookmarks  bool                 `json:"allowWatchBookmarks,omitempty"`
 }
 
 // DeletionPropagation decides if a deletion will propagate to the dependents of
@@ -204,10 +213,10 @@ const (
 type Preconditions struct {
 	// Specifies the target UID.
 	// +optional
-	UID *types.UID `json:"uid,omitempty" protobuf:"bytes,1,opt,name=uid,casttype=k8s.io/apimachinery/pkg/types.UID"`
+	UID *types.UID `json:"uid,omitempty"`
 	// Specifies the target ResourceVersion
 	// +optional
-	ResourceVersion *string `json:"resourceVersion,omitempty" protobuf:"bytes,2,opt,name=resourceVersion"`
+	ResourceVersion *string `json:"resourceVersion,omitempty"`
 }
 
 // +k8s:conversion-gen:explicit-from=net/url.Values
@@ -222,20 +231,20 @@ type DeleteOptions struct {
 	// specified type will be used.
 	// Defaults to a per object value if not specified. zero means delete immediately.
 	// +optional
-	GracePeriodSeconds *int64 `json:"gracePeriodSeconds,omitempty" protobuf:"varint,1,opt,name=gracePeriodSeconds"`
+	GracePeriodSeconds *int64 `json:"gracePeriodSeconds,omitempty"`
 
 	// Must be fulfilled before a deletion is carried out. If not possible, a 409 Conflict status will be
 	// returned.
 	// +k8s:conversion-gen=false
 	// +optional
-	Preconditions *Preconditions `json:"preconditions,omitempty" protobuf:"bytes,2,opt,name=preconditions"`
+	Preconditions *Preconditions `json:"preconditions,omitempty"`
 
 	// Deprecated: please use the PropagationPolicy, this field will be deprecated in 1.7.
 	// Should the dependent objects be orphaned. If true/false, the "orphan"
 	// finalizer will be added to/removed from the object's finalizers list.
 	// Either this field or PropagationPolicy may be set, but not both.
 	// +optional
-	OrphanDependents *bool `json:"orphanDependents,omitempty" protobuf:"varint,3,opt,name=orphanDependents"`
+	OrphanDependents *bool `json:"orphanDependents,omitempty"`
 
 	// Whether and how garbage collection will be performed.
 	// Either this field or OrphanDependents may be set, but not both.
@@ -246,7 +255,7 @@ type DeleteOptions struct {
 	// 'Foreground' - a cascading policy that deletes all dependents in the
 	// foreground.
 	// +optional
-	PropagationPolicy *DeletionPropagation `json:"propagationPolicy,omitempty" protobuf:"varint,4,opt,name=propagationPolicy"`
+	PropagationPolicy *DeletionPropagation `json:"propagationPolicy,omitempty"`
 
 	// When present, indicates that modifications should not be
 	// persisted. An invalid or unrecognized dryRun directive will
@@ -255,5 +264,5 @@ type DeleteOptions struct {
 	// - All: all dry run stages will be processed
 	// +optional
 	// +listType=atomic
-	DryRun []string `json:"dryRun,omitempty" protobuf:"bytes,5,rep,name=dryRun"`
+	DryRun []string `json:"dryRun,omitempty"`
 }

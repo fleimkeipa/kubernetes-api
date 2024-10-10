@@ -13,9 +13,9 @@ type Pod struct {
 
 // PodList is a list of Pods.
 type PodList struct {
-	metav1.TypeMeta `json:",inline"`
-	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []Pod `json:"items"`
+	TypeMeta `json:",inline"`
+	ListMeta `json:"metadata,omitempty"`
+	Items    []Pod `json:"items"`
 }
 
 type PodSpec struct {
