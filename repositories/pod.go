@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"time"
 
 	"github.com/fleimkeipa/kubernetes-api/model"
 
@@ -178,6 +179,21 @@ func (rc *PodRepository) fillResponsePod(pod *corev1.Pod) *model.Pod {
 		})
 	}
 
+	initContainers := make([]model.Container, 0, len(pod.Spec.InitContainers))
+	for _, v := range pod.Spec.InitContainers {
+		initContainers = append(initContainers, model.Container{
+			Name:                   v.Name,
+			Image:                  v.Image,
+			Command:                v.Command,
+			Args:                   v.Args,
+			WorkingDir:             v.WorkingDir,
+			TerminationMessagePath: v.TerminationMessagePath,
+			Stdin:                  v.Stdin,
+			StdinOnce:              v.StdinOnce,
+			TTY:                    v.TTY,
+		})
+	}
+
 	conditions := make([]model.PodCondition, 0, len(pod.Status.Conditions))
 	for _, v := range pod.Status.Conditions {
 		conditions = append(conditions, model.PodCondition{
@@ -190,23 +206,57 @@ func (rc *PodRepository) fillResponsePod(pod *corev1.Pod) *model.Pod {
 		})
 	}
 
+	tolerations := make([]model.Toleration, 0, len(pod.Spec.Tolerations))
+	for _, v := range pod.Spec.Tolerations {
+		tolerations = append(tolerations, model.Toleration{
+			Key:               v.Key,
+			Operator:          model.TolerationOperator(v.Operator),
+			Value:             v.Value,
+			Effect:            model.TaintEffect(v.Effect),
+			TolerationSeconds: v.TolerationSeconds,
+		})
+	}
+
+	ownerReferences := make([]model.OwnerReference, 0, len(pod.OwnerReferences))
+	for _, v := range pod.OwnerReferences {
+		ownerReferences = append(ownerReferences, model.OwnerReference{
+			Controller:         v.Controller,
+			BlockOwnerDeletion: v.BlockOwnerDeletion,
+			APIVersion:         v.APIVersion,
+			Kind:               v.Kind,
+			Name:               v.Name,
+		})
+	}
+
+	deletionTimestamp := new(time.Time)
+	if deletionTime := pod.DeletionTimestamp; deletionTime != nil {
+		deletionTimestamp = &deletionTime.Time
+	}
+
 	return &model.Pod{
 		TypeMeta: model.TypeMeta(pod.TypeMeta),
 		ObjectMeta: model.ObjectMeta{
 			UID:                        string(pod.UID),
+			CreationTimestamp:          pod.CreationTimestamp.Time,
+			DeletionTimestamp:          deletionTimestamp,
+			DeletionGracePeriodSeconds: pod.DeletionGracePeriodSeconds,
+			Labels:                     pod.Labels,
+			Annotations:                pod.Annotations,
 			Name:                       pod.Name,
 			GenerateName:               pod.GenerateName,
 			Namespace:                  pod.Namespace,
 			ResourceVersion:            pod.ResourceVersion,
-			Generation:                 pod.Generation,
-			DeletionGracePeriodSeconds: pod.DeletionGracePeriodSeconds,
-			Labels:                     pod.Labels,
-			Annotations:                pod.Annotations,
+			OwnerReferences:            ownerReferences,
 			Finalizers:                 pod.Finalizers,
+			Generation:                 pod.Generation,
 		},
 		Spec: model.PodSpec{
-			Volumes:    volumes,
-			Containers: containers,
+			Volumes:                       volumes,
+			InitContainers:                initContainers,
+			Containers:                    containers,
+			ActiveDeadlineSeconds:         pod.DeletionGracePeriodSeconds,
+			TerminationGracePeriodSeconds: pod.DeletionGracePeriodSeconds,
+			Tolerations:                   tolerations,
 		},
 		Status: model.PodStatus{
 			Phase:             model.PodPhase(pod.Status.Phase),
