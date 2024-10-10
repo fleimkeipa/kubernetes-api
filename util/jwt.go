@@ -122,6 +122,60 @@ func GetUserIDOnToken(c echo.Context) (string, error) {
 	return id, nil
 }
 
+// GetOwnerFromToken returns the owner details from the JWT token
+func GetOwnerFromToken(c echo.Context) (model.Owner, error) {
+	token, err := getToken(c)
+	if err != nil {
+		return model.Owner{}, err
+	}
+
+	if !token.Valid {
+		return model.Owner{}, errors.New("invalid token")
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return model.Owner{}, errors.New("invalid token claims")
+	}
+
+	id, ok := claims["id"].(float64)
+	if !ok {
+		return model.Owner{}, errors.New("invalid id claims")
+	}
+
+	username, ok := claims["username"].(string)
+	if !ok {
+		return model.Owner{}, errors.New("invalid username claims")
+	}
+
+	email, ok := claims["email"].(string)
+	if !ok {
+		return model.Owner{}, errors.New("invalid email claims")
+	}
+
+	role, ok := claims["role"].(float64)
+	if !ok {
+		return model.Owner{}, errors.New("invalid role claims")
+	}
+
+	return model.Owner{
+		ID:       int64(id),
+		Username: username,
+		Email:    email,
+		RoleID:   uint(role),
+	}, nil
+}
+
+// GetOwnerFromCtx returns the owner details from the context
+func GetOwnerFromCtx(ctx context.Context) model.Owner {
+	owner, ok := ctx.Value("user").(model.Owner)
+	if !ok {
+		owner = model.Owner{}
+	}
+
+	return owner
+}
+
 // check token validity
 func getToken(context echo.Context) (*jwt.Token, error) {
 	tokenString := getTokenFromRequest(context)
