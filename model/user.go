@@ -14,11 +14,18 @@ type User struct {
 	RoleID    uint      `json:"role_id"`
 }
 
+type Owner struct {
+	Username string `json:"username" pg:",unique"`
+	Email    string `json:"email" pg:",unique"`
+	ID       int64  `json:"id" pg:",pk"`
+	RoleID   uint   `json:"role_id"`
+}
+
 type UserRequest struct {
 	Username string `json:"username" binding:"required"`
 	Email    string `json:"email" binding:"required"`
 	Password string `json:"password" binding:"required"`
-	RoleID   uint   `bson:"role_id" json:"role_id"`
+	RoleID   uint   `json:"role_id" binding:"required"`
 }
 
 type GoogleUser struct {
