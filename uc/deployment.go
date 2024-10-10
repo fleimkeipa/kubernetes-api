@@ -5,7 +5,6 @@ import (
 
 	"github.com/fleimkeipa/kubernetes-api/model"
 	"github.com/fleimkeipa/kubernetes-api/repositories/interfaces"
-	"github.com/fleimkeipa/kubernetes-api/util"
 
 	v1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -35,7 +34,6 @@ func (rc *DeploymentUC) Create(ctx context.Context, request *model.DeploymentCre
 	event := model.Event{
 		Category: model.DeploymentKind,
 		Type:     model.CreateEventKind,
-		Owner:    util.GetOwnerFromCtx(ctx),
 	}
 	_, err := rc.eventUC.Create(ctx, &event)
 	if err != nil {
@@ -56,7 +54,6 @@ func (rc *DeploymentUC) Update(ctx context.Context, id, namespace string, reques
 	event := model.Event{
 		Category: model.DeploymentKind,
 		Type:     model.UpdateEventKind,
-		Owner:    util.GetOwnerFromCtx(ctx),
 	}
 	_, err = rc.eventUC.Create(ctx, &event)
 	if err != nil {
@@ -111,7 +108,6 @@ func (rc *DeploymentUC) Delete(ctx context.Context, namespace, name string, opts
 	event := model.Event{
 		Category: model.DeploymentKind,
 		Type:     model.DeleteEventKind,
-		Owner:    util.GetOwnerFromCtx(ctx),
 	}
 	_, err := rc.eventUC.Create(ctx, &event)
 	if err != nil {

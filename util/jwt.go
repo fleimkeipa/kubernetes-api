@@ -167,13 +167,13 @@ func GetOwnerFromToken(c echo.Context) (model.Owner, error) {
 }
 
 // GetOwnerFromCtx returns the owner details from the context
-func GetOwnerFromCtx(ctx context.Context) model.Owner {
+func GetOwnerFromCtx(ctx context.Context) *model.Owner {
 	owner, ok := ctx.Value("user").(model.Owner)
-	if !ok {
-		owner = model.Owner{}
+	if ok {
+		return &owner
 	}
 
-	return owner
+	return nil
 }
 
 // check token validity

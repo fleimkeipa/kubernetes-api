@@ -6,7 +6,6 @@ import (
 
 	"github.com/fleimkeipa/kubernetes-api/model"
 	"github.com/fleimkeipa/kubernetes-api/repositories/interfaces"
-	"github.com/fleimkeipa/kubernetes-api/util"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -34,7 +33,6 @@ func (rc *PodUC) Create(ctx context.Context, pod *model.Pod, opts model.CreateOp
 	event := model.Event{
 		Category: model.PodKind,
 		Type:     model.CreateEventKind,
-		Owner:    util.GetOwnerFromCtx(ctx),
 	}
 	_, err := rc.eventUC.Create(ctx, &event)
 	if err != nil {
@@ -55,7 +53,6 @@ func (rc *PodUC) Update(ctx context.Context, id string, request *model.PodsUpdat
 	event := model.Event{
 		Category: model.PodKind,
 		Type:     model.UpdateEventKind,
-		Owner:    util.GetOwnerFromCtx(ctx),
 	}
 	_, err = rc.eventUC.Create(ctx, &event)
 	if err != nil {
@@ -110,7 +107,6 @@ func (rc *PodUC) Delete(ctx context.Context, namespace, name string, opts model.
 	event := model.Event{
 		Category: model.PodKind,
 		Type:     model.DeleteEventKind,
-		Owner:    util.GetOwnerFromCtx(ctx),
 	}
 	_, err := rc.eventUC.Create(ctx, &event)
 	if err != nil {

@@ -2,10 +2,12 @@ package uc
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/fleimkeipa/kubernetes-api/model"
 	"github.com/fleimkeipa/kubernetes-api/repositories/interfaces"
+	"github.com/fleimkeipa/kubernetes-api/util"
 )
 
 type EventUC struct {
@@ -20,6 +22,11 @@ func NewEventUC(eventRepo interfaces.EventInterfaces) *EventUC {
 
 func (rc *EventUC) Create(ctx context.Context, event *model.Event) (*model.Event, error) {
 	event.CreatedAt = time.Now()
+
+	owner := util.GetOwnerFromCtx(ctx)
+	if owner == nil {
+		return nil, errors.New("invalid owner")
+	}
 
 	return rc.eventRepo.Create(ctx, event)
 }
