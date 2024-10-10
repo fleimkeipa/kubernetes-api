@@ -111,12 +111,7 @@ func (rc *PodRepository) getByNameOrUID(ctx context.Context, namespace, nameOrUI
 func (rc *PodRepository) list(ctx context.Context, namespace string, opts model.ListOptions) (*corev1.PodList, error) {
 	listOpts := convertListOptsToKube(opts)
 
-	kubePods, err := rc.client.CoreV1().Pods(namespace).List(ctx, listOpts)
-	if err != nil {
-		return nil, err
-	}
-
-	return kubePods, nil
+	return rc.client.CoreV1().Pods(namespace).List(ctx, listOpts)
 }
 
 func (rc *PodRepository) overwriteOnKubePod(newPod *model.Pod, existPod *corev1.Pod) *corev1.Pod {
