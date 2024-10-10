@@ -5,6 +5,7 @@ import (
 
 	"github.com/fleimkeipa/kubernetes-api/model"
 	"github.com/fleimkeipa/kubernetes-api/repositories/interfaces"
+	"github.com/fleimkeipa/kubernetes-api/util"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -29,7 +30,7 @@ func (rc *NamespaceUC) Create(ctx context.Context, request model.NamespaceCreate
 	event := model.Event{
 		Category: model.NamespaceKind,
 		Type:     model.CreateEventKind,
-		Owner:    model.User{},
+		Owner:    util.GetOwnerFromCtx(ctx),
 	}
 	_, err := rc.eventUC.Create(ctx, &event)
 	if err != nil {
@@ -52,7 +53,7 @@ func (rc *NamespaceUC) Update(ctx context.Context, id string, request *model.Nam
 	event := model.Event{
 		Category: model.NamespaceKind,
 		Type:     model.UpdateEventKind,
-		Owner:    model.User{},
+		Owner:    util.GetOwnerFromCtx(ctx),
 	}
 	_, err = rc.eventUC.Create(ctx, &event)
 	if err != nil {
@@ -98,7 +99,7 @@ func (rc *NamespaceUC) Delete(ctx context.Context, name string, opts model.Delet
 	event := model.Event{
 		Category: model.NamespaceKind,
 		Type:     model.DeleteEventKind,
-		Owner:    model.User{},
+		Owner:    util.GetOwnerFromCtx(ctx),
 	}
 	_, err := rc.eventUC.Create(ctx, &event)
 	if err != nil {
