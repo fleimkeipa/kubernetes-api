@@ -3,15 +3,16 @@ package model
 import "time"
 
 const (
-	PodKind        = "pod"
-	DeploymentKind = "deployment"
-	NamespaceKind  = "namespace"
+	UserCategory       = "user"
+	PodCategory        = "pod"
+	DeploymentCategory = "deployment"
+	NamespaceCategory  = "namespace"
 )
 
 const (
-	CreateEventKind = "create"
-	UpdateEventKind = "update"
-	DeleteEventKind = "delete"
+	CreateEventType = "create"
+	UpdateEventType = "update"
+	DeleteEventType = "delete"
 )
 
 type Event struct {

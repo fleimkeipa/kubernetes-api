@@ -32,8 +32,8 @@ func (rc *DeploymentUC) Create(ctx context.Context, request *model.DeploymentCre
 	}
 
 	event := model.Event{
-		Category: model.DeploymentKind,
-		Type:     model.CreateEventKind,
+		Category: model.DeploymentCategory,
+		Type:     model.CreateEventType,
 	}
 	_, err := rc.eventUC.Create(ctx, &event)
 	if err != nil {
@@ -52,8 +52,8 @@ func (rc *DeploymentUC) Update(ctx context.Context, id, namespace string, reques
 	}
 
 	event := model.Event{
-		Category: model.DeploymentKind,
-		Type:     model.UpdateEventKind,
+		Category: model.DeploymentCategory,
+		Type:     model.UpdateEventType,
 	}
 	_, err = rc.eventUC.Create(ctx, &event)
 	if err != nil {
@@ -106,8 +106,8 @@ func (rc *DeploymentUC) Delete(ctx context.Context, namespace, name string, opts
 	}
 
 	event := model.Event{
-		Category: model.DeploymentKind,
-		Type:     model.DeleteEventKind,
+		Category: model.DeploymentCategory,
+		Type:     model.DeleteEventType,
 	}
 	_, err := rc.eventUC.Create(ctx, &event)
 	if err != nil {

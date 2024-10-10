@@ -31,8 +31,8 @@ func (rc *PodUC) Create(ctx context.Context, pod *model.Pod, opts model.CreateOp
 	}
 
 	event := model.Event{
-		Category: model.PodKind,
-		Type:     model.CreateEventKind,
+		Category: model.PodCategory,
+		Type:     model.CreateEventType,
 	}
 	_, err := rc.eventUC.Create(ctx, &event)
 	if err != nil {
@@ -51,8 +51,8 @@ func (rc *PodUC) Update(ctx context.Context, id string, request *model.PodsUpdat
 	}
 
 	event := model.Event{
-		Category: model.PodKind,
-		Type:     model.UpdateEventKind,
+		Category: model.PodCategory,
+		Type:     model.UpdateEventType,
 	}
 	_, err = rc.eventUC.Create(ctx, &event)
 	if err != nil {
@@ -105,8 +105,8 @@ func (rc *PodUC) Delete(ctx context.Context, namespace, name string, opts model.
 	}
 
 	event := model.Event{
-		Category: model.PodKind,
-		Type:     model.DeleteEventKind,
+		Category: model.PodCategory,
+		Type:     model.DeleteEventType,
 	}
 	_, err := rc.eventUC.Create(ctx, &event)
 	if err != nil {

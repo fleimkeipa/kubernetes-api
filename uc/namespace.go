@@ -27,8 +27,8 @@ func (rc *NamespaceUC) Create(ctx context.Context, request model.NamespaceCreate
 	request.Opts.TypeMeta.Kind = "namespace"
 
 	event := model.Event{
-		Category: model.NamespaceKind,
-		Type:     model.CreateEventKind,
+		Category: model.NamespaceCategory,
+		Type:     model.CreateEventType,
 	}
 	_, err := rc.eventUC.Create(ctx, &event)
 	if err != nil {
@@ -49,8 +49,8 @@ func (rc *NamespaceUC) Update(ctx context.Context, id string, request *model.Nam
 	request.Namespace.TypeMeta.Kind = "namespace"
 
 	event := model.Event{
-		Category: model.NamespaceKind,
-		Type:     model.UpdateEventKind,
+		Category: model.NamespaceCategory,
+		Type:     model.UpdateEventType,
 	}
 	_, err = rc.eventUC.Create(ctx, &event)
 	if err != nil {
@@ -94,8 +94,8 @@ func (rc *NamespaceUC) Delete(ctx context.Context, name string, opts model.Delet
 	opts.TypeMeta.Kind = "namespace"
 
 	event := model.Event{
-		Category: model.NamespaceKind,
-		Type:     model.DeleteEventKind,
+		Category: model.NamespaceCategory,
+		Type:     model.DeleteEventType,
 	}
 	_, err := rc.eventUC.Create(ctx, &event)
 	if err != nil {
