@@ -9,7 +9,6 @@ import (
 	"github.com/fleimkeipa/kubernetes-api/repositories"
 
 	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 )
 
@@ -22,12 +21,12 @@ func TestPodRepository_Create(t *testing.T) {
 	}
 	type args struct {
 		ctx  context.Context
-		pod  *corev1.Pod
+		pod  *model.Pod
 		opts model.CreateOptions
 	}
 	tests := []struct {
 		fields  fields
-		want    *corev1.Pod
+		want    *model.Pod
 		name    string
 		args    args
 		wantErr bool
@@ -39,34 +38,34 @@ func TestPodRepository_Create(t *testing.T) {
 			},
 			args: args{
 				ctx: context.TODO(),
-				pod: &corev1.Pod{
-					TypeMeta: metav1.TypeMeta{
+				pod: &model.Pod{
+					TypeMeta: model.TypeMeta{
 						Kind:       "pod",
 						APIVersion: "v1",
 					},
-					ObjectMeta: metav1.ObjectMeta{
+					ObjectMeta: model.ObjectMeta{
 						Name:      "pod1",
 						Namespace: "test",
 					},
-					Spec: corev1.PodSpec{
-						Containers: []corev1.Container{
+					Spec: model.PodSpec{
+						Containers: []model.Container{
 							{
 								Name:  "nginx",
 								Image: "nginx:latest",
 							},
 						},
 					},
-					Status: corev1.PodStatus{},
+					Status: model.PodStatus{},
 				},
 				opts: model.CreateOptions{},
 			},
-			want: &corev1.Pod{
-				TypeMeta: metav1.TypeMeta{},
-				ObjectMeta: metav1.ObjectMeta{
+			want: &model.Pod{
+				TypeMeta: model.TypeMeta{},
+				ObjectMeta: model.ObjectMeta{
 					Name: "pod1",
 				},
-				Spec:   corev1.PodSpec{},
-				Status: corev1.PodStatus{},
+				Spec:   model.PodSpec{},
+				Status: model.PodStatus{},
 			},
 			wantErr: false,
 		},

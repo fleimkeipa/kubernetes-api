@@ -24,11 +24,11 @@ type (
 		Containers                    []ContainerRequest `json:"containers"`
 		ActiveDeadlineSeconds         *int64             `json:"activeDeadlineSeconds,omitempty"`
 		TerminationGracePeriodSeconds *int64             `json:"terminationGracePeriodSeconds,omitempty"`
-		Tolerations                   []Toleration       `json:"tolerations,omitempty"`
+		Tolerations                   []Toleration       `json:"tolerations,omitempty"` // allow it to be set to 1 if it was previously negative
 	}
 
 	ContainerRequest struct {
-		Name  string `json:"name"`
+		Name  string `json:"name"` // cannot changable
 		Image string `json:"image,omitempty"`
 	}
 )

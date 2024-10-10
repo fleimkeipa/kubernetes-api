@@ -43,7 +43,7 @@ func (rc *PodHandler) Create(c echo.Context) error {
 		})
 	}
 
-	pod, err := rc.podsUC.Create(c.Request().Context(), &request.Pod, request.Opts)
+	pod, err := rc.podsUC.Create(c.Request().Context(), request)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, FailureResponse{
 			Error:   fmt.Sprintf("Failed to create pod: %v", err),
@@ -71,12 +71,15 @@ func (rc *PodHandler) Create(c echo.Context) error {
 //	@Produce		json
 //	@Param			Authorization	header		string					true	"Insert your access token"	default(Bearer <Add access token here>)
 //	@Param			pod				body		model.PodsUpdateRequest	true	"Pod update request body"
+//	@Param			namespace		query		string					false	"Namespace to filter the pod by"
+//	@Param			id				path		string					true	"Name or UID of the pod"
 //	@Success		200				{object}	SuccessResponse			"Pod successfully updated"
 //	@Failure		400				{object}	FailureResponse			"Bad request or invalid input data"
 //	@Failure		500				{object}	FailureResponse			"Interval error"
 //	@Router			/pods/{id} [put]
 func (rc *PodHandler) Update(c echo.Context) error {
 	id := c.Param("id")
+	namespace := c.QueryParam("namespace")
 
 	var request model.PodsUpdateRequest
 	if err := c.Bind(&request); err != nil {
@@ -86,7 +89,7 @@ func (rc *PodHandler) Update(c echo.Context) error {
 		})
 	}
 
-	pod, err := rc.podsUC.Update(c.Request().Context(), id, &request)
+	pod, err := rc.podsUC.Update(c.Request().Context(), namespace, id, &request)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, FailureResponse{
 			Error:   fmt.Sprintf("Failed to update pod: %v", err),
