@@ -79,9 +79,12 @@ func TestCreateUser(t *testing.T) {
 			rec := httptest.NewRecorder()
 			c := e.NewContext(req, rec)
 
+			eventRepo := repositories.NewEventRepository(test_db)
+			eventUC := uc.NewEventUC(eventRepo)
+
 			// create a new UserHandler
 			userRepo := repositories.NewUserRepository(test_db)
-			userUC := uc.NewUserUC(userRepo)
+			userUC := uc.NewUserUC(userRepo, eventUC)
 			userHandler := controller.NewUserHandlers(userUC)
 
 			// call the Create function

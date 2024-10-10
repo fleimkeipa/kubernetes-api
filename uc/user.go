@@ -9,11 +9,13 @@ import (
 
 type UserUC struct {
 	userRepo interfaces.UserInterfaces
+	eventUC  *EventUC
 }
 
-func NewUserUC(repo interfaces.UserInterfaces) *UserUC {
+func NewUserUC(repo interfaces.UserInterfaces, eventUC *EventUC) *UserUC {
 	return &UserUC{
 		userRepo: repo,
+		eventUC:  eventUC,
 	}
 }
 
@@ -23,6 +25,15 @@ func (rc *UserUC) Create(ctx context.Context, user model.User) (*model.User, err
 		return nil, err
 	}
 	user.Password = hashedPassword
+
+	event := model.Event{
+		Category: model.UserCategory,
+		Type:     model.CreateEventType,
+	}
+	_, err = rc.eventUC.Create(ctx, &event)
+	if err != nil {
+		return nil, err
+	}
 
 	return rc.userRepo.Create(ctx, user)
 }
@@ -35,6 +46,15 @@ func (rc *UserUC) Update(ctx context.Context, id string, user model.User) (*mode
 	}
 
 	user.ID = existUser.ID
+
+	event := model.Event{
+		Category: model.UserCategory,
+		Type:     model.UpdateEventType,
+	}
+	_, err = rc.eventUC.Create(ctx, &event)
+	if err != nil {
+		return nil, err
+	}
 
 	return rc.userRepo.Update(ctx, user)
 }
@@ -62,5 +82,14 @@ func (rc *UserUC) GetByUsernameOrEmail(ctx context.Context, usernameOrEmail stri
 }
 
 func (rc *UserUC) Delete(ctx context.Context, id string) error {
+	event := model.Event{
+		Category: model.UserCategory,
+		Type:     model.DeleteEventType,
+	}
+	_, err := rc.eventUC.Create(ctx, &event)
+	if err != nil {
+		return err
+	}
+
 	return rc.userRepo.Delete(ctx, id)
 }

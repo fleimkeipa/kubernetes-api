@@ -74,7 +74,7 @@ func serveApplication() {
 
 	// Create user handlers and related components
 	userRepo := repositories.NewUserRepository(dbClient)
-	userUC := uc.NewUserUC(userRepo)
+	userUC := uc.NewUserUC(userRepo, eventUC)
 	userHandlers := controller.NewUserHandlers(userUC)
 
 	// Create Auth handlers and related components
