@@ -12,6 +12,7 @@ type TypeMeta struct {
 }
 
 type ObjectMeta struct {
+	UID                        string            `json:"uid,omitempty"`
 	CreationTimestamp          time.Time         `json:"creationTimestamp,omitempty"`
 	DeletionTimestamp          *time.Time        `json:"deletionTimestamp,omitempty"`
 	DeletionGracePeriodSeconds *int64            `json:"deletionGracePeriodSeconds,omitempty"`
