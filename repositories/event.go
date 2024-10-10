@@ -87,16 +87,16 @@ func (rc *EventRepository) fillFields(opts *model.EventFindOpts) []string {
 func (rc *EventRepository) fillFilter(opts *model.EventFindOpts) string {
 	filter := ""
 
-	if opts.Kind.IsSended {
-		filter = addFilterClause(filter, "kind", opts.Kind.Value)
+	if opts.Category.IsSended {
+		filter = addFilterClause(filter, "category", opts.Category.Value)
 	}
 
-	if opts.EventKind.IsSended {
-		filter = addFilterClause(filter, "event_kind", opts.EventKind.Value)
+	if opts.Type.IsSended {
+		filter = addFilterClause(filter, "type", opts.Type.Value)
 	}
 
-	if opts.CreationTime.IsSended {
-		filter = addFilterClause(filter, "creation_time", opts.CreationTime.Value)
+	if opts.CreatedAt.IsSended {
+		filter = addFilterClause(filter, "created_at", opts.CreatedAt.Value)
 	}
 
 	if opts.OwnerID.IsSended {

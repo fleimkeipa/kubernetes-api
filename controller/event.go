@@ -38,7 +38,7 @@ func NewEventHandler(eventsUC *uc.EventUC) *EventHandler {
 //	@Router			/events [get]
 func (rc *EventHandler) List(c echo.Context) error {
 	// Extract filtering options from the query parameters
-	var opts = rc.getEventsFindOpts(c)
+	opts := rc.getEventsFindOpts(c)
 
 	// Attempt to retrieve the list of events
 	list, err := rc.eventsUC.List(c.Request().Context(), &opts)
@@ -69,7 +69,7 @@ func (rc *EventHandler) List(c echo.Context) error {
 //	@Failure		500				{object}	FailureResponse	"Interval error"
 //	@Router			/events/{id} [get]
 func (rc *EventHandler) GetByID(c echo.Context) error {
-	var nameOrUID = c.Param("id")
+	nameOrUID := c.Param("id")
 
 	event, err := rc.eventsUC.GetByID(c.Request().Context(), nameOrUID)
 	if err != nil {
@@ -88,9 +88,9 @@ func (rc *EventHandler) GetByID(c echo.Context) error {
 func (rc *EventHandler) getEventsFindOpts(c echo.Context) model.EventFindOpts {
 	return model.EventFindOpts{
 		PaginationOpts: getPagination(c),
-		Kind:           getFilter(c, "kind"),
-		EventKind:      getFilter(c, "event_kind"),
-		CreationTime:   getFilter(c, "creation_time"),
+		Category:       getFilter(c, "kind"),
+		Type:           getFilter(c, "event_kind"),
+		CreatedAt:      getFilter(c, "created_at"),
 		OwnerID:        getFilter(c, "owner_id"),
 		OwnerUsername:  getFilter(c, "owner_username"),
 	}

@@ -147,15 +147,15 @@ func TestEventRepository_List(t *testing.T) {
 				ctx: context.TODO(),
 				opts: &model.EventFindOpts{
 					PaginationOpts: model.PaginationOpts{},
-					Kind: model.Filter{
+					Category: model.Filter{
 						IsSended: true,
 						Value:    "namespace",
 					},
-					EventKind: model.Filter{
+					Type: model.Filter{
 						IsSended: true,
 						Value:    "update",
 					},
-					CreationTime:  model.Filter{},
+					CreatedAt:     model.Filter{},
 					OwnerID:       model.Filter{},
 					OwnerUsername: model.Filter{},
 				},

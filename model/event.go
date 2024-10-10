@@ -24,9 +24,9 @@ type Event struct {
 }
 
 type EventFindOpts struct {
-	Kind          Filter
-	EventKind     Filter
-	CreationTime  Filter
+	Category      Filter
+	Type          Filter
+	CreatedAt     Filter
 	OwnerID       Filter
 	OwnerUsername Filter
 	FieldsOpts
