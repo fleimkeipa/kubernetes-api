@@ -1,6 +1,7 @@
 package util
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -17,6 +18,8 @@ func JWTAuth(next echo.HandlerFunc) echo.HandlerFunc {
 			return c.JSON(http.StatusUnauthorized, echo.Map{"error": "Only Administrator is allowed to perform this action"})
 		}
 
+		setOwnerOnCtx(c)
+
 		return next(c)
 	}
 }
@@ -32,6 +35,20 @@ func JWTAuthViewer(next echo.HandlerFunc) echo.HandlerFunc {
 			return c.JSON(http.StatusUnauthorized, echo.Map{"error": "Only registered Viewers are allowed to perform this action"})
 		}
 
+		setOwnerOnCtx(c)
+
 		return next(c)
 	}
+}
+
+func setOwnerOnCtx(c echo.Context) error {
+	user, err := GetOwnerFromToken(c)
+	if err != nil {
+		return err
+	}
+
+	ctx := context.WithValue(c.Request().Context(), "user", user)
+
+	c.SetRequest(c.Request().WithContext(ctx))
+	return nil
 }
