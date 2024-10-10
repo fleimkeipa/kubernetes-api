@@ -20,7 +20,9 @@ func NewEventRepository(db *pg.DB) *EventRepository {
 }
 
 func (rc *EventRepository) Create(ctx context.Context, newEvent *model.Event) (*model.Event, error) {
-	_, err := rc.db.Model(newEvent).Insert()
+	q := rc.db.Model(newEvent)
+
+	_, err := q.Insert()
 	if err != nil {
 		return nil, fmt.Errorf("failed to create event (kind: [%s], event kind: [%s]): %v", newEvent.Category, newEvent.Type, err)
 	}
@@ -53,11 +55,15 @@ func (rc *EventRepository) List(ctx context.Context, opts *model.EventFindOpts) 
 func (rc *EventRepository) GetByID(ctx context.Context, id string) (*model.Event, error) {
 	var event model.Event
 
-	err := rc.db.
-		Model(event).
-		Where("id = ?", id).
-		Select()
-	if err != nil {
+	q := rc.db.Model(event)
+
+	if id == "0" || id == "" {
+		return nil, fmt.Errorf("invalid event id")
+	}
+
+	q = q.Where("id = ?", id)
+
+	if err := q.Select(); err != nil {
 		return nil, fmt.Errorf("failed to find event [%s] id: %w", id, err)
 	}
 

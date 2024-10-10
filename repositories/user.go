@@ -20,7 +20,9 @@ func NewUserRepository(db *pg.DB) *UserRepository {
 }
 
 func (rc *UserRepository) Create(ctx context.Context, newUser model.User) (*model.User, error) {
-	_, err := rc.db.Model(&newUser).Insert()
+	q := rc.db.Model(&newUser)
+
+	_, err := q.Insert()
 	if err != nil {
 		return nil, fmt.Errorf("failed to create user: %w", err)
 	}
@@ -29,7 +31,9 @@ func (rc *UserRepository) Create(ctx context.Context, newUser model.User) (*mode
 }
 
 func (rc *UserRepository) Update(ctx context.Context, updatedUser model.User) (*model.User, error) {
-	result, err := rc.db.Model(&updatedUser).WherePK().Update()
+	q := rc.db.Model(&updatedUser).WherePK()
+
+	result, err := q.Update()
 	if err != nil {
 		return nil, fmt.Errorf("failed to update user: %w", err)
 	}
@@ -55,8 +59,7 @@ func (rc *UserRepository) List(ctx context.Context, opts *model.UserFindOpts) ([
 
 	q = q.Limit(opts.Limit).Offset(opts.Skip)
 
-	err := q.Select()
-	if err != nil {
+	if err := q.Select(); err != nil {
 		return nil, fmt.Errorf("failed to list users: %w", err)
 	}
 
@@ -66,11 +69,15 @@ func (rc *UserRepository) List(ctx context.Context, opts *model.UserFindOpts) ([
 func (rc *UserRepository) GetByID(ctx context.Context, id string) (*model.User, error) {
 	var user model.User
 
-	err := rc.db.
-		Model(&user).
-		Where("id = ?", id).
-		Select()
-	if err != nil {
+	q := rc.db.Model(&user)
+
+	if id == "0" || id == "" {
+		return nil, fmt.Errorf("invalid user id")
+	}
+
+	q = q.Where("id = ?", id)
+
+	if err := q.Select(); err != nil {
 		return nil, fmt.Errorf("failed to find user by id [%s]: %w", id, err)
 	}
 
@@ -80,11 +87,15 @@ func (rc *UserRepository) GetByID(ctx context.Context, id string) (*model.User, 
 func (rc *UserRepository) GetByUsernameOrEmail(ctx context.Context, usernameOrEmail string) (*model.User, error) {
 	var user model.User
 
-	err := rc.db.
-		Model(&user).
-		Where("username = ? OR email = ?", usernameOrEmail, usernameOrEmail).
-		Select()
-	if err != nil {
+	q := rc.db.Model(&user)
+
+	if usernameOrEmail == "" {
+		return nil, fmt.Errorf("invalid username or email")
+	}
+
+	q = q.Where("username = ? OR email = ?", usernameOrEmail, usernameOrEmail)
+
+	if err := q.Select(); err != nil {
 		return nil, fmt.Errorf("failed to get user by [%s]: %w", usernameOrEmail, err)
 	}
 
