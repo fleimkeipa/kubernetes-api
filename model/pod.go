@@ -1,7 +1,7 @@
 package model
 
 import (
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"time"
 )
 
 type Pod struct {
@@ -48,8 +48,8 @@ type (
 	PodCondition struct {
 		Type               PodConditionType `json:"type"`
 		Status             ConditionStatus  `json:"status"`
-		LastProbeTime      metav1.Time      `json:"lastProbeTime,omitempty"`
-		LastTransitionTime metav1.Time      `json:"lastTransitionTime,omitempty"`
+		LastProbeTime      time.Time        `json:"lastProbeTime,omitempty"`
+		LastTransitionTime time.Time        `json:"lastTransitionTime,omitempty"`
 		Reason             string           `json:"reason,omitempty"`
 		Message            string           `json:"message,omitempty"`
 	}

@@ -194,8 +194,8 @@ func (rc *PodRepository) fillResponsePod(pod *corev1.Pod) *model.Pod {
 		conditions = append(conditions, model.PodCondition{
 			Type:               model.PodConditionType(v.Type),
 			Status:             model.ConditionStatus(v.Status),
-			LastProbeTime:      v.LastProbeTime,
-			LastTransitionTime: v.LastTransitionTime,
+			LastProbeTime:      v.LastProbeTime.Time,
+			LastTransitionTime: v.LastTransitionTime.Time,
 			Reason:             v.Reason,
 			Message:            v.Message,
 		})

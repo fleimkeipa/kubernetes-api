@@ -68,8 +68,8 @@ func convertPodConditionsToKube(conditions []model.PodCondition) []corev1.PodCon
 		kubeConditions = append(kubeConditions, corev1.PodCondition{
 			Type:               corev1.PodConditionType(condition.Type),
 			Status:             corev1.ConditionStatus(condition.Status),
-			LastProbeTime:      condition.LastProbeTime,
-			LastTransitionTime: condition.LastTransitionTime,
+			LastProbeTime:      metav1.Time{Time: condition.LastProbeTime},
+			LastTransitionTime: metav1.Time{Time: condition.LastTransitionTime},
 			Reason:             condition.Reason,
 			Message:            condition.Message,
 		})
