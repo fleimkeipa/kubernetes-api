@@ -44,7 +44,7 @@ func TestEventUC_List(t *testing.T) {
 					ticket: &model.Event{
 						Category: "pod",
 						Type:     "create",
-						Owner: model.User{
+						Owner: model.Owner{
 							ID:       1,
 							Username: "test_username",
 							Email:    "test@mail.com",
@@ -61,7 +61,7 @@ func TestEventUC_List(t *testing.T) {
 				{
 					Category: "pod",
 					Type:     "create",
-					Owner: model.User{
+					Owner: model.Owner{
 						ID:       1,
 						Username: "test_username",
 						Email:    "test@mail.com",

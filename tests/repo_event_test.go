@@ -45,7 +45,7 @@ func TestEventRepository_Create(t *testing.T) {
 					Category:  "pod",
 					Type:      "create",
 					CreatedAt: now,
-					Owner: model.User{
+					Owner: model.Owner{
 						ID:       1,
 						Username: "test_username",
 						Email:    "test@mail.com",
@@ -57,7 +57,7 @@ func TestEventRepository_Create(t *testing.T) {
 				Category:  "pod",
 				Type:      "create",
 				CreatedAt: now,
-				Owner: model.User{
+				Owner: model.Owner{
 					ID:       1,
 					Username: "test_username",
 					Email:    "test@mail.com",
@@ -78,7 +78,7 @@ func TestEventRepository_Create(t *testing.T) {
 					Category:  "namespace",
 					Type:      "create",
 					CreatedAt: now,
-					Owner: model.User{
+					Owner: model.Owner{
 						ID:       1,
 						Username: "test_username",
 						Email:    "test@mail.com",
@@ -90,7 +90,7 @@ func TestEventRepository_Create(t *testing.T) {
 				Category:  "namespace",
 				Type:      "create",
 				CreatedAt: now,
-				Owner: model.User{
+				Owner: model.Owner{
 					ID:       1,
 					Username: "test_username",
 					Email:    "test@mail.com",
@@ -164,7 +164,7 @@ func TestEventRepository_List(t *testing.T) {
 						Category:  "namespace",
 						Type:      "create",
 						CreatedAt: time.Now(),
-						Owner: model.User{
+						Owner: model.Owner{
 							ID:       1,
 							Username: "test_username",
 							Email:    "test@mail.com",
@@ -175,7 +175,7 @@ func TestEventRepository_List(t *testing.T) {
 						Category:  "pod",
 						Type:      "update",
 						CreatedAt: time.Now(),
-						Owner: model.User{
+						Owner: model.Owner{
 							ID:       1,
 							Username: "test_username",
 							Email:    "test@mail.com",
