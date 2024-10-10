@@ -66,7 +66,7 @@ func ValidateAdminRoleJWT(c echo.Context) error {
 		return errors.New("invalid token claims")
 	}
 
-	var userRole = uint(claims["role"].(float64))
+	userRole := uint(claims["role"].(float64))
 	if userRole == model.AdminRole {
 		return nil
 	}
@@ -90,7 +90,7 @@ func ValidateViewerRoleJWT(c echo.Context) error {
 		return errors.New("invalid token claims")
 	}
 
-	var userRole = uint(claims["role"].(float64))
+	userRole := uint(claims["role"].(float64))
 	if userRole == model.ViewerRole || userRole == model.AdminRole {
 		return nil
 	}
@@ -124,7 +124,7 @@ func GetUserIDOnToken(c echo.Context) (string, error) {
 
 // check token validity
 func getToken(context echo.Context) (*jwt.Token, error) {
-	var tokenString = getTokenFromRequest(context)
+	tokenString := getTokenFromRequest(context)
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
@@ -138,8 +138,8 @@ func getToken(context echo.Context) (*jwt.Token, error) {
 
 // extract token from request Authorization header
 func getTokenFromRequest(c echo.Context) string {
-	var bearerToken = c.Request().Header.Get("Authorization")
-	var splitToken = strings.Split(bearerToken, " ")
+	bearerToken := c.Request().Header.Get("Authorization")
+	splitToken := strings.Split(bearerToken, " ")
 	if len(splitToken) == 2 {
 		return splitToken[1]
 	}
