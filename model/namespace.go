@@ -15,6 +15,13 @@ type Namespace struct {
 	ObjectMeta `json:"metadata,omitempty"`
 }
 
+// NamespaceList is a list of Namespaces.
+type NamespaceList struct {
+	TypeMeta `json:",inline"`
+	ListMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
+	Items    []Namespace `json:"items" protobuf:"bytes,2,rep,name=items"`
+}
+
 // FinalizerName is the name identifying a finalizer during namespace lifecycle.
 type FinalizerName string
 

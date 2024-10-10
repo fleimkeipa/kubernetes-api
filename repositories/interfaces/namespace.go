@@ -4,13 +4,12 @@ import (
 	"context"
 
 	"github.com/fleimkeipa/kubernetes-api/model"
-
-	corev1 "k8s.io/api/core/v1"
 )
 
 type NamespaceInterfaces interface {
-	Create(ctx context.Context, namespace *corev1.Namespace, opts model.CreateOptions) (*corev1.Namespace, error)
-	Update(ctx context.Context, namespace *corev1.Namespace, opts model.UpdateOptions) (*corev1.Namespace, error)
-	List(ctx context.Context, opts model.ListOptions) (*corev1.NamespaceList, error)
+	Create(ctx context.Context, namespace *model.Namespace, opts model.CreateOptions) (*model.Namespace, error)
+	Update(ctx context.Context, namespace *model.Namespace, opts model.UpdateOptions) (*model.Namespace, error)
+	List(ctx context.Context, opts model.ListOptions) (*model.NamespaceList, error)
 	Delete(ctx context.Context, namespaceID string, opts model.DeleteOptions) error
+	GetByNameOrUID(ctx context.Context, nameOrUID string, opts model.ListOptions) (*model.Namespace, error)
 }
