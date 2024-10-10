@@ -43,7 +43,7 @@ func (rc *UserHandlers) CreateUser(c echo.Context) error {
 		})
 	}
 
-	var user = model.User{
+	user := model.User{
 		Username: input.Username,
 		Email:    input.Email,
 		Password: input.Password,
@@ -78,7 +78,7 @@ func (rc *UserHandlers) CreateUser(c echo.Context) error {
 //	@Failure		500				{object}	FailureResponse		"Interval error"
 //	@Router			/users/{id} [put]
 func (rc *UserHandlers) UpdateUser(c echo.Context) error {
-	var id = c.Param("id")
+	id := c.Param("id")
 	var input model.UserRequest
 
 	if err := c.Bind(&input); err != nil {
@@ -88,7 +88,7 @@ func (rc *UserHandlers) UpdateUser(c echo.Context) error {
 		})
 	}
 
-	var user = model.User{
+	user := model.User{
 		Username: input.Username,
 		Email:    input.Email,
 		Password: input.Password,
@@ -126,7 +126,7 @@ func (rc *UserHandlers) UpdateUser(c echo.Context) error {
 //	@Failure		500				{object}	FailureResponse	"Interval error"
 //	@Router			/users [get]
 func (rc *UserHandlers) List(c echo.Context) error {
-	var opts = rc.getUsersFindOpts(c, model.ZeroCreds)
+	opts := rc.getUsersFindOpts(c, model.ZeroCreds)
 
 	list, err := rc.userUC.List(c.Request().Context(), &opts)
 	if err != nil {
@@ -155,7 +155,7 @@ func (rc *UserHandlers) List(c echo.Context) error {
 //	@Failure		500				{object}	FailureResponse	"Internal server error"
 //	@Router			/users/{id} [get]
 func (rc *UserHandlers) GetByID(c echo.Context) error {
-	var id = c.Param("id") // Extract the user ID from the path parameters
+	id := c.Param("id") // Extract the user ID from the path parameters
 
 	user, err := rc.userUC.GetByID(c.Request().Context(), id)
 	if err != nil {
@@ -186,7 +186,7 @@ func (rc *UserHandlers) GetByID(c echo.Context) error {
 //	@Failure		500				{object}	FailureResponse	"Interval error"
 //	@Router			/users/{id} [delete]
 func (rc *UserHandlers) DeleteUser(c echo.Context) error {
-	var id = c.Param("id")
+	id := c.Param("id")
 
 	if err := rc.userUC.Delete(c.Request().Context(), id); err != nil {
 		return c.JSON(http.StatusInternalServerError, FailureResponse{
