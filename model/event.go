@@ -19,7 +19,7 @@ type Event struct {
 	DeletedAt time.Time `json:"deleted_at" pg:",soft_delete"`
 	Type      string    `json:"type"`
 	Category  string    `json:"category"`
-	Owner     User      `json:"owner" pg:"rel:has-one"`
+	Owner     Owner     `json:"owner" pg:"rel:has-one"`
 }
 
 type EventFindOpts struct {
