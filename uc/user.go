@@ -2,6 +2,7 @@ package uc
 
 import (
 	"context"
+	"time"
 
 	"github.com/fleimkeipa/kubernetes-api/model"
 	"github.com/fleimkeipa/kubernetes-api/repositories/interfaces"
@@ -34,6 +35,8 @@ func (rc *UserUC) Create(ctx context.Context, user model.User) (*model.User, err
 	if err != nil {
 		return nil, err
 	}
+
+	user.CreatedAt = time.Now()
 
 	return rc.userRepo.Create(ctx, user)
 }
