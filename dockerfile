@@ -1,15 +1,37 @@
-FROM golang:1.22.3
+# Stage 1: Install dependencies
+FROM golang:1.23.1-bookworm AS deps
 
 WORKDIR /app
 
+COPY go.mod go.sum ./
+
+RUN go mod download
+
+# Stage 2: Build the application
+FROM golang:1.23.1-bookworm AS builder
+
+WORKDIR /app
+
+COPY --from=deps /go/pkg /go/pkg
 COPY . .
 
-# Utilize cache and avoid re-downloading if no changes are detected
-RUN go mod download
-RUN go mod verify
+RUN go build -ldflags="-w -s" -o main .
 
-RUN go build -o /kubernetes-app ./main.go
+# Final stage: Run the application
+FROM debian:bookworm-slim
 
-EXPOSE 8080
+WORKDIR /app
 
-CMD ["/kubernetes-app"]
+# Create a non-root user and group
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+
+# Copy the built application
+COPY --from=builder /app/main .
+
+# Change ownership of the application binary
+RUN chown appuser:appuser /app/main
+
+# Switch to the non-root user
+USER appuser
+
+CMD ["./main"]
