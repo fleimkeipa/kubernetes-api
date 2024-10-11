@@ -12,10 +12,10 @@ type TypeMeta struct {
 // ListMeta describes metadata that synthetic resources must have, including lists and
 // various status objects. A resource may have only one of {ObjectMeta, ListMeta}.
 type ListMeta struct {
-	SelfLink           string `json:"selfLink,omitempty"`
+	RemainingItemCount *int64 `json:"remainingItemCount,omitempty"`
 	ResourceVersion    string `json:"resourceVersion,omitempty"`
 	Continue           string `json:"continue,omitempty"`
-	RemainingItemCount *int64 `json:"remainingItemCount,omitempty"`
+	SelfLink           string `json:"selfLink,omitempty"`
 }
 
 type ObjectMeta struct {

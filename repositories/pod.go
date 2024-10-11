@@ -63,7 +63,11 @@ func (rc *PodRepository) List(ctx context.Context, namespace string, opts model.
 		podList.Items = append(podList.Items, *rc.fillResponsePod(&kubePod))
 	}
 
-	podList.ListMeta = model.ListMeta(kubePods.ListMeta)
+	podList.ListMeta = model.ListMeta{
+		RemainingItemCount: kubePods.ListMeta.RemainingItemCount,
+		ResourceVersion:    kubePods.ListMeta.ResourceVersion,
+		Continue:           kubePods.ListMeta.Continue,
+	}
 	podList.TypeMeta = model.TypeMeta(kubePods.TypeMeta)
 
 	return &podList, nil

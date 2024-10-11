@@ -65,7 +65,11 @@ func (rc *NamespaceRepository) List(ctx context.Context, opts model.ListOptions)
 		namespaceList.Items = append(namespaceList.Items, *rc.fillResponseNamespace(&kubeNamespace))
 	}
 
-	namespaceList.ListMeta = model.ListMeta(kubeNamespaces.ListMeta)
+	namespaceList.ListMeta = model.ListMeta{
+		RemainingItemCount: kubeNamespaces.ListMeta.RemainingItemCount,
+		ResourceVersion:    kubeNamespaces.ListMeta.ResourceVersion,
+		Continue:           kubeNamespaces.ListMeta.Continue,
+	}
 	namespaceList.TypeMeta = model.TypeMeta(kubeNamespaces.TypeMeta)
 
 	return &namespaceList, nil

@@ -23,9 +23,9 @@ type (
 
 	DeploymentSpecUpdateRequest struct {
 		Replicas                *int32             `json:"replicas,omitempty"`
-		Template                PodTemplateSpec    `json:"template"`
-		Strategy                DeploymentStrategy `json:"strategy,omitempty"`
-		MinReadySeconds         int32              `json:"minReadySeconds,omitempty"`
 		ProgressDeadlineSeconds *int32             `json:"progressDeadlineSeconds,omitempty"`
+		Strategy                DeploymentStrategy `json:"strategy,omitempty"`
+		Template                PodTemplateSpec    `json:"template"`
+		MinReadySeconds         int32              `json:"minReadySeconds,omitempty"`
 	}
 )

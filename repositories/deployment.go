@@ -64,7 +64,11 @@ func (rc *DeploymentRepository) List(ctx context.Context, namespace string, opts
 		deploymentList.Items = append(deploymentList.Items, *rc.fillResponseDeployment(&deployment))
 	}
 
-	deploymentList.ListMeta = model.ListMeta(kubeDeployments.ListMeta)
+	deploymentList.ListMeta = model.ListMeta{
+		RemainingItemCount: kubeDeployments.ListMeta.RemainingItemCount,
+		ResourceVersion:    kubeDeployments.ListMeta.ResourceVersion,
+		Continue:           kubeDeployments.ListMeta.Continue,
+	}
 	deploymentList.TypeMeta = model.TypeMeta(kubeDeployments.TypeMeta)
 
 	return &deploymentList, nil
