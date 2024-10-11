@@ -14,9 +14,7 @@ type (
 	}
 
 	PodUpdate struct {
-		ID        string
-		Namespace string
-		Spec      SpecRequest `json:"spec,omitempty"`
+		Spec SpecRequest `json:"spec,omitempty"`
 	}
 
 	SpecRequest struct {
