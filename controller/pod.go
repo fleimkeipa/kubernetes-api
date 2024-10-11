@@ -106,11 +106,13 @@ func (rc *PodHandler) Update(c echo.Context) error {
 // List godoc
 //
 //	@Summary		List pods
-//	@Description	Retrieves a list of pods from the Kubernetes cluster, optionally filtered by namespace.
+//	@Description	Retrieves a list of pods from the Kubernetes cluster. You can filter results by namespace or paginate the response using the limit and continue parameters.
 //	@Tags			pods
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string			true	"Insert your access token"	default(Bearer <Add access token here>)
+//	@Param			limit			query		string			false	"Maximum number of pods to retrieve"
+//	@Param			continue		query		string			false	"Pagination token for fetching more pods"
 //	@Param			namespace		query		string			false	"Namespace to filter pods by"
 //	@Success		200				{object}	SuccessResponse	"List of pods"
 //	@Failure		500				{object}	FailureResponse	"Interval error"
@@ -118,7 +120,7 @@ func (rc *PodHandler) Update(c echo.Context) error {
 func (rc *PodHandler) List(c echo.Context) error {
 	namespace := c.QueryParam("namespace")
 
-	opts := model.ListOptions{}
+	opts := getKubeListOpts(c)
 
 	list, err := rc.podsUC.List(c.Request().Context(), namespace, opts)
 	if err != nil {

@@ -103,11 +103,14 @@ func (rc *NamespaceHandler) Update(c echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string			true	"Insert your access token"	default(Bearer <Add access token here>)
+//	@Param			limit			query		string			false	"Maximum number of namespaces to retrieve"
+//	@Param			continue		query		string			false	"Pagination token for fetching more namespaces"
 //	@Success		200				{object}	SuccessResponse	"List of namespaces"
 //	@Failure		500				{object}	FailureResponse	"Bad request or error message"
 //	@Router			/namespaces [get]
 func (rc *NamespaceHandler) List(c echo.Context) error {
-	opts := model.ListOptions{}
+	opts := getKubeListOpts(c)
+
 	list, err := rc.namespaceUC.List(c.Request().Context(), opts)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, FailureResponse{

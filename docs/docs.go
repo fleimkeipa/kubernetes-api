@@ -227,6 +227,18 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "Maximum number of deployments to retrieve",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Pagination token for fetching more deployments",
+                        "name": "continue",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "Namespace to filter deployments by",
                         "name": "namespace",
                         "in": "query"
@@ -593,6 +605,18 @@ const docTemplate = `{
                         "name": "Authorization",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Maximum number of namespaces to retrieve",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Pagination token for fetching more namespaces",
+                        "name": "continue",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -807,7 +831,7 @@ const docTemplate = `{
         },
         "/pods": {
             "get": {
-                "description": "Retrieves a list of pods from the Kubernetes cluster, optionally filtered by namespace.",
+                "description": "Retrieves a list of pods from the Kubernetes cluster. You can filter results by namespace or paginate the response using the limit and continue parameters.",
                 "consumes": [
                     "application/json"
                 ],
@@ -826,6 +850,18 @@ const docTemplate = `{
                         "name": "Authorization",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Maximum number of pods to retrieve",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Pagination token for fetching more pods",
+                        "name": "continue",
+                        "in": "query"
                     },
                     {
                         "type": "string",

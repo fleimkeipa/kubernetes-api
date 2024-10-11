@@ -831,6 +831,14 @@ paths:
         name: Authorization
         required: true
         type: string
+      - description: Maximum number of deployments to retrieve
+        in: query
+        name: limit
+        type: string
+      - description: Pagination token for fetching more deployments
+        in: query
+        name: continue
+        type: string
       - description: Namespace to filter deployments by
         in: query
         name: namespace
@@ -1082,6 +1090,14 @@ paths:
         name: Authorization
         required: true
         type: string
+      - description: Maximum number of namespaces to retrieve
+        in: query
+        name: limit
+        type: string
+      - description: Pagination token for fetching more namespaces
+        in: query
+        name: continue
+        type: string
       produces:
       - application/json
       responses:
@@ -1233,14 +1249,23 @@ paths:
     get:
       consumes:
       - application/json
-      description: Retrieves a list of pods from the Kubernetes cluster, optionally
-        filtered by namespace.
+      description: Retrieves a list of pods from the Kubernetes cluster. You can filter
+        results by namespace or paginate the response using the limit and continue
+        parameters.
       parameters:
       - default: Bearer <Add access token here>
         description: Insert your access token
         in: header
         name: Authorization
         required: true
+        type: string
+      - description: Maximum number of pods to retrieve
+        in: query
+        name: limit
+        type: string
+      - description: Pagination token for fetching more pods
+        in: query
+        name: continue
         type: string
       - description: Namespace to filter pods by
         in: query

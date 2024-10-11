@@ -26,8 +26,8 @@ type AuthResponse struct {
 }
 
 func getPagination(c echo.Context) model.PaginationOpts {
-	var limitQuery = c.QueryParam("limit")
-	var skipQuery = c.QueryParam("skip")
+	limitQuery := c.QueryParam("limit")
+	skipQuery := c.QueryParam("skip")
 
 	limit, _ := strconv.Atoi(limitQuery)
 
@@ -40,7 +40,7 @@ func getPagination(c echo.Context) model.PaginationOpts {
 }
 
 func getFilter(c echo.Context, query string) model.Filter {
-	var param = c.QueryParam(query)
+	param := c.QueryParam(query)
 	if param == "" {
 		return model.Filter{}
 	}
@@ -48,5 +48,18 @@ func getFilter(c echo.Context, query string) model.Filter {
 	return model.Filter{
 		IsSended: true,
 		Value:    param,
+	}
+}
+
+func getKubeListOpts(c echo.Context) model.ListOptions {
+	limitQuery := c.QueryParam("limit")
+
+	continueQuery := c.QueryParam("continue")
+
+	limit, _ := strconv.Atoi(limitQuery)
+
+	return model.ListOptions{
+		Continue: continueQuery,
+		Limit:    int64(limit),
 	}
 }

@@ -105,6 +105,8 @@ func (rc *DeploymentHandler) Update(c echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string			true	"Insert your access token"	default(Bearer <Add access token here>)
+//	@Param			limit			query		string			false	"Maximum number of deployments to retrieve"
+//	@Param			continue		query		string			false	"Pagination token for fetching more deployments"
 //	@Param			namespace		query		string			false	"Namespace to filter deployments by"
 //	@Success		200				{object}	SuccessResponse	"List of deployments"
 //	@Failure		500				{object}	FailureResponse	"Interval error"
@@ -112,7 +114,7 @@ func (rc *DeploymentHandler) Update(c echo.Context) error {
 func (rc *DeploymentHandler) List(c echo.Context) error {
 	namespace := c.QueryParam("namespace")
 
-	opts := model.ListOptions{}
+	opts := getKubeListOpts(c)
 
 	list, err := rc.deploymentUC.List(c.Request().Context(), namespace, opts)
 	if err != nil {
