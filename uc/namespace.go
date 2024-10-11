@@ -60,8 +60,6 @@ func (rc *NamespaceUC) GetByNameOrUID(ctx context.Context, nameOrUID string, opt
 }
 
 func (rc *NamespaceUC) Delete(ctx context.Context, name string, opts model.DeleteOptions) error {
-	opts.TypeMeta.Kind = "namespace"
-
 	event := model.Event{
 		Category: model.NamespaceCategory,
 		Type:     model.DeleteEventType,

@@ -63,32 +63,10 @@ func (rc *DeploymentUC) List(ctx context.Context, namespace string, opts model.L
 }
 
 func (rc *DeploymentUC) GetByNameOrUID(ctx context.Context, namespace, nameOrUID string, opts model.ListOptions) (*model.Deployment, error) {
-	opts.TypeMeta.Kind = "deployment"
-	if namespace == "" {
-		namespace = "default"
-	}
-
-	opts.Limit = 100
-	deployments, err := rc.deploymentRepo.List(ctx, namespace, opts)
-	if err != nil {
-		return nil, err
-	}
-
-	for _, v := range deployments.Items {
-		if v.Name == nameOrUID || v.UID == nameOrUID {
-			return &v, nil
-		}
-	}
-
-	if deployments.ListMeta.Continue == "" {
-		return &model.Deployment{}, nil
-	}
-
-	opts.Continue = deployments.ListMeta.Continue
-	return rc.GetByNameOrUID(ctx, namespace, nameOrUID, opts)
+	return rc.deploymentRepo.GetByNameOrUID(ctx, namespace, nameOrUID, opts)
 }
 
-func (rc *DeploymentUC) Delete(ctx context.Context, namespace, name string, opts model.DeleteOptions) error {
+func (rc *DeploymentUC) Delete(ctx context.Context, namespace, nameOrUID string, opts model.DeleteOptions) error {
 	opts.TypeMeta.Kind = "deployment"
 	if namespace == "" {
 		namespace = "default"
@@ -103,7 +81,7 @@ func (rc *DeploymentUC) Delete(ctx context.Context, namespace, name string, opts
 		return err
 	}
 
-	return rc.deploymentRepo.Delete(ctx, namespace, name, opts)
+	return rc.deploymentRepo.Delete(ctx, namespace, nameOrUID, opts)
 }
 
 func (rc *DeploymentUC) fillDeployment(request *model.DeploymentUpdateRequest) *model.Deployment {

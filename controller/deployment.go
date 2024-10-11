@@ -180,7 +180,11 @@ func (rc *DeploymentHandler) Delete(c echo.Context) error {
 	namespace := c.QueryParam("namespace")
 	nameOrUID := c.Param("id")
 
-	opts := model.DeleteOptions{}
+	opts := model.DeleteOptions{
+		Preconditions: &model.Preconditions{
+			UID: &nameOrUID,
+		},
+	}
 
 	if err := rc.deploymentUC.Delete(c.Request().Context(), namespace, nameOrUID, opts); err != nil {
 		return c.JSON(http.StatusInternalServerError, FailureResponse{

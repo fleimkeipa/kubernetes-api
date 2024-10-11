@@ -3,6 +3,7 @@ package repositories
 import (
 	"github.com/fleimkeipa/kubernetes-api/model"
 
+	"github.com/google/uuid"
 	v1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -181,24 +182,28 @@ func convertDeleteOptsToKube(opts model.DeleteOptions) metav1.DeleteOptions {
 		gracePeriodSeconds = opts.GracePeriodSeconds
 	}
 
-	preconditions := new(model.Preconditions)
-	var uid types.UID
-	if opts.Preconditions != nil {
-		preconditions = opts.Preconditions
-		uid = types.UID(*preconditions.UID)
-	}
-
 	metaOpts := metav1.DeleteOptions{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       opts.TypeMeta.Kind,
 			APIVersion: opts.TypeMeta.APIVersion,
 		},
 		GracePeriodSeconds: gracePeriodSeconds,
-		Preconditions: &metav1.Preconditions{
-			UID:             &uid,
-			ResourceVersion: preconditions.ResourceVersion,
-		},
-		DryRun: opts.DryRun,
+		DryRun:             opts.DryRun,
+	}
+
+	if opts.Preconditions == nil || opts.Preconditions.UID == nil {
+		return metaOpts
+	}
+
+	uidStr := *opts.Preconditions.UID
+	if err := uuid.Validate(string(uidStr)); err != nil {
+		return metaOpts
+	}
+
+	opts.Preconditions.UID = &uidStr
+	uidTypes := types.UID(uidStr)
+	metaOpts.Preconditions = &metav1.Preconditions{
+		UID: &uidTypes,
 	}
 
 	return metaOpts

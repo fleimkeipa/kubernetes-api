@@ -74,10 +74,14 @@ func (rc *DeploymentRepository) List(ctx context.Context, namespace string, opts
 	return &deploymentList, nil
 }
 
-func (rc *DeploymentRepository) Delete(ctx context.Context, namespace, name string, opts model.DeleteOptions) error {
+func (rc *DeploymentRepository) Delete(ctx context.Context, namespace, nameOrUID string, opts model.DeleteOptions) error {
 	metaOpts := convertDeleteOptsToKube(opts)
 
-	return rc.client.AppsV1().Deployments(namespace).Delete(ctx, name, metaOpts)
+	if metaOpts.Preconditions != nil && metaOpts.Preconditions.UID != nil {
+		return rc.client.AppsV1().Deployments(namespace).DeleteCollection(ctx, metaOpts, metav1.ListOptions{})
+	}
+
+	return rc.client.AppsV1().Deployments(namespace).Delete(ctx, nameOrUID, metaOpts)
 }
 
 func (rc *DeploymentRepository) GetByNameOrUID(ctx context.Context, namespace, nameOrUID string, opts model.ListOptions) (*model.Deployment, error) {
