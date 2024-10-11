@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"time"
 
 	"github.com/fleimkeipa/kubernetes-api/model"
 
@@ -169,19 +170,38 @@ func (rc *NamespaceRepository) fillResponseNamespace(namespace *corev1.Namespace
 		finalizers = append(finalizers, model.FinalizerName(v))
 	}
 
+	ownerReferences := make([]model.OwnerReference, 0, len(namespace.OwnerReferences))
+	for _, v := range namespace.OwnerReferences {
+		ownerReferences = append(ownerReferences, model.OwnerReference{
+			Controller:         v.Controller,
+			BlockOwnerDeletion: v.BlockOwnerDeletion,
+			APIVersion:         v.APIVersion,
+			Kind:               v.Kind,
+			Name:               v.Name,
+		})
+	}
+
+	deletionTimestamp := new(time.Time)
+	if deletionTime := namespace.DeletionTimestamp; deletionTime != nil {
+		deletionTimestamp = &deletionTime.Time
+	}
+
 	return &model.Namespace{
 		TypeMeta: model.TypeMeta(namespace.TypeMeta),
 		ObjectMeta: model.ObjectMeta{
 			UID:                        string(namespace.UID),
+			CreationTimestamp:          namespace.CreationTimestamp.Time,
+			DeletionTimestamp:          deletionTimestamp,
+			DeletionGracePeriodSeconds: namespace.DeletionGracePeriodSeconds,
+			Labels:                     namespace.Labels,
+			Annotations:                namespace.Annotations,
 			Name:                       namespace.Name,
 			GenerateName:               namespace.GenerateName,
 			Namespace:                  namespace.Namespace,
 			ResourceVersion:            namespace.ResourceVersion,
-			Generation:                 namespace.Generation,
-			DeletionGracePeriodSeconds: namespace.DeletionGracePeriodSeconds,
-			Labels:                     namespace.Labels,
-			Annotations:                namespace.Annotations,
+			OwnerReferences:            ownerReferences,
 			Finalizers:                 namespace.Finalizers,
+			Generation:                 namespace.Generation,
 		},
 		Spec: model.NamespaceSpec{
 			Finalizers: finalizers,

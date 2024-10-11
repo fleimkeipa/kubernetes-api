@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"time"
 
 	"github.com/fleimkeipa/kubernetes-api/model"
 
@@ -222,9 +223,9 @@ func fillSelector(newDeployment *model.Deployment) metav1.LabelSelector {
 	return selector
 }
 
-func (rc *DeploymentRepository) fillResponseDeployment(newDeployment *v1.Deployment) *model.Deployment {
+func (rc *DeploymentRepository) fillResponseDeployment(deployment *v1.Deployment) *model.Deployment {
 	matchExpressions := make([]model.LabelSelectorRequirement, 0)
-	for _, v := range newDeployment.Spec.Selector.MatchExpressions {
+	for _, v := range deployment.Spec.Selector.MatchExpressions {
 		matchExpressions = append(matchExpressions, model.LabelSelectorRequirement{
 			Key:      v.Key,
 			Operator: model.LabelSelectorOperator(v.Operator),
@@ -232,12 +233,12 @@ func (rc *DeploymentRepository) fillResponseDeployment(newDeployment *v1.Deploym
 		})
 	}
 	selector := model.LabelSelector{
-		MatchLabels:      newDeployment.Spec.Selector.MatchLabels,
+		MatchLabels:      deployment.Spec.Selector.MatchLabels,
 		MatchExpressions: matchExpressions,
 	}
 
 	conditions := make([]model.DeploymentCondition, 0)
-	for _, v := range newDeployment.Status.Conditions {
+	for _, v := range deployment.Status.Conditions {
 		conditions = append(conditions, model.DeploymentCondition{
 			Type:               model.DeploymentConditionType(v.Type),
 			Status:             model.ConditionStatus(v.Status),
@@ -248,41 +249,60 @@ func (rc *DeploymentRepository) fillResponseDeployment(newDeployment *v1.Deploym
 		})
 	}
 
+	ownerReferences := make([]model.OwnerReference, 0, len(deployment.OwnerReferences))
+	for _, v := range deployment.OwnerReferences {
+		ownerReferences = append(ownerReferences, model.OwnerReference{
+			Controller:         v.Controller,
+			BlockOwnerDeletion: v.BlockOwnerDeletion,
+			APIVersion:         v.APIVersion,
+			Kind:               v.Kind,
+			Name:               v.Name,
+		})
+	}
+
+	deletionTimestamp := new(time.Time)
+	if deletionTime := deployment.DeletionTimestamp; deletionTime != nil {
+		deletionTimestamp = &deletionTime.Time
+	}
+
 	return &model.Deployment{
-		TypeMeta: model.TypeMeta(newDeployment.TypeMeta),
+		TypeMeta: model.TypeMeta(deployment.TypeMeta),
 		ObjectMeta: model.ObjectMeta{
-			UID:                        string(newDeployment.UID),
-			Name:                       newDeployment.ObjectMeta.Name,
-			GenerateName:               newDeployment.ObjectMeta.GenerateName,
-			Namespace:                  newDeployment.ObjectMeta.Namespace,
-			ResourceVersion:            newDeployment.ObjectMeta.ResourceVersion,
-			Generation:                 newDeployment.ObjectMeta.Generation,
-			DeletionGracePeriodSeconds: newDeployment.ObjectMeta.DeletionGracePeriodSeconds,
-			Labels:                     newDeployment.ObjectMeta.Labels,
-			Annotations:                newDeployment.ObjectMeta.Annotations,
-			Finalizers:                 newDeployment.ObjectMeta.Finalizers,
+			UID:                        string(deployment.UID),
+			CreationTimestamp:          deployment.CreationTimestamp.Time,
+			DeletionTimestamp:          deletionTimestamp,
+			DeletionGracePeriodSeconds: deployment.ObjectMeta.DeletionGracePeriodSeconds,
+			Labels:                     deployment.ObjectMeta.Labels,
+			Annotations:                deployment.ObjectMeta.Annotations,
+			Name:                       deployment.ObjectMeta.Name,
+			GenerateName:               deployment.ObjectMeta.GenerateName,
+			Namespace:                  deployment.ObjectMeta.Namespace,
+			ResourceVersion:            deployment.ObjectMeta.ResourceVersion,
+			OwnerReferences:            ownerReferences,
+			Finalizers:                 deployment.ObjectMeta.Finalizers,
+			Generation:                 deployment.ObjectMeta.Generation,
 		},
 		Spec: model.DeploymentSpec{
-			Replicas: newDeployment.Spec.Replicas,
+			Replicas: deployment.Spec.Replicas,
 			Selector: &selector,
 			Strategy: model.DeploymentStrategy{
-				Type: model.DeploymentStrategyType(newDeployment.Spec.Strategy.Type),
+				Type: model.DeploymentStrategyType(deployment.Spec.Strategy.Type),
 				// RollingUpdate: (*model.RollingUpdateDeployment)(newDeployment.Spec.Strategy.RollingUpdate),
 			},
-			MinReadySeconds:         newDeployment.Spec.MinReadySeconds,
-			RevisionHistoryLimit:    newDeployment.Spec.RevisionHistoryLimit,
-			Paused:                  newDeployment.Spec.Paused,
-			ProgressDeadlineSeconds: newDeployment.Spec.ProgressDeadlineSeconds,
+			MinReadySeconds:         deployment.Spec.MinReadySeconds,
+			RevisionHistoryLimit:    deployment.Spec.RevisionHistoryLimit,
+			Paused:                  deployment.Spec.Paused,
+			ProgressDeadlineSeconds: deployment.Spec.ProgressDeadlineSeconds,
 		},
 		Status: model.DeploymentStatus{
-			ObservedGeneration:  newDeployment.Status.ObservedGeneration,
-			Replicas:            newDeployment.Status.Replicas,
-			UpdatedReplicas:     newDeployment.Status.UpdatedReplicas,
-			ReadyReplicas:       newDeployment.Status.ReadyReplicas,
-			AvailableReplicas:   newDeployment.Status.AvailableReplicas,
-			UnavailableReplicas: newDeployment.Status.UnavailableReplicas,
+			ObservedGeneration:  deployment.Status.ObservedGeneration,
+			Replicas:            deployment.Status.Replicas,
+			UpdatedReplicas:     deployment.Status.UpdatedReplicas,
+			ReadyReplicas:       deployment.Status.ReadyReplicas,
+			AvailableReplicas:   deployment.Status.AvailableReplicas,
+			UnavailableReplicas: deployment.Status.UnavailableReplicas,
 			Conditions:          conditions,
-			CollisionCount:      newDeployment.Status.CollisionCount,
+			CollisionCount:      deployment.Status.CollisionCount,
 		},
 	}
 }
