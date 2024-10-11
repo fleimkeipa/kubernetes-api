@@ -36,10 +36,10 @@ func (rc *NamespaceRepository) Create(ctx context.Context, namespace *model.Name
 	return rc.fillResponseNamespace(createdNamespace), nil
 }
 
-func (rc *NamespaceRepository) Update(ctx context.Context, namespace *model.Namespace, opts model.UpdateOptions) (*model.Namespace, error) {
+func (rc *NamespaceRepository) Update(ctx context.Context, nameOrUID string, namespace *model.Namespace, opts model.UpdateOptions) (*model.Namespace, error) {
 	metaOpts := convertUpdateOptsToKube(opts)
 
-	existNamespace, err := rc.getByNameOrUID(ctx, namespace.Name, model.ListOptions{})
+	existNamespace, err := rc.getByNameOrUID(ctx, nameOrUID, model.ListOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -215,10 +215,10 @@ func (rc *NamespaceRepository) fillResponseNamespace(namespace *corev1.Namespace
 }
 
 func (rc *NamespaceRepository) overwriteOnKubeNamespace(newNamespace *model.Namespace, existNamespace *corev1.Namespace) *corev1.Namespace {
-	existNamespace.Name = newNamespace.Namespace
+	existNamespace.Finalizers = newNamespace.Finalizers
 
-	existNamespace.Kind = "namespace"
-	existNamespace.APIVersion = "v1"
+	existNamespace.Labels = newNamespace.Labels
+	existNamespace.Annotations = newNamespace.Annotations
 
 	return existNamespace
 }

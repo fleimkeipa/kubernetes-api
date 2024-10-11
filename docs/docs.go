@@ -1950,6 +1950,23 @@ const docTemplate = `{
                 }
             }
         },
+        "model.NamespaceObjectMetaUpdateRequest": {
+            "type": "object",
+            "properties": {
+                "annotations": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "labels": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "model.NamespacePhase": {
             "type": "string",
             "enum": [
@@ -1993,11 +2010,22 @@ const docTemplate = `{
                 }
             }
         },
+        "model.NamespaceUpdate": {
+            "type": "object",
+            "properties": {
+                "metadata": {
+                    "$ref": "#/definitions/model.NamespaceObjectMetaUpdateRequest"
+                },
+                "spec": {
+                    "$ref": "#/definitions/model.NamespaceSpec"
+                }
+            }
+        },
         "model.NamespaceUpdateRequest": {
             "type": "object",
             "properties": {
                 "namespace": {
-                    "$ref": "#/definitions/model.Namespace"
+                    "$ref": "#/definitions/model.NamespaceUpdate"
                 },
                 "opts": {
                     "$ref": "#/definitions/model.UpdateOptions"

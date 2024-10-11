@@ -462,6 +462,17 @@ definitions:
       opts:
         $ref: '#/definitions/model.CreateOptions'
     type: object
+  model.NamespaceObjectMetaUpdateRequest:
+    properties:
+      annotations:
+        additionalProperties:
+          type: string
+        type: object
+      labels:
+        additionalProperties:
+          type: string
+        type: object
+    type: object
   model.NamespacePhase:
     enum:
     - Active
@@ -495,10 +506,17 @@ definitions:
           Phase is the current lifecycle phase of the namespace.
           +optional
     type: object
+  model.NamespaceUpdate:
+    properties:
+      metadata:
+        $ref: '#/definitions/model.NamespaceObjectMetaUpdateRequest'
+      spec:
+        $ref: '#/definitions/model.NamespaceSpec'
+    type: object
   model.NamespaceUpdateRequest:
     properties:
       namespace:
-        $ref: '#/definitions/model.Namespace'
+        $ref: '#/definitions/model.NamespaceUpdate'
       opts:
         $ref: '#/definitions/model.UpdateOptions'
     type: object

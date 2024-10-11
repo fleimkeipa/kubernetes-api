@@ -34,9 +34,7 @@ func (rc *NamespaceUC) Create(ctx context.Context, request model.NamespaceCreate
 	return rc.namespaceRepo.Create(ctx, &request.Namespace, request.Opts)
 }
 
-func (rc *NamespaceUC) Update(ctx context.Context, id string, request *model.NamespaceUpdateRequest) (*model.Namespace, error) {
-	request.Namespace.TypeMeta.Kind = "namespace"
-
+func (rc *NamespaceUC) Update(ctx context.Context, nameOrUID string, request *model.NamespaceUpdateRequest) (*model.Namespace, error) {
 	event := model.Event{
 		Category: model.NamespaceCategory,
 		Type:     model.UpdateEventType,
@@ -46,7 +44,9 @@ func (rc *NamespaceUC) Update(ctx context.Context, id string, request *model.Nam
 		return nil, err
 	}
 
-	return rc.namespaceRepo.Update(ctx, &request.Namespace, request.Opts)
+	kubeNamespace := rc.fillNamespace(request)
+
+	return rc.namespaceRepo.Update(ctx, nameOrUID, kubeNamespace, request.Opts)
 }
 
 func (rc *NamespaceUC) List(ctx context.Context, opts model.ListOptions) (*model.NamespaceList, error) {
@@ -72,4 +72,14 @@ func (rc *NamespaceUC) Delete(ctx context.Context, name string, opts model.Delet
 	}
 
 	return rc.namespaceRepo.Delete(ctx, name, opts)
+}
+
+func (rc *NamespaceUC) fillNamespace(request *model.NamespaceUpdateRequest) *model.Namespace {
+	return &model.Namespace{
+		ObjectMeta: model.ObjectMeta{
+			Labels:      request.Namespace.Labels,
+			Annotations: request.Namespace.Annotations,
+		},
+		Spec: request.Namespace.Spec,
+	}
 }
