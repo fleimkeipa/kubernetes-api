@@ -1,8 +1,8 @@
 package model
 
 type PaginationOpts struct {
-	Skip  int
-	Limit int
+	Skip  int `json:"skip"`
+	Limit int `json:"limit"`
 }
 
 type Filter struct {
