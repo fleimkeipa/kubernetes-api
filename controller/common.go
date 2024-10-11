@@ -59,11 +59,15 @@ func getKubeListOpts(c echo.Context) model.ListOptions {
 	limitQuery := c.QueryParam("limit")
 
 	continueQuery := c.QueryParam("continue")
+	labelSelectorQuery := c.QueryParam("labelSelector")
+	fieldSelectorQuery := c.QueryParam("fieldSelector")
 
 	limit, _ := strconv.Atoi(limitQuery)
 
 	return model.ListOptions{
-		Continue: continueQuery,
-		Limit:    int64(limit),
+		Continue:      continueQuery,
+		LabelSelector: labelSelectorQuery,
+		FieldSelector: fieldSelectorQuery,
+		Limit:         int64(limit),
 	}
 }
