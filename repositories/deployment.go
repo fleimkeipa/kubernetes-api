@@ -138,8 +138,8 @@ func (rc *DeploymentRepository) fillRequestDeployment(deployment *model.Deployme
 			Replicas: deployment.Spec.Replicas,
 			Selector: &selector,
 			Strategy: v1.DeploymentStrategy{
-				Type:          v1.DeploymentStrategyType(deployment.Spec.Strategy.Type),
-				RollingUpdate: (*v1.RollingUpdateDeployment)(deployment.Spec.Strategy.RollingUpdate),
+				Type: v1.DeploymentStrategyType(deployment.Spec.Strategy.Type),
+				// RollingUpdate: (*v1.RollingUpdateDeployment)(deployment.Spec.Strategy.RollingUpdate),
 			},
 			Template:                template,
 			MinReadySeconds:         deployment.Spec.MinReadySeconds,
@@ -240,7 +240,7 @@ func (rc *DeploymentRepository) fillResponseDeployment(newDeployment *v1.Deploym
 	for _, v := range newDeployment.Status.Conditions {
 		conditions = append(conditions, model.DeploymentCondition{
 			Type:               model.DeploymentConditionType(v.Type),
-			Status:             v.Status,
+			Status:             model.ConditionStatus(v.Status),
 			LastUpdateTime:     v.LastUpdateTime.Time,
 			LastTransitionTime: v.LastTransitionTime.Time,
 			Reason:             v.Reason,
@@ -265,8 +265,8 @@ func (rc *DeploymentRepository) fillResponseDeployment(newDeployment *v1.Deploym
 			Replicas: newDeployment.Spec.Replicas,
 			Selector: &selector,
 			Strategy: model.DeploymentStrategy{
-				Type:          model.DeploymentStrategyType(newDeployment.Spec.Strategy.Type),
-				RollingUpdate: (*model.RollingUpdateDeployment)(newDeployment.Spec.Strategy.RollingUpdate),
+				Type: model.DeploymentStrategyType(newDeployment.Spec.Strategy.Type),
+				// RollingUpdate: (*model.RollingUpdateDeployment)(newDeployment.Spec.Strategy.RollingUpdate),
 			},
 			MinReadySeconds:         newDeployment.Spec.MinReadySeconds,
 			RevisionHistoryLimit:    newDeployment.Spec.RevisionHistoryLimit,

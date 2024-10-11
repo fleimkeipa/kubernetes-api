@@ -2,8 +2,6 @@ package model
 
 import (
 	"time"
-
-	"k8s.io/apimachinery/pkg/types"
 )
 
 type TypeMeta struct {
@@ -213,7 +211,7 @@ const (
 type Preconditions struct {
 	// Specifies the target UID.
 	// +optional
-	UID *types.UID `json:"uid,omitempty"`
+	UID *string `json:"uid,omitempty"`
 	// Specifies the target ResourceVersion
 	// +optional
 	ResourceVersion *string `json:"resourceVersion,omitempty"`

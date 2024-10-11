@@ -5,6 +5,7 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
 )
 
 // overwriteKubeContainers change only images
@@ -130,8 +131,10 @@ func convertDeleteOptsToKube(opts model.DeleteOptions) metav1.DeleteOptions {
 	}
 
 	preconditions := new(model.Preconditions)
+	var uid types.UID
 	if opts.Preconditions != nil {
 		preconditions = opts.Preconditions
+		uid = types.UID(*preconditions.UID)
 	}
 
 	metaOpts := metav1.DeleteOptions{
@@ -141,7 +144,7 @@ func convertDeleteOptsToKube(opts model.DeleteOptions) metav1.DeleteOptions {
 		},
 		GracePeriodSeconds: gracePeriodSeconds,
 		Preconditions: &metav1.Preconditions{
-			UID:             preconditions.UID,
+			UID:             &uid,
 			ResourceVersion: preconditions.ResourceVersion,
 		},
 		DryRun: opts.DryRun,
