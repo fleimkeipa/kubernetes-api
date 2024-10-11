@@ -2114,12 +2114,6 @@ const docTemplate = `{
         "model.PodUpdate": {
             "type": "object",
             "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "namespace": {
-                    "type": "string"
-                },
                 "spec": {
                     "$ref": "#/definitions/model.SpecRequest"
                 }
