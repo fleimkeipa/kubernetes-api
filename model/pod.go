@@ -18,6 +18,12 @@ type PodList struct {
 	Items    []Pod `json:"items"`
 }
 
+// PodTemplateSpec describes the data a pod should have when created from a template
+type PodTemplateSpec struct {
+	ObjectMeta `json:"metadata,omitempty"`
+	Spec       PodSpec `json:"spec,omitempty"`
+}
+
 type PodSpec struct {
 	Volumes                       []Volume     `json:"volumes,omitempty"`
 	InitContainers                []Container  `json:"initContainers,omitempty"`

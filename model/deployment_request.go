@@ -1,11 +1,11 @@
 package model
 
 type DeploymentCreateRequest struct {
-	Opts       CreateOptions
-	Deployment Deployment
+	Opts       CreateOptions `json:"opts"`
+	Deployment Deployment    `json:"deployment"`
 }
 
 type DeploymentUpdateRequest struct {
-	Opts       UpdateOptions
-	Deployment Deployment
+	Opts       UpdateOptions `json:"opts"`
+	Deployment Deployment    `json:"deployment"`
 }

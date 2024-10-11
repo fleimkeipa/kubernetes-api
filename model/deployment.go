@@ -20,6 +20,17 @@ type Deployment struct {
 	Status DeploymentStatus `json:"status,omitempty"`
 }
 
+// DeploymentList is a list of Deployments.
+type DeploymentList struct {
+	TypeMeta `json:",inline"`
+	// Standard list metadata.
+	// +optional
+	ListMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
+
+	// Items is the list of Deployments.
+	Items []Deployment `json:"items" protobuf:"bytes,2,rep,name=items"`
+}
+
 // DeploymentSpec is the specification of the desired behavior of the Deployment.
 type DeploymentSpec struct {
 	// The deployment strategy to use to replace existing pods with new ones.
@@ -47,7 +58,7 @@ type DeploymentSpec struct {
 	ProgressDeadlineSeconds *int32 `json:"progressDeadlineSeconds,omitempty"`
 	// Template describes the pods that will be created.
 	// The only allowed template.spec.restartPolicy value is "Always".
-	Template v1.PodTemplateSpec `json:"template"`
+	Template PodTemplateSpec `json:"template"`
 	// Minimum number of seconds for which a newly created pod should be ready
 	// without any of its container crashing, for it to be considered available.
 	// Defaults to 0 (pod will be considered available as soon as it is ready)

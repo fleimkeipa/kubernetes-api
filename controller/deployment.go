@@ -72,6 +72,7 @@ func (rc *DeploymentHandler) Create(c echo.Context) error {
 //	@Router			/deployments [put]
 func (rc *DeploymentHandler) Update(c echo.Context) error {
 	id := c.Param("id")
+	namespace := c.QueryParam("namespace")
 
 	var request model.DeploymentUpdateRequest
 
@@ -82,7 +83,7 @@ func (rc *DeploymentHandler) Update(c echo.Context) error {
 		})
 	}
 
-	deployment, err := rc.deploymentUC.Update(c.Request().Context(), "", id, &request)
+	deployment, err := rc.deploymentUC.Update(c.Request().Context(), namespace, id, &request)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, FailureResponse{
 			Error:   fmt.Sprintf("Failed to update deployment: %v", err),
