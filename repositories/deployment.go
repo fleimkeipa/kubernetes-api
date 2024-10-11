@@ -249,6 +249,8 @@ func (rc *DeploymentRepository) fillResponseDeployment(deployment *v1.Deployment
 		})
 	}
 
+	template := convertTemplateToModel(deployment)
+
 	ownerReferences := make([]model.OwnerReference, 0, len(deployment.OwnerReferences))
 	for _, v := range deployment.OwnerReferences {
 		ownerReferences = append(ownerReferences, model.OwnerReference{
@@ -289,6 +291,7 @@ func (rc *DeploymentRepository) fillResponseDeployment(deployment *v1.Deployment
 				Type: model.DeploymentStrategyType(deployment.Spec.Strategy.Type),
 				// RollingUpdate: (*model.RollingUpdateDeployment)(newDeployment.Spec.Strategy.RollingUpdate),
 			},
+			Template:                template,
 			MinReadySeconds:         deployment.Spec.MinReadySeconds,
 			RevisionHistoryLimit:    deployment.Spec.RevisionHistoryLimit,
 			Paused:                  deployment.Spec.Paused,

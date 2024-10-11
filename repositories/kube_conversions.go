@@ -3,6 +3,7 @@ package repositories
 import (
 	"github.com/fleimkeipa/kubernetes-api/model"
 
+	v1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
@@ -63,19 +64,18 @@ func convertTolerationsToKube(tolerations []model.Toleration) []corev1.Toleratio
 	return newTolerations
 }
 
-func convertPodConditionsToKube(conditions []model.PodCondition) []corev1.PodCondition {
-	kubeConditions := make([]corev1.PodCondition, 0, len(conditions))
-	for _, condition := range conditions {
-		kubeConditions = append(kubeConditions, corev1.PodCondition{
-			Type:               corev1.PodConditionType(condition.Type),
-			Status:             corev1.ConditionStatus(condition.Status),
-			LastProbeTime:      metav1.Time{Time: condition.LastProbeTime},
-			LastTransitionTime: metav1.Time{Time: condition.LastTransitionTime},
-			Reason:             condition.Reason,
-			Message:            condition.Message,
+func convertTolerationsToModel(tolerations []corev1.Toleration) []model.Toleration {
+	newTolerations := make([]model.Toleration, 0, len(tolerations))
+	for _, v := range tolerations {
+		newTolerations = append(newTolerations, model.Toleration{
+			Key:               v.Key,
+			Operator:          model.TolerationOperator(v.Operator),
+			Value:             v.Value,
+			Effect:            model.TaintEffect(v.Effect),
+			TolerationSeconds: v.TolerationSeconds,
 		})
 	}
-	return kubeConditions
+	return newTolerations
 }
 
 func convertContainersToKube(containers []model.Container) []corev1.Container {
@@ -94,6 +94,41 @@ func convertContainersToKube(containers []model.Container) []corev1.Container {
 		})
 	}
 	return newContainers
+}
+
+func convertContainersToModel(containers []corev1.Container) []model.Container {
+	newContainers := make([]model.Container, 0, len(containers))
+	for _, v := range containers {
+		newContainers = append(newContainers, model.Container{
+			Name:                   v.Name,
+			Image:                  v.Image,
+			Command:                v.Command,
+			Args:                   v.Args,
+			WorkingDir:             v.WorkingDir,
+			TerminationMessagePath: v.TerminationMessagePath,
+			Stdin:                  v.Stdin,
+			StdinOnce:              v.StdinOnce,
+			TTY:                    v.TTY,
+		})
+	}
+	return newContainers
+}
+
+func convertTemplateToModel(deployment *v1.Deployment) model.PodTemplateSpec {
+	template := model.PodTemplateSpec{
+		ObjectMeta: model.ObjectMeta{
+			Name:        deployment.Spec.Template.ObjectMeta.Name,
+			Labels:      deployment.Spec.Template.ObjectMeta.Labels,
+			Annotations: deployment.Spec.Template.ObjectMeta.Annotations,
+		},
+		Spec: model.PodSpec{
+			Containers:            convertContainersToModel(deployment.Spec.Template.Spec.Containers),
+			InitContainers:        convertContainersToModel(deployment.Spec.Template.Spec.InitContainers),
+			Tolerations:           convertTolerationsToModel(deployment.Spec.Template.Spec.Tolerations),
+			ActiveDeadlineSeconds: deployment.Spec.Template.Spec.ActiveDeadlineSeconds,
+		},
+	}
+	return template
 }
 
 /*---------------- Kube Options Conversions ----------------*/
