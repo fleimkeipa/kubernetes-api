@@ -131,7 +131,7 @@ func (rc *PodHandler) List(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, SuccessResponse{
-		Data:    list,
+		Data:    list.ConvertMini(),
 		Message: "Pods retrieved successfully.",
 	})
 }

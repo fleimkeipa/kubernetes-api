@@ -34,6 +34,14 @@ type ObjectMeta struct {
 	Generation                 int64             `json:"generation,omitempty"`
 }
 
+type MiniObjectMeta struct {
+	UID               string    `json:"uid,omitempty"`
+	CreationTimestamp time.Time `json:"creationTimestamp,omitempty"`
+	Name              string    `json:"name,omitempty"`
+	GenerateName      string    `json:"generateName,omitempty"`
+	Namespace         string    `json:"namespace,omitempty"`
+}
+
 type OwnerReference struct {
 	Controller         *bool  `json:"controller,omitempty"`
 	BlockOwnerDeletion *bool  `json:"blockOwnerDeletion,omitempty"`
