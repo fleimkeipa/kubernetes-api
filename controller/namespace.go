@@ -164,16 +164,16 @@ func (rc *NamespaceHandler) GetByNameOrUID(c echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string			true	"Insert your access token"	default(Bearer <Add access token here>)
-//	@Param			id				path		string			true	"Name or UID of the namespace"
+//	@Param			name			path		string			true	"Name of the Namespace"
 //	@Success		200				{string}	SuccessResponse	"Success message"
 //	@Failure		500				{object}	FailureResponse	"Interval error"
 //	@Router			/namespaces/{id} [delete]
 func (rc *NamespaceHandler) Delete(c echo.Context) error {
-	nameOrUID := c.Param("id")
+	name := c.Param("name")
 
 	opts := model.DeleteOptions{}
 
-	if err := rc.namespaceUC.Delete(c.Request().Context(), nameOrUID, opts); err != nil {
+	if err := rc.namespaceUC.Delete(c.Request().Context(), name, opts); err != nil {
 		return c.JSON(http.StatusInternalServerError, FailureResponse{
 			Error:   fmt.Sprintf("Failed to delete namespace: %v", err),
 			Message: "Error deleting namespace. Please check the name or UID and try again.",

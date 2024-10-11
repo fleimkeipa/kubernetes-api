@@ -120,7 +120,7 @@ func serveApplication() {
 	namespacesRoutes.GET("/:id", namespaceHandlers.GetByNameOrUID)
 	namespacesRoutes.POST("", namespaceHandlers.Create)
 	namespacesRoutes.PUT("/:id", namespaceHandlers.Update)
-	namespacesRoutes.DELETE("/:id", namespaceHandlers.Delete)
+	namespacesRoutes.DELETE("/:name", namespaceHandlers.Delete)
 
 	// Define deployment routes
 	deploymentsRoutes := restrictedRoutes.Group("/deployments")

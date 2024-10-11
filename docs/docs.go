@@ -807,8 +807,8 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Name or UID of the namespace",
-                        "name": "id",
+                        "description": "Name of the Namespace",
+                        "name": "name",
                         "in": "path",
                         "required": true
                     }
