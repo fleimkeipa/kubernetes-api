@@ -1,0 +1,7 @@
+.*
+build
+dist
+postgres_setup/
+bin
+*.md
+*.yaml
