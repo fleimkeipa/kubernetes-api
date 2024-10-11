@@ -89,7 +89,7 @@ You can access the Swagger documentation at the following URL:
 ### Prerequisites
 
 - Docker 🐋
-- Go (version 1.22.3 or later) ⚙️
+- Go (version 1.23.1 or later) ⚙️
 - kubectl configured with access to your Kubernetes cluster 📡
 
 ### Postgres Setup
