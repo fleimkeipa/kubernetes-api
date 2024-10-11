@@ -31,6 +31,10 @@ func getPagination(c echo.Context) model.PaginationOpts {
 
 	limit, _ := strconv.Atoi(limitQuery)
 
+	if limit == 0 {
+		limit = 30
+	}
+
 	skip, _ := strconv.Atoi(skipQuery)
 
 	return model.PaginationOpts{
