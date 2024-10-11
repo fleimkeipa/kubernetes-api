@@ -47,7 +47,10 @@ func (rc *DeploymentUC) Update(ctx context.Context, namespace, id string, reques
 		return nil, err
 	}
 
-	return rc.deploymentRepo.Update(ctx, namespace, id, &request.Deployment, request.Opts)
+	kubeDeployment := rc.fillDeployment(request)
+	kubeDeployment.Namespace = namespace
+
+	return rc.deploymentRepo.Update(ctx, namespace, id, kubeDeployment, request.Opts)
 }
 
 func (rc *DeploymentUC) List(ctx context.Context, namespace string, opts model.ListOptions) (*model.DeploymentList, error) {
@@ -70,6 +73,7 @@ func (rc *DeploymentUC) GetByNameOrUID(ctx context.Context, namespace, nameOrUID
 	if err != nil {
 		return nil, err
 	}
+
 	for _, v := range deployments.Items {
 		if v.Name == nameOrUID || v.UID == nameOrUID {
 			return &v, nil
@@ -100,4 +104,20 @@ func (rc *DeploymentUC) Delete(ctx context.Context, namespace, name string, opts
 	}
 
 	return rc.deploymentRepo.Delete(ctx, namespace, name, opts)
+}
+
+func (rc *DeploymentUC) fillDeployment(request *model.DeploymentUpdateRequest) *model.Deployment {
+	return &model.Deployment{
+		Spec: model.DeploymentSpec{
+			Strategy:                request.Deployment.Spec.Strategy,
+			Replicas:                request.Deployment.Spec.Replicas,
+			ProgressDeadlineSeconds: request.Deployment.Spec.ProgressDeadlineSeconds,
+			Template:                request.Deployment.Spec.Template,
+			MinReadySeconds:         request.Deployment.Spec.MinReadySeconds,
+		},
+		ObjectMeta: model.ObjectMeta{
+			Labels:      request.Deployment.Labels,
+			Annotations: request.Deployment.Annotations,
+		},
+	}
 }

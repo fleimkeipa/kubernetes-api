@@ -311,7 +311,17 @@ func (rc *DeploymentRepository) fillResponseDeployment(deployment *v1.Deployment
 }
 
 func (rc *DeploymentRepository) overwriteOnKubeDeployment(newDeployment *model.Deployment, existDeployment *v1.Deployment) *v1.Deployment {
-	existDeployment.Name = newDeployment.Name
+	existDeployment.ObjectMeta.Labels = newDeployment.Labels
+	existDeployment.ObjectMeta.Annotations = newDeployment.Annotations
+
+	existDeployment.Spec.Replicas = newDeployment.Spec.Replicas
+	existDeployment.Spec.Strategy = v1.DeploymentStrategy{
+		Type: v1.DeploymentStrategyType(newDeployment.Spec.Strategy.Type),
+		// RollingUpdate: (*v1.RollingUpdateDeployment)(newDeployment.Spec.Strategy.RollingUpdate),
+	}
+	existDeployment.Spec.Template = convertTemplateToKube(&newDeployment.Spec.Template)
+	existDeployment.Spec.MinReadySeconds = newDeployment.Spec.MinReadySeconds
+	existDeployment.Spec.ProgressDeadlineSeconds = newDeployment.Spec.ProgressDeadlineSeconds
 
 	return existDeployment
 }

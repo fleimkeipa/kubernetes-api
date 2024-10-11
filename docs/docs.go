@@ -1598,6 +1598,23 @@ const docTemplate = `{
                 }
             }
         },
+        "model.DeploymentObjectMetaUpdateRequest": {
+            "type": "object",
+            "properties": {
+                "annotations": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "labels": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "model.DeploymentSpec": {
             "type": "object",
             "properties": {
@@ -1644,6 +1661,26 @@ const docTemplate = `{
                             "$ref": "#/definitions/model.PodTemplateSpec"
                         }
                     ]
+                }
+            }
+        },
+        "model.DeploymentSpecUpdateRequest": {
+            "type": "object",
+            "properties": {
+                "minReadySeconds": {
+                    "type": "integer"
+                },
+                "progressDeadlineSeconds": {
+                    "type": "integer"
+                },
+                "replicas": {
+                    "type": "integer"
+                },
+                "strategy": {
+                    "$ref": "#/definitions/model.DeploymentStrategy"
+                },
+                "template": {
+                    "$ref": "#/definitions/model.PodTemplateSpec"
                 }
             }
         },
@@ -1711,11 +1748,22 @@ const docTemplate = `{
                 "RollingUpdateDeploymentStrategyType"
             ]
         },
+        "model.DeploymentUpdate": {
+            "type": "object",
+            "properties": {
+                "metadata": {
+                    "$ref": "#/definitions/model.DeploymentObjectMetaUpdateRequest"
+                },
+                "spec": {
+                    "$ref": "#/definitions/model.DeploymentSpecUpdateRequest"
+                }
+            }
+        },
         "model.DeploymentUpdateRequest": {
             "type": "object",
             "properties": {
                 "deployment": {
-                    "$ref": "#/definitions/model.Deployment"
+                    "$ref": "#/definitions/model.DeploymentUpdate"
                 },
                 "opts": {
                     "$ref": "#/definitions/model.UpdateOptions"

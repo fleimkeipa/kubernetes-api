@@ -157,6 +157,17 @@ definitions:
       opts:
         $ref: '#/definitions/model.CreateOptions'
     type: object
+  model.DeploymentObjectMetaUpdateRequest:
+    properties:
+      annotations:
+        additionalProperties:
+          type: string
+        type: object
+      labels:
+        additionalProperties:
+          type: string
+        type: object
+    type: object
   model.DeploymentSpec:
     properties:
       minReadySeconds:
@@ -212,6 +223,19 @@ definitions:
         description: |-
           Template describes the pods that will be created.
           The only allowed template.spec.restartPolicy value is "Always".
+    type: object
+  model.DeploymentSpecUpdateRequest:
+    properties:
+      minReadySeconds:
+        type: integer
+      progressDeadlineSeconds:
+        type: integer
+      replicas:
+        type: integer
+      strategy:
+        $ref: '#/definitions/model.DeploymentStrategy'
+      template:
+        $ref: '#/definitions/model.PodTemplateSpec'
     type: object
   model.DeploymentStatus:
     properties:
@@ -285,10 +309,17 @@ definitions:
     x-enum-varnames:
     - RecreateDeploymentStrategyType
     - RollingUpdateDeploymentStrategyType
+  model.DeploymentUpdate:
+    properties:
+      metadata:
+        $ref: '#/definitions/model.DeploymentObjectMetaUpdateRequest'
+      spec:
+        $ref: '#/definitions/model.DeploymentSpecUpdateRequest'
+    type: object
   model.DeploymentUpdateRequest:
     properties:
       deployment:
-        $ref: '#/definitions/model.Deployment'
+        $ref: '#/definitions/model.DeploymentUpdate'
       opts:
         $ref: '#/definitions/model.UpdateOptions'
     type: object

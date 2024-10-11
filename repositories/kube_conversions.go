@@ -114,6 +114,22 @@ func convertContainersToModel(containers []corev1.Container) []model.Container {
 	return newContainers
 }
 
+func convertTemplateToKube(template *model.PodTemplateSpec) corev1.PodTemplateSpec {
+	return corev1.PodTemplateSpec{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:        template.ObjectMeta.Name,
+			Labels:      template.ObjectMeta.Labels,
+			Annotations: template.ObjectMeta.Annotations,
+		},
+		Spec: corev1.PodSpec{
+			Containers:            convertContainersToKube(template.Spec.Containers),
+			InitContainers:        convertContainersToKube(template.Spec.InitContainers),
+			Tolerations:           convertTolerationsToKube(template.Spec.Tolerations),
+			ActiveDeadlineSeconds: template.Spec.ActiveDeadlineSeconds,
+		},
+	}
+}
+
 func convertTemplateToModel(deployment *v1.Deployment) model.PodTemplateSpec {
 	template := model.PodTemplateSpec{
 		ObjectMeta: model.ObjectMeta{
