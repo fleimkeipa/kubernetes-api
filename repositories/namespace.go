@@ -172,6 +172,7 @@ func (rc *NamespaceRepository) fillResponseNamespace(namespace *corev1.Namespace
 	return &model.Namespace{
 		TypeMeta: model.TypeMeta(namespace.TypeMeta),
 		ObjectMeta: model.ObjectMeta{
+			UID:                        string(namespace.UID),
 			Name:                       namespace.Name,
 			GenerateName:               namespace.GenerateName,
 			Namespace:                  namespace.Namespace,

@@ -120,7 +120,7 @@ func (rc *NamespaceHandler) List(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, SuccessResponse{
-		Data:    list,
+		Data:    list.ConvertMini(),
 		Message: "Namespaces retrieved successfully.",
 	})
 }
