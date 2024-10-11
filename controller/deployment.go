@@ -125,7 +125,7 @@ func (rc *DeploymentHandler) List(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, SuccessResponse{
-		Data:    list,
+		Data:    list.ConvertMini(),
 		Message: "Deployments retrieved successfully.",
 	})
 }

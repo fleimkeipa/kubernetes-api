@@ -251,6 +251,7 @@ func (rc *DeploymentRepository) fillResponseDeployment(newDeployment *v1.Deploym
 	return &model.Deployment{
 		TypeMeta: model.TypeMeta(newDeployment.TypeMeta),
 		ObjectMeta: model.ObjectMeta{
+			UID:                        string(newDeployment.UID),
 			Name:                       newDeployment.ObjectMeta.Name,
 			GenerateName:               newDeployment.ObjectMeta.GenerateName,
 			Namespace:                  newDeployment.ObjectMeta.Namespace,
