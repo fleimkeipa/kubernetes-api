@@ -62,7 +62,7 @@ func (rc *UserUC) Update(ctx context.Context, id string, user model.User) (*mode
 	return rc.userRepo.Update(ctx, user)
 }
 
-func (rc *UserUC) List(ctx context.Context, opts *model.UserFindOpts) ([]model.User, error) {
+func (rc *UserUC) List(ctx context.Context, opts *model.UserFindOpts) (*model.UserList, error) {
 	return rc.userRepo.List(ctx, opts)
 }
 

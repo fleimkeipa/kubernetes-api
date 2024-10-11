@@ -14,6 +14,12 @@ type User struct {
 	RoleID    uint      `json:"role_id"`
 }
 
+type UserList struct {
+	Users []User `json:"users"`
+	Total int    `json:"total"`
+	PaginationOpts
+}
+
 type Owner struct {
 	Username string `json:"username" pg:",unique"`
 	Email    string `json:"email" pg:",unique"`

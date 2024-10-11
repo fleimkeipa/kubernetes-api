@@ -45,7 +45,7 @@ func (rc *UserRepository) Update(ctx context.Context, updatedUser model.User) (*
 	return &updatedUser, nil
 }
 
-func (rc *UserRepository) List(ctx context.Context, opts *model.UserFindOpts) ([]model.User, error) {
+func (rc *UserRepository) List(ctx context.Context, opts *model.UserFindOpts) (*model.UserList, error) {
 	var users []model.User
 
 	filter := rc.fillFilter(opts)
@@ -59,11 +59,19 @@ func (rc *UserRepository) List(ctx context.Context, opts *model.UserFindOpts) ([
 
 	q = q.Limit(opts.Limit).Offset(opts.Skip)
 
-	if err := q.Select(); err != nil {
+	count, err := q.SelectAndCount()
+	if err != nil {
 		return nil, fmt.Errorf("failed to list users: %w", err)
 	}
 
-	return users, nil
+	return &model.UserList{
+		Users: users,
+		Total: count,
+		PaginationOpts: model.PaginationOpts{
+			Skip:  opts.Skip,
+			Limit: opts.Limit,
+		},
+	}, nil
 }
 
 func (rc *UserRepository) GetByID(ctx context.Context, id string) (*model.User, error) {
