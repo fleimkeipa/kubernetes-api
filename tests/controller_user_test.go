@@ -18,9 +18,9 @@ import (
 func TestCreateUser(t *testing.T) {
 	tests := []struct {
 		name       string
+		wantJSON   string
 		request    model.UserRequest
 		wantStatus int
-		wantJSON   string
 	}{
 		{
 			name: "successful creation",

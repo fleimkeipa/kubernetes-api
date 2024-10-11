@@ -16,11 +16,11 @@ import (
 
 func TestPodHandlerCreate(t *testing.T) {
 	tests := []struct {
-		name       string
-		request    model.PodsCreateRequest
 		podsUC     *uc.PodUC
-		wantStatus int
+		name       string
 		wantJSON   string
+		request    model.PodsCreateRequest
+		wantStatus int
 	}{
 		{
 			name: "successful creation",
