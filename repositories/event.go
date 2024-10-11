@@ -30,7 +30,7 @@ func (rc *EventRepository) Create(ctx context.Context, newEvent *model.Event) (*
 	return newEvent, nil
 }
 
-func (rc *EventRepository) List(ctx context.Context, opts *model.EventFindOpts) ([]model.Event, error) {
+func (rc *EventRepository) List(ctx context.Context, opts *model.EventFindOpts) (*model.EventList, error) {
 	var events []model.Event
 
 	filter := rc.fillFilter(opts)
@@ -44,12 +44,19 @@ func (rc *EventRepository) List(ctx context.Context, opts *model.EventFindOpts) 
 
 	q = q.Limit(opts.Limit).Offset(opts.Skip)
 
-	err := q.Select()
+	count, err := q.SelectAndCount()
 	if err != nil {
 		return nil, fmt.Errorf("failed to list events: %w", err)
 	}
 
-	return events, nil
+	return &model.EventList{
+		Events: events,
+		Total:  count,
+		PaginationOpts: model.PaginationOpts{
+			Skip:  opts.Skip,
+			Limit: opts.Limit,
+		},
+	}, nil
 }
 
 func (rc *EventRepository) GetByID(ctx context.Context, id string) (*model.Event, error) {

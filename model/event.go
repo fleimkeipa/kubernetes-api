@@ -23,6 +23,12 @@ type Event struct {
 	Owner     Owner     `json:"owner" pg:"rel:has-one"`
 }
 
+type EventList struct {
+	Events []Event `json:"events"`
+	Total  int     `json:"total"`
+	PaginationOpts
+}
+
 type EventFindOpts struct {
 	Category      Filter
 	Type          Filter

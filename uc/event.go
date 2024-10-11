@@ -31,7 +31,7 @@ func (rc *EventUC) Create(ctx context.Context, event *model.Event) (*model.Event
 	return rc.eventRepo.Create(ctx, event)
 }
 
-func (rc *EventUC) List(ctx context.Context, opts *model.EventFindOpts) ([]model.Event, error) {
+func (rc *EventUC) List(ctx context.Context, opts *model.EventFindOpts) (*model.EventList, error) {
 	return rc.eventRepo.List(ctx, opts)
 }
 
