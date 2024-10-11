@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/fleimkeipa/kubernetes-api/model"
@@ -106,7 +107,7 @@ func (rc *NamespaceRepository) getByNameOrUID(ctx context.Context, nameOrUID str
 	}
 
 	if namespaces.ListMeta.Continue == "" {
-		return &corev1.Namespace{}, nil
+		return nil, fmt.Errorf("namespace %s not found", nameOrUID)
 	}
 
 	opts.Continue = namespaces.ListMeta.Continue

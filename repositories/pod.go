@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/fleimkeipa/kubernetes-api/model"
@@ -101,7 +102,7 @@ func (rc *PodRepository) getByNameOrUID(ctx context.Context, namespace, nameOrUI
 	}
 
 	if pods.ListMeta.Continue == "" {
-		return &corev1.Pod{}, nil
+		return nil, fmt.Errorf("pod %s not found", nameOrUID)
 	}
 
 	opts.Continue = pods.ListMeta.Continue

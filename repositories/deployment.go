@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/fleimkeipa/kubernetes-api/model"
@@ -102,7 +103,7 @@ func (rc *DeploymentRepository) getByNameOrUID(ctx context.Context, namespace, n
 	}
 
 	if deployments.ListMeta.Continue == "" {
-		return &v1.Deployment{}, nil
+		return nil, fmt.Errorf("deployment %s not found", nameOrUID)
 	}
 
 	opts.Continue = deployments.ListMeta.Continue
