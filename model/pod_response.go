@@ -11,11 +11,6 @@ type MiniPodList struct {
 	Items    []MiniPod `json:"items"`
 }
 
-// MiniPodSpec is a PodSpec with only the information needed for the UI.
-type MiniPodSpec struct {
-	Containers []Container `json:"containers,omitempty"`
-}
-
 // ConvertMini converts a PodList object into a MiniPodList object.
 func (rc *PodList) ConvertMini() MiniPodList {
 	return MiniPodList{
@@ -26,9 +21,9 @@ func (rc *PodList) ConvertMini() MiniPodList {
 
 // convertPodsToMiniPods converts a slice of Pod objects into a slice of MiniPod objects.
 func (rc *PodList) convertPodsToMiniPods() []MiniPod {
-	miniPods := make([]MiniPod, len(rc.Items))
+	pods := make([]MiniPod, len(rc.Items))
 	for i, pod := range rc.Items {
-		miniPods[i] = MiniPod{
+		pods[i] = MiniPod{
 			MiniObjectMeta: MiniObjectMeta{
 				UID:               pod.UID,
 				CreationTimestamp: pod.CreationTimestamp,
@@ -39,5 +34,5 @@ func (rc *PodList) convertPodsToMiniPods() []MiniPod {
 		}
 	}
 
-	return miniPods
+	return pods
 }
