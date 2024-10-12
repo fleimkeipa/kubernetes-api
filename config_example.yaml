@@ -1,3 +1,6 @@
+# Stage options
+stage: dev # dev or prod
+
 # Database options
 database:
   name: kubernetes-api
