@@ -5,3 +5,4 @@ postgres_setup/
 bin
 *.md
 config_example.yaml
+todo
