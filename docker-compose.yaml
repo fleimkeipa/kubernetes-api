@@ -6,9 +6,10 @@ services:
     # image: kubernetes-api:latest  # Docker image for your Go application
     container_name: app-container
     environment:
-      - KUBECONFIG=/root/.kube/config # Location of the Kubernetes configuration file
+      - KUBECONFIG=/app/root/.kube/config # Location of the Kubernetes configuration file
     volumes:
-      - ~/.kube/config:/root/.kube/config # Mount the local kubeconfig file to the container
+      - ~/.kube/config:/app/root/.kube/config # Mount the local kubeconfig file to the container
+      - ./config.yaml:/app/config.yaml
     ports:
       - "8080:8080" # Expose necessary ports
     networks:
