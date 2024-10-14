@@ -20,20 +20,11 @@ spec:
           image: postgres:latest
           env:
             - name: POSTGRES_DB
-              valueFrom:
-                configMapKeyRef:
-                  name: database-config
-                  key: POSTGRES_DB
+              value: "kubernetes-api"
             - name: POSTGRES_USER
-              valueFrom:
-                configMapKeyRef:
-                  name: database-config
-                  key: POSTGRES_USER
+              value: "postgres"
             - name: POSTGRES_PASSWORD
-              valueFrom:
-                configMapKeyRef:
-                  name: database-config
-                  key: POSTGRES_PASSWORD
+              value: "password"
           ports:
             - containerPort: 5432
 

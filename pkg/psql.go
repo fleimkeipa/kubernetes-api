@@ -16,11 +16,17 @@ import (
 )
 
 func NewPSQLClient() *pg.DB {
+	// Determine if we are on local or cluster
+	addr := "localhost:5432"
+	if stage := viper.GetString("stage"); stage == "prod" {
+		addr = "postgres-service:5432"
+	}
+
 	opts := pg.Options{
-		Database: viper.GetString("database.name"),
-		User:     viper.GetString("database.username"),
-		Password: viper.GetString("database.password"),
-		Addr:     viper.GetString("database.addr"),
+		Database: "kubernetes-api",
+		User:     "postgres",
+		Password: "password",
+		Addr:     addr,
 	}
 	db := pg.Connect(&opts)
 

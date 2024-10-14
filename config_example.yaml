@@ -1,13 +1,6 @@
 # Stage options
 stage: dev # dev or prod
 
-# Database options
-database:
-  name: kubernetes-api
-  username: postgres
-  password: password
-  addr: localhost:5432 # postgres:5432 if api working on container
-
 # UI service options
 ui_service:
   allow_origin: http://localhost:8081

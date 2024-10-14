@@ -1,30 +1,12 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: database-config
-  namespace: kubernetes-api-namespace
-data:
-  POSTGRES_DB: "kubernetes-api"
-  POSTGRES_USER: "postgres"
-  POSTGRES_PASSWORD: "password"
-
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
   name: app-config-map
   namespace: kubernetes-api-namespace
 data:
   config.yaml: |
     # Stage options
     stage: prod # dev or prod
-
-    # Database options
-    database:
-      name: kubernetes-api
-      username: postgres
-      password: password
-      addr: postgres-service:5432
 
     # UI service options
     ui_service:
