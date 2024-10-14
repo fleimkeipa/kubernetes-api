@@ -19,6 +19,8 @@ api_service:
 # JWT options
 jwt:
   private_key: <SECRET>
+  # 24 hours
+  token_ttl: 86400
 
 # OAuth2 options
 oauth2:
