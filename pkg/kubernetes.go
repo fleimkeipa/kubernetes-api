@@ -17,8 +17,7 @@ func NewKubernetesClient() (*kubernetes.Clientset, error) {
 	var err error
 
 	// Determine if we are on local or cluster
-	stage := viper.GetString("stage")
-	if stage == "prod" {
+	if stage := viper.GetString("stage"); stage == "prod" {
 		config, err = getConfigOnCluster()
 		if err != nil {
 			return nil, fmt.Errorf("failed to get config for cluster stage: %w", err)
