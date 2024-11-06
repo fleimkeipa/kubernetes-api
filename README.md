@@ -2,6 +2,8 @@
 
 This project provides a Kubernetes API wrapper with authentication and various Kubernetes resource management endpoints. 🎯
 
+![a-diagram-of-a-kubernetes-api-wrapper-with-authent-oEk9zzsWS8W6Fb6pJ52RqA-fGl--Cl8StqGaT3q84aWKA](https://github.com/user-attachments/assets/f32d493e-cb8d-4bac-a737-220de5de91f7)
+
 ## ✨ Features
 
 - 🔐 Authentication (Basic Auth, Google, and GitHub)
